@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import dynamic from "next/dynamic"
-import { useSession, signIn, signOut } from "next-auth/react"
+import { useSession, signOut } from "next-auth/react"
 import { useState } from "react"
 import { DefaultAvatar } from "./default-avatar"
 
@@ -113,12 +113,12 @@ export function Header() {
               )}
             </div>
           ) : (
-            <button
-              onClick={() => signIn("google")}
-              className="bg-white text-black px-4 py-2 text-sm font-bold hover:bg-gray-100"
+            <Link
+              href="/login"
+              className="bg-white text-black px-4 py-2 text-sm font-bold hover:bg-gray-100 no-underline border border-black"
             >
               Sign In
-            </button>
+            </Link>
           )}
         </nav>
       </div>
