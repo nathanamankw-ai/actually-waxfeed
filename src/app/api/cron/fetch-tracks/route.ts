@@ -17,7 +17,6 @@ export async function GET(request: Request) {
     // Find albums without tracks (limit to 100 per run to avoid timeout)
     const albumsWithoutTracks = await prisma.album.findMany({
       where: {
-        spotifyId: { not: null },
         tracks: { none: {} }
       },
       select: {
@@ -61,7 +60,6 @@ export async function GET(request: Request) {
 
     const remaining = await prisma.album.count({
       where: {
-        spotifyId: { not: null },
         tracks: { none: {} }
       }
     })
