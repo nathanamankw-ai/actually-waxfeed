@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import * as cheerio from "cheerio"
 
 // Cron secret to prevent unauthorized access
 const CRON_SECRET = process.env.CRON_SECRET
@@ -76,26 +77,49 @@ interface BillboardEntry {
 }
 
 async function fetchBillboard200(): Promise<BillboardEntry[]> {
-  // Use billboard-top-100 package to fetch live chart data
-  const { getChart } = await import("billboard-top-100")
-
-  return new Promise((resolve, reject) => {
-    getChart("billboard-200", (err: Error | null, chart: { songs: Array<{ rank: number; title: string; artist: string }> }) => {
-      if (err) {
-        reject(err)
-        return
-      }
-
-      // Get top 50 albums
-      const albums = chart.songs.slice(0, 50).map((song) => ({
-        rank: song.rank,
-        title: song.title,
-        artist: song.artist,
-      }))
-
-      resolve(albums)
-    })
+  const response = await fetch("https://www.billboard.com/charts/billboard-200/", {
+    headers: {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    },
   })
+
+  if (!response.ok) {
+    throw new Error(`Billboard fetch failed: ${response.status}`)
+  }
+
+  const html = await response.text()
+  const $ = cheerio.load(html)
+  const albums: BillboardEntry[] = []
+
+  // Billboard uses data-detail-target for chart entries
+  $("div.o-chart-results-list-row-container").each((i, el) => {
+    const rank = i + 1
+    const title = $(el).find("h3#title-of-a-story").first().text().trim()
+    const artist = $(el).find("span.c-label.a-no-trucate").first().text().trim()
+
+    if (title && artist && rank <= 50) {
+      albums.push({ rank, title, artist })
+    }
+  })
+
+  // Fallback selector if the above doesn't work
+  if (albums.length === 0) {
+    $("li.o-chart-results-list__item").each((i, el) => {
+      const rank = i + 1
+      const title = $(el).find("h3").first().text().trim()
+      const artist = $(el).find("span").first().text().trim()
+
+      if (title && artist && rank <= 50) {
+        albums.push({ rank, title, artist })
+      }
+    })
+  }
+
+  if (albums.length === 0) {
+    throw new Error("Could not parse Billboard chart - website structure may have changed")
+  }
+
+  return albums
 }
 
 export async function GET(request: NextRequest) {

@@ -13,7 +13,7 @@ async function getTrendingAlbums() {
       { totalReviews: "desc" },
       { averageRating: "desc" },
     ],
-    take: 15,
+    take: 50,
     select: {
       id: true,
       spotifyId: true,

@@ -20,7 +20,6 @@
     "@react-three/fiber": "^9.4.0",
     "@vercel/analytics": "^1.6.1",
     "bcryptjs": "^3.0.3",
-    "billboard-top-100": "^2.6.5",
     "date-fns": "^4.1.0",
     "next": "^16.0.10",
     "next-auth": "^5.0.0-beta.30",
