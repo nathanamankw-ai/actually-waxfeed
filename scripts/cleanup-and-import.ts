@@ -124,7 +124,7 @@ async function fetchMissingTracks(): Promise<{ fetched: number; failed: number }
 
   const albumsNeedingTracks = await prisma.album.findMany({
     where: {
-      spotifyId: { not: null },
+      spotifyId: { not: "" },
       tracks: { none: {} }
     },
     select: { id: true, spotifyId: true, title: true, artistName: true },

@@ -5,6 +5,7 @@ import { AlbumReviewForm } from "./review-form"
 import { auth } from "@/lib/auth"
 import Link from "next/link"
 import { format } from "date-fns"
+import { StreamingLinks } from "@/components/streaming-links"
 
 interface Props {
   params: Promise<{ id: string }>
@@ -149,16 +150,9 @@ export default async function AlbumPage({ params }: Props) {
               )}
             </div>
 
-            {/* Spotify Link */}
+            {/* Streaming Links */}
             {album.spotifyUrl && (
-              <a
-                href={album.spotifyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-[#1DB954] text-black px-4 py-2 font-bold text-sm hover:bg-[#1ed760] transition-colors no-underline"
-              >
-                Listen on Spotify
-              </a>
+              <StreamingLinks spotifyUrl={album.spotifyUrl} />
             )}
           </div>
         </div>
