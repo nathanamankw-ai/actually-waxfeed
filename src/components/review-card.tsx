@@ -2,6 +2,8 @@
 
 import Link from "next/link"
 import { formatDistanceToNow } from "date-fns"
+import { useState } from "react"
+import { useSession } from "next-auth/react"
 
 interface ReviewCardProps {
   id: string
@@ -11,6 +13,10 @@ interface ReviewCardProps {
   isEdited?: boolean
   likeCount: number
   replyCount?: number
+  fireCount?: number
+  insightfulCount?: number
+  funnyCount?: number
+  controversialCount?: number
   user: {
     id: string
     username?: string | null
@@ -28,20 +34,86 @@ interface ReviewCardProps {
   compact?: boolean
 }
 
+const REACTIONS = [
+  { type: "fire", emoji: "🔥", label: "Fire" },
+  { type: "insightful", emoji: "💡", label: "Insightful" },
+  { type: "funny", emoji: "😂", label: "Funny" },
+  { type: "controversial", emoji: "🌶️", label: "Hot Take" },
+] as const
+
 export function ReviewCard({
   id,
   rating,
   text,
   createdAt,
   isEdited,
-  likeCount,
+  likeCount: initialLikeCount,
   replyCount,
+  fireCount: initialFireCount = 0,
+  insightfulCount: initialInsightfulCount = 0,
+  funnyCount: initialFunnyCount = 0,
+  controversialCount: initialControversialCount = 0,
   user,
   album,
   showAlbum = true,
   compact = false
 }: ReviewCardProps) {
+  const { data: session } = useSession()
   const date = new Date(createdAt)
+
+  const [likeCount, setLikeCount] = useState(initialLikeCount)
+  const [liked, setLiked] = useState(false)
+  const [showReactions, setShowReactions] = useState(false)
+  const [reactionCounts, setReactionCounts] = useState({
+    fire: initialFireCount,
+    insightful: initialInsightfulCount,
+    funny: initialFunnyCount,
+    controversial: initialControversialCount,
+  })
+  const [userReactions, setUserReactions] = useState<string[]>([])
+
+  const handleLike = async () => {
+    if (!session) return
+
+    try {
+      const res = await fetch(`/api/reviews/${id}/like`, {
+        method: liked ? "DELETE" : "POST",
+      })
+      if (res.ok) {
+        setLiked(!liked)
+        setLikeCount(prev => liked ? prev - 1 : prev + 1)
+      }
+    } catch (error) {
+      console.error("Failed to toggle like:", error)
+    }
+  }
+
+  const handleReaction = async (type: string) => {
+    if (!session) return
+
+    const hasReaction = userReactions.includes(type)
+
+    try {
+      const res = await fetch(`/api/reviews/${id}/reactions`, {
+        method: hasReaction ? "DELETE" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type }),
+      })
+      if (res.ok) {
+        if (hasReaction) {
+          setUserReactions(prev => prev.filter(r => r !== type))
+          setReactionCounts(prev => ({ ...prev, [type]: prev[type as keyof typeof prev] - 1 }))
+        } else {
+          setUserReactions(prev => [...prev, type])
+          setReactionCounts(prev => ({ ...prev, [type]: prev[type as keyof typeof prev] + 1 }))
+        }
+      }
+    } catch (error) {
+      console.error("Failed to toggle reaction:", error)
+    }
+  }
+
+  const totalReactions = Object.values(reactionCounts).reduce((a, b) => a + b, 0)
 
   return (
     <article className="border border-[#222] p-3 sm:p-4 hover:border-[#333] transition-colors">
@@ -109,11 +181,56 @@ export function ReviewCard({
           )}
 
           {/* Actions */}
-          <div className="flex items-center gap-3 sm:gap-4 text-xs text-[#666]">
-            <button className="hover:text-white transition-colors flex items-center gap-1">
-              <span>♡</span>
+          <div className="flex items-center gap-2 sm:gap-3 text-xs text-[#666] flex-wrap">
+            <button
+              onClick={handleLike}
+              className={`hover:text-white transition-colors flex items-center gap-1 ${liked ? "text-red-500" : ""}`}
+            >
+              <span>{liked ? "♥" : "♡"}</span>
               <span>{likeCount}</span>
             </button>
+
+            {/* Reactions */}
+            <div className="relative">
+              <button
+                onClick={() => setShowReactions(!showReactions)}
+                className="hover:text-white transition-colors flex items-center gap-1"
+              >
+                <span>✨</span>
+                <span>{totalReactions}</span>
+              </button>
+
+              {showReactions && (
+                <div className="absolute bottom-full left-0 mb-1 bg-[#1a1a1a] border border-[#333] p-1 flex gap-1 z-10">
+                  {REACTIONS.map(({ type, emoji, label }) => (
+                    <button
+                      key={type}
+                      onClick={() => handleReaction(type)}
+                      className={`p-1.5 hover:bg-[#333] rounded transition-colors ${
+                        userReactions.includes(type) ? "bg-[#333]" : ""
+                      }`}
+                      title={`${label} (${reactionCounts[type as keyof typeof reactionCounts]})`}
+                    >
+                      <span className="text-sm">{emoji}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Show top reactions if any */}
+            {totalReactions > 0 && !compact && (
+              <div className="flex items-center gap-0.5">
+                {REACTIONS.filter(r => reactionCounts[r.type as keyof typeof reactionCounts] > 0)
+                  .slice(0, 3)
+                  .map(({ type, emoji }) => (
+                    <span key={type} className="text-xs" title={`${reactionCounts[type as keyof typeof reactionCounts]}`}>
+                      {emoji}
+                    </span>
+                  ))}
+              </div>
+            )}
+
             <Link
               href={`/review/${id}`}
               className="hover:text-white transition-colors no-underline flex items-center gap-1"

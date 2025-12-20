@@ -52,6 +52,7 @@ model User {
 
   // Engagement relations
   reviewLikes           ReviewLike[]
+  reviewReactions       ReviewReaction[]
   replyLikes            ReplyLike[]
   listLikes             ListLike[]
   listComments          ListComment[]
@@ -234,11 +235,18 @@ model Review {
   premiumWaxCount Int     @default(0)
   replyCount    Int       @default(0)
 
+  // Reaction counts
+  fireCount         Int   @default(0)
+  insightfulCount   Int   @default(0)
+  funnyCount        Int   @default(0)
+  controversialCount Int  @default(0)
+
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   album         Album     @relation(fields: [albumId], references: [id], onDelete: Cascade)
 
   replies       Reply[]
   likes         ReviewLike[]
+  reactions     ReviewReaction[]
   waxAwards     WaxAward[]
 
   @@unique([userId, albumId])
@@ -298,6 +306,22 @@ model ReviewLike {
   @@unique([reviewId, userId])
   @@index([reviewId])
   @@index([userId])
+}
+
+model ReviewReaction {
+  id        String   @id @default(cuid())
+  reviewId  String
+  userId    String
+  type      String   // "fire", "insightful", "funny", "controversial"
+  createdAt DateTime @default(now())
+
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([reviewId, userId, type])
+  @@index([reviewId])
+  @@index([userId])
+  @@index([type])
 }
 
 model ReplyLike {
