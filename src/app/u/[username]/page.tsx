@@ -235,11 +235,27 @@ export default async function ProfilePage({ params }: Props) {
           )}
 
           {isOwnProfile && (
+            <div className="flex gap-2">
+              <Link
+                href="/settings"
+                className="inline-block border border-[#333] px-4 py-2 text-sm no-underline hover:bg-[#111]"
+              >
+                Edit Profile
+              </Link>
+              <Link
+                href={`/u/${user.username}/stats`}
+                className="inline-block border border-[#333] px-4 py-2 text-sm no-underline hover:bg-[#111]"
+              >
+                📊 Stats
+              </Link>
+            </div>
+          )}
+          {!isOwnProfile && (
             <Link
-              href="/settings"
-              className="inline-block border border-[#333] px-4 py-2 text-sm no-underline hover:bg-[#111]"
+              href={`/u/${user.username}/stats`}
+              className="inline-block text-xs text-[#888] hover:text-white no-underline mt-2"
             >
-              Edit Profile
+              View Stats →
             </Link>
           )}
         </div>
