@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import Link from "next/link"
 
 interface Track {
   id: string
@@ -152,6 +153,18 @@ export function TrackPlayer({ tracks, albumTitle, artistName, coverArtUrl }: Tra
               <div className="text-xs text-[#666]">
                 {formatDuration(track.durationMs)}
               </div>
+
+              {/* Lyrics Link */}
+              <Link
+                href={`/lyrics/${track.id}`}
+                className="text-[#666] hover:text-white p-1"
+                onClick={(e) => e.stopPropagation()}
+                title="View lyrics"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h12" />
+                </svg>
+              </Link>
 
               {/* Spotify Link */}
               {track.spotifyUrl && (
