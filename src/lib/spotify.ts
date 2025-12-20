@@ -37,6 +37,7 @@ interface SpotifyTrack {
   track_number: number
   disc_number: number
   duration_ms: number
+  preview_url: string | null
   external_urls: { spotify: string }
 }
 
@@ -360,6 +361,7 @@ export async function importAlbumToDatabase(spotifyAlbum: SpotifyAlbum) {
           trackNumber: track.track_number,
           discNumber: track.disc_number,
           durationMs: track.duration_ms,
+          previewUrl: track.preview_url,
           spotifyUrl: track.external_urls.spotify,
         },
         create: {
@@ -369,6 +371,7 @@ export async function importAlbumToDatabase(spotifyAlbum: SpotifyAlbum) {
           trackNumber: track.track_number,
           discNumber: track.disc_number,
           durationMs: track.duration_ms,
+          previewUrl: track.preview_url,
           spotifyUrl: track.external_urls.spotify,
         },
       })

@@ -6,6 +6,7 @@ import { auth } from "@/lib/auth"
 import Link from "next/link"
 import { format } from "date-fns"
 import { StreamingLinks } from "@/components/streaming-links"
+import { TrackPlayer } from "@/components/track-player"
 
 interface Props {
   params: Promise<{ id: string }>
@@ -170,31 +171,18 @@ export default async function AlbumPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Tracklist */}
-        <div className="lg:w-80 xl:w-96 flex-shrink-0">
-          <h2 className="text-lg font-bold mb-3">Tracklist</h2>
-          <div className="border border-[#222] max-h-[300px] lg:max-h-[400px] overflow-y-auto">
-            {album.tracks.map((track, index) => (
-              <div
-                key={track.id}
-                className="flex items-center gap-3 px-3 sm:px-4 py-2.5 border-b border-[#1a1a1a] last:border-b-0 hover:bg-[#111] transition-colors group"
-              >
-                <span className="text-[#555] text-sm w-5 flex-shrink-0">{index + 1}</span>
-                <span className="flex-1 truncate text-sm">{track.name}</span>
-                <Link
-                  href={`/lyrics/${track.id}`}
-                  className="sm:opacity-0 sm:group-hover:opacity-100 transition-opacity text-[#666] hover:text-white p-1 flex-shrink-0"
-                  title="View lyrics"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h12" />
-                  </svg>
-                </Link>
-                <span className="text-[#555] text-sm flex-shrink-0">{formatDuration(track.durationMs)}</span>
-              </div>
-            ))}
+        {/* Tracklist with Player */}
+        {album.tracks.length > 0 && (
+          <div className="lg:w-80 xl:w-96 flex-shrink-0">
+            <h2 className="text-lg font-bold mb-3">Tracklist</h2>
+            <TrackPlayer
+              tracks={album.tracks}
+              albumTitle={album.title}
+              artistName={album.artistName}
+              coverArtUrl={album.coverArtUrlSmall || album.coverArtUrl}
+            />
           </div>
-        </div>
+        )}
       </div>
 
       {/* Write a Review */}

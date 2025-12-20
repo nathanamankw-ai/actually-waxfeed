@@ -175,6 +175,7 @@ model Track {
   trackNumber     Int
   discNumber      Int     @default(1)
   durationMs      Int
+  previewUrl      String? // 30-second Spotify preview
   spotifyUrl      String?
 
   album           Album   @relation(fields: [albumId], references: [id], onDelete: Cascade)
