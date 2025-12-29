@@ -82,8 +82,8 @@ export default async function AlbumPage({ params }: Props) {
           {/* Mobile: Cover on top, Info below */}
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
             {/* Album Cover */}
-            <div className="w-full sm:w-48 md:w-56 lg:w-64 flex-shrink-0">
-              <div className="aspect-square w-full max-w-[280px] mx-auto sm:max-w-none sm:mx-0 bg-[#181818]">
+            <div className="w-full sm:w-64 md:w-80 lg:w-96 flex-shrink-0">
+              <div className="aspect-square w-full max-w-[384px] mx-auto sm:max-w-none sm:mx-0 bg-[#181818]">
                 {album.coverArtUrlLarge || album.coverArtUrl ? (
                   <img
                     src={album.coverArtUrlLarge || album.coverArtUrl || ""}
