@@ -189,7 +189,7 @@ export async function POST(request: NextRequest) {
         // Search for album on Spotify
         const spotifyAlbum = await searchAlbum(token, albumInfo.artist, albumInfo.title)
 
-        if (!spotifyAlbum || spotifyAlbum.album_type === "single") {
+        if (!spotifyAlbum || spotifyAlbum.album_type === "single" || !spotifyAlbum.release_date) {
           continue
         }
 
@@ -206,7 +206,7 @@ export async function POST(request: NextRequest) {
               title: spotifyAlbum.name,
               artistName: spotifyAlbum.artists[0]?.name || "Unknown",
               coverArtUrl: spotifyAlbum.images[0]?.url,
-              releaseDate: new Date(spotifyAlbum.release_date || "1970-01-01"),
+              releaseDate: new Date(spotifyAlbum.release_date),
               albumType: spotifyAlbum.album_type,
               totalTracks: spotifyAlbum.total_tracks,
             }
