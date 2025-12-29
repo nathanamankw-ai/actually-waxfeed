@@ -206,7 +206,7 @@ export async function POST(request: NextRequest) {
               title: spotifyAlbum.name,
               artistName: spotifyAlbum.artists[0]?.name || "Unknown",
               coverArtUrl: spotifyAlbum.images[0]?.url,
-              releaseDate: spotifyAlbum.release_date ? new Date(spotifyAlbum.release_date) : null,
+              releaseDate: spotifyAlbum.release_date ? new Date(spotifyAlbum.release_date) : undefined,
               albumType: spotifyAlbum.album_type,
               totalTracks: spotifyAlbum.total_tracks,
             }
