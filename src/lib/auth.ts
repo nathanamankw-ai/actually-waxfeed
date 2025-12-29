@@ -75,7 +75,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token }) {
       if (session.user && token.id) {
         session.user.id = token.id as string
-        // Fetch additional user data
+        // Fetch additional user data (including image to keep in sync)
         const dbUser = await prisma.user.findUnique({
           where: { id: token.id as string },
           select: {
@@ -83,6 +83,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             isPremium: true,
             isVerified: true,
             waxScore: true,
+            image: true,
           }
         })
         if (dbUser) {
@@ -90,6 +91,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           session.user.isPremium = dbUser.isPremium
           session.user.isVerified = dbUser.isVerified
           session.user.waxScore = dbUser.waxScore
+          session.user.image = dbUser.image
         }
       }
       return session

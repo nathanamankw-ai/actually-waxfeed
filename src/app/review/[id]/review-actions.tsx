@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
 
 interface ReviewActionsProps {
   reviewId: string
@@ -107,14 +106,6 @@ export function ReviewActions({
         <span className="text-sm">{waxCount} wax</span>
       </button>
 
-      {isOwner && (
-        <Link
-          href={`/review/${reviewId}/edit`}
-          className="ml-auto text-sm text-[#888] hover:text-white transition-colors no-underline"
-        >
-          Edit
-        </Link>
-      )}
     </div>
   )
 }
