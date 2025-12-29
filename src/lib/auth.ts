@@ -91,7 +91,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           session.user.isPremium = dbUser.isPremium
           session.user.isVerified = dbUser.isVerified
           session.user.waxScore = dbUser.waxScore
-          session.user.image = dbUser.image
+          // Only override image if DB has one (preserve OAuth image otherwise)
+          if (dbUser.image) {
+            session.user.image = dbUser.image
+          }
         }
       }
       return session
