@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server"
-import { put, del } from "@vercel/blob"
+import { v2 as cloudinary } from "cloudinary"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
 
 export async function POST(request: NextRequest) {
   try {
@@ -40,28 +47,42 @@ export async function POST(request: NextRequest) {
       select: { image: true },
     })
 
-    // Delete old image if it's a Vercel Blob URL
-    if (user?.image?.includes("blob.vercel-storage.com")) {
+    // Delete old Cloudinary image if exists
+    if (user?.image?.includes("cloudinary.com")) {
       try {
-        await del(user.image)
+        // Extract public_id from Cloudinary URL
+        const urlParts = user.image.split("/")
+        const filename = urlParts[urlParts.length - 1]
+        const publicId = `waxfeed/avatars/${filename.split(".")[0]}`
+        await cloudinary.uploader.destroy(publicId)
       } catch {
         // Ignore deletion errors
       }
     }
 
-    // Upload new image
-    const blob = await put(`avatars/${session.user.id}-${Date.now()}`, file, {
-      access: "public",
-      contentType: file.type,
+    // Convert file to base64
+    const bytes = await file.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+    const base64 = buffer.toString("base64")
+    const dataUri = `data:${file.type};base64,${base64}`
+
+    // Upload to Cloudinary
+    const result = await cloudinary.uploader.upload(dataUri, {
+      folder: "waxfeed/avatars",
+      public_id: `${session.user.id}-${Date.now()}`,
+      transformation: [
+        { width: 400, height: 400, crop: "fill", gravity: "face" },
+        { quality: "auto", fetch_format: "auto" },
+      ],
     })
 
     // Update user's image URL
     await prisma.user.update({
       where: { id: session.user.id },
-      data: { image: blob.url },
+      data: { image: result.secure_url },
     })
 
-    return NextResponse.json({ url: blob.url })
+    return NextResponse.json({ url: result.secure_url })
   } catch (error) {
     console.error("Upload error:", error)
     return NextResponse.json(
