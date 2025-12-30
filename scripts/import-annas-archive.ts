@@ -211,14 +211,21 @@ async function main() {
     }
   }
 
-  // Flush remaining batch
+  // Flush remaining batches
   if (batch.length > 0) {
-    const result = await prisma.album.createMany({
-      data: batch,
-      skipDuplicates: true,
-    })
-    imported += result.count
-    skipped += batch.length - result.count
+    pendingBatches.push(batch)
+  }
+  if (pendingBatches.length > 0) {
+    const results = await Promise.all(
+      pendingBatches.map(b =>
+        prisma.album.createMany({ data: b, skipDuplicates: true })
+      )
+    )
+    for (const result of results) {
+      imported += result.count
+    }
+    const totalInBatches = pendingBatches.reduce((sum, b) => sum + b.length, 0)
+    skipped += totalInBatches - results.reduce((sum, r) => sum + r.count, 0)
   }
 
   // Close SQLite
