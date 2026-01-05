@@ -10,11 +10,11 @@ export const metadata: Metadata = {
   description: "A social music review platform - Letterboxd for music",
   icons: {
     icon: [
-      { url: "/favicon.ico?v=3", sizes: "any" },
-      { url: "/logo/favicon-32.png?v=3", type: "image/png", sizes: "32x32" },
-      { url: "/logo/favicon-16.png?v=3", type: "image/png", sizes: "16x16" },
+      { url: "/favicon.ico?v=4", sizes: "any" },
+      { url: "/logo/favicon-32.png?v=4", type: "image/png", sizes: "32x32" },
+      { url: "/logo/favicon-16.png?v=4", type: "image/png", sizes: "16x16" },
     ],
-    apple: "/apple-touch-icon.png?v=3",
+    apple: "/apple-touch-icon.png?v=4",
   },
   openGraph: {
     title: "WAXFEED",
