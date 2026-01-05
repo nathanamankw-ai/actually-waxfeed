@@ -15,7 +15,7 @@ export function WaxfeedLogo({ className = "", size = "md" }: { className?: strin
       alt="Waxfeed"
       width={width}
       height={height}
-      className={className}
+      className={`animate-spin-slow ${className}`}
       priority
     />
   )
