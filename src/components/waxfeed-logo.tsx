@@ -11,7 +11,7 @@ export function WaxfeedLogo({ className = "", size = "md" }: { className?: strin
 
   return (
     <Image
-      src="/logo/waxfeed-disc-128.png"
+      src="/logo/waxfeed-full.svg"
       alt="Waxfeed"
       width={width}
       height={height}
