@@ -5,38 +5,45 @@ import { DefaultAvatar } from "@/components/default-avatar"
 import Link from "next/link"
 import { auth } from "@/lib/auth"
 import { formatDistanceToNow } from "date-fns"
+import { Suspense } from "react"
+import { unstable_cache } from "next/cache"
 
-// Force dynamic rendering for fresh data
+// Use dynamic rendering for auth but cache expensive queries
 export const dynamic = "force-dynamic"
 
-async function getRecentReviews() {
-  return prisma.review.findMany({
-    take: 10,
-    orderBy: { createdAt: "desc" },
-    include: {
-      user: {
-        select: {
-          id: true,
-          username: true,
-          image: true,
-          isVerified: true,
+// Cache recent reviews for 30 seconds to reduce database load
+const getRecentReviews = unstable_cache(
+  async () => {
+    return prisma.review.findMany({
+      take: 10,
+      orderBy: { createdAt: "desc" },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            image: true,
+            isVerified: true,
+          },
+        },
+        album: {
+          select: {
+            id: true,
+            spotifyId: true,
+            title: true,
+            artistName: true,
+            coverArtUrl: true,
+          },
+        },
+        _count: {
+          select: { replies: true },
         },
       },
-      album: {
-        select: {
-          id: true,
-          spotifyId: true,
-          title: true,
-          artistName: true,
-          coverArtUrl: true,
-        },
-      },
-      _count: {
-        select: { replies: true },
-      },
-    },
-  })
-}
+    })
+  },
+  ['homepage-recent-reviews'],
+  { revalidate: 30 }
+)
 
 async function getFriendsActivity(userId: string | undefined) {
   if (!userId) return []
@@ -86,37 +93,47 @@ async function getFriendsActivity(userId: string | undefined) {
   })
 }
 
-async function getTopAlbums() {
-  // Get Billboard chart albums sorted by rank
-  // CRITICAL: NEVER show singles
-  return prisma.album.findMany({
-    take: 40,
-    where: {
-      billboardRank: { not: null },
-      albumType: { not: 'single' }
-    },
-    orderBy: { billboardRank: "asc" },
-    select: {
-      id: true,
-      spotifyId: true,
-      title: true,
-      artistName: true,
-      coverArtUrl: true,
-      averageRating: true,
-      totalReviews: true,
-    },
-  })
-}
+// Cache top albums for 60 seconds
+const getTopAlbums = unstable_cache(
+  async () => {
+    // Get Billboard chart albums sorted by rank
+    // CRITICAL: NEVER show singles
+    return prisma.album.findMany({
+      take: 40,
+      where: {
+        billboardRank: { not: null },
+        albumType: { not: 'single' }
+      },
+      orderBy: { billboardRank: "asc" },
+      select: {
+        id: true,
+        spotifyId: true,
+        title: true,
+        artistName: true,
+        coverArtUrl: true,
+        averageRating: true,
+        totalReviews: true,
+      },
+    })
+  },
+  ['homepage-top-albums'],
+  { revalidate: 60 }
+)
 
-async function getStats() {
-  const [albumCount, reviewCount, userCount] = await Promise.all([
-    // CRITICAL: Only count albums (not singles)
-    prisma.album.count({ where: { albumType: { not: 'single' } } }),
-    prisma.review.count(),
-    prisma.user.count(),
-  ])
-  return { albumCount, reviewCount, userCount }
-}
+// Cache stats for 60 seconds - these change slowly
+const getStats = unstable_cache(
+  async () => {
+    const [albumCount, reviewCount, userCount] = await Promise.all([
+      // CRITICAL: Only count albums (not singles)
+      prisma.album.count({ where: { albumType: { not: 'single' } } }),
+      prisma.review.count(),
+      prisma.user.count(),
+    ])
+    return { albumCount, reviewCount, userCount }
+  },
+  ['homepage-stats'],
+  { revalidate: 60 }
+)
 
 export default async function Home() {
   const session = await auth()
