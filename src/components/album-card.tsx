@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { memo } from "react"
 
 interface AlbumCardProps {
   id: string
@@ -13,7 +14,7 @@ interface AlbumCardProps {
   size?: "sm" | "md" | "lg"
 }
 
-export function AlbumCard({
+export const AlbumCard = memo(function AlbumCard({
   id,
   spotifyId,
   title,
@@ -55,4 +56,4 @@ export function AlbumCard({
       </div>
     </Link>
   )
-}
+})

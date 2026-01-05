@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <!-- Vibrant holographic gradient for favicon visibility -->
+    <linearGradient id="holoBase" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff6b9d"/>
+      <stop offset="20%" stop-color="#c44dff"/>
+      <stop offset="40%" stop-color="#4dc9ff"/>
+      <stop offset="60%" stop-color="#4dff88"/>
+      <stop offset="80%" stop-color="#ffe14d"/>
+      <stop offset="100%" stop-color="#ff6b9d"/>
+    </linearGradient>
+
+    <!-- Iridescent overlay -->
+    <radialGradient id="iridescentSweep" cx="30%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.6"/>
+      <stop offset="30%" stop-color="#ff88cc" stop-opacity="0.4"/>
+      <stop offset="60%" stop-color="#88ffcc" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#8888ff" stop-opacity="0.2"/>
+    </radialGradient>
+
+    <!-- Light streak -->
+    <linearGradient id="lightStreak" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="40%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="60%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Colorful hub gradient -->
+    <radialGradient id="hubGradient" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#e8d0f0"/>
+      <stop offset="30%" stop-color="#c8a8d8"/>
+      <stop offset="60%" stop-color="#9878a8"/>
+      <stop offset="100%" stop-color="#685878"/>
+    </radialGradient>
+  </defs>
+
+  <g transform="translate(200, 200)">
+    <!-- Disc base with vibrant colors -->
+    <circle cx="0" cy="0" r="190" fill="url(#holoBase)"/>
+    <circle cx="0" cy="0" r="190" fill="url(#iridescentSweep)"/>
+
+    <!-- Subtle track rings -->
+    <g fill="none" stroke="#000" stroke-opacity="0.1">
+      <circle cx="0" cy="0" r="170" stroke-width="8"/>
+      <circle cx="0" cy="0" r="140" stroke-width="6"/>
+      <circle cx="0" cy="0" r="110" stroke-width="4"/>
+      <circle cx="0" cy="0" r="80" stroke-width="3"/>
+    </g>
+
+    <!-- Light streak -->
+    <circle cx="0" cy="0" r="190" fill="url(#lightStreak)"/>
+
+    <!-- Center hub - purple tinted instead of gray -->
+    <circle cx="0" cy="0" r="50" fill="url(#hubGradient)"/>
+    <circle cx="0" cy="0" r="40" fill="#b090c0"/>
+    <circle cx="0" cy="0" r="30" fill="#9070a0"/>
+    <circle cx="0" cy="0" r="20" fill="#705080"/>
+    <circle cx="0" cy="0" r="10" fill="#483058"/>
+    <circle cx="0" cy="0" r="5" fill="#281838"/>
+
+    <!-- Hub highlight -->
+    <ellipse cx="-15" cy="-15" rx="15" ry="8" fill="#ffffff" opacity="0.5" transform="rotate(-45 -15 -15)"/>
+  </g>
+</svg>

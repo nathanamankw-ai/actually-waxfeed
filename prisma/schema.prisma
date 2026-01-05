@@ -376,6 +376,7 @@ model List {
   @@index([createdAt])
   @@index([likeCount])
   @@index([isPublic])
+  @@index([userId, createdAt]) // For user's lists sorted by date
 }
 
 model ListItem {
@@ -524,6 +525,7 @@ model Notification {
   @@index([userId])
   @@index([isRead])
   @@index([createdAt])
+  @@index([userId, isRead, createdAt]) // Compound index for common query pattern
 }
 
 model NotificationSettings {

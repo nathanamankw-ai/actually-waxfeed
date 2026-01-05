@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { formatDistanceToNow } from "date-fns"
-import { useState } from "react"
+import { useState, memo, useMemo, useCallback } from "react"
 import { useSession } from "next-auth/react"
 
 interface ReviewCardProps {
@@ -41,7 +41,7 @@ const REACTIONS = [
   { type: "controversial", emoji: "🌶️", label: "Hot Take" },
 ] as const
 
-export function ReviewCard({
+export const ReviewCard = memo(function ReviewCard({
   id,
   rating,
   text,
@@ -72,7 +72,7 @@ export function ReviewCard({
   })
   const [userReactions, setUserReactions] = useState<string[]>([])
 
-  const handleLike = async () => {
+  const handleLike = useCallback(async () => {
     if (!session) return
 
     try {
@@ -86,9 +86,9 @@ export function ReviewCard({
     } catch (error) {
       console.error("Failed to toggle like:", error)
     }
-  }
+  }, [session, id, liked])
 
-  const handleReaction = async (type: string) => {
+  const handleReaction = useCallback(async (type: string) => {
     if (!session) return
 
     const hasReaction = userReactions.includes(type)
@@ -111,9 +111,12 @@ export function ReviewCard({
     } catch (error) {
       console.error("Failed to toggle reaction:", error)
     }
-  }
+  }, [session, id, userReactions])
 
-  const totalReactions = Object.values(reactionCounts).reduce((a, b) => a + b, 0)
+  const totalReactions = useMemo(() =>
+    Object.values(reactionCounts).reduce((a, b) => a + b, 0),
+    [reactionCounts]
+  )
 
   return (
     <article className="border border-[#222] p-3 sm:p-4 hover:border-[#333] transition-colors">
@@ -249,4 +252,4 @@ export function ReviewCard({
       </div>
     </article>
   )
-}
+})
