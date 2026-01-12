@@ -6,6 +6,8 @@ import { format, formatDistanceToNow } from "date-fns"
 import { DefaultAvatar } from "@/components/default-avatar"
 import { EventChat } from "./event-chat"
 import { AttendButton } from "./attend-button"
+import { QuickRating } from "./quick-rating"
+import { SetlistManager } from "./setlist-manager"
 
 export const dynamic = "force-dynamic"
 
@@ -269,6 +271,23 @@ export default async function EventPage({
 
         {/* Sidebar */}
         <div className="space-y-4">
+          {/* Quick Rating - Only show for live events */}
+          {isLive && (
+            <QuickRating
+              eventSlug={event.slug}
+              currentUserId={session?.user?.id}
+            />
+          )}
+
+          {/* Setlist Manager */}
+          <SetlistManager
+            eventId={event.id}
+            eventSlug={event.slug}
+            initialSetlist={event.setlist}
+            isHost={event.createdById === session?.user?.id}
+            isLive={isLive}
+          />
+
           {/* Stats */}
           <div className="bg-[#111] border border-[#222] rounded-lg p-4">
             <h3 className="font-bold mb-4">Event Stats</h3>

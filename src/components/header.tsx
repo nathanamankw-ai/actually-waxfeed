@@ -81,6 +81,29 @@ export function Header() {
           <Link href="/community" className="no-underline hover:underline">
             Community
           </Link>
+          <Link href="/live" className="no-underline hover:underline flex items-center gap-1">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+            </span>
+            Live
+          </Link>
+          <div className="relative group">
+            <button className="no-underline hover:underline flex items-center gap-1">
+              More
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-black shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+              <Link href="/homebru" className="block px-4 py-2 hover:bg-gray-100 no-underline">📻 HomeBRU</Link>
+              <Link href="/avdp" className="block px-4 py-2 hover:bg-gray-100 no-underline">🎙️ AVDP</Link>
+              <Link href="/dj-feed" className="block px-4 py-2 hover:bg-gray-100 no-underline">🎧 DJFeed</Link>
+              <div className="border-t border-gray-200" />
+              <Link href="/year-in-music" className="block px-4 py-2 hover:bg-gray-100 no-underline">📊 Year in Music</Link>
+              <Link href="/wax-shop" className="block px-4 py-2 hover:bg-gray-100 no-underline">💰 Wax Shop</Link>
+            </div>
+          </div>
 
           {status === "loading" ? (
             <span className="text-gray-500">...</span>
@@ -255,6 +278,60 @@ export function Header() {
               <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
+            </Link>
+            <Link
+              href="/live"
+              className="flex items-center justify-between px-4 py-4 text-lg font-medium no-underline hover:bg-gray-50 active:bg-gray-100 border-b border-gray-100"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                </span>
+                Live Events
+              </span>
+              <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+
+            {/* More Section */}
+            <div className="px-4 py-2 text-sm text-gray-500 uppercase tracking-wider border-b border-gray-100">More</div>
+            <Link
+              href="/homebru"
+              className="flex items-center justify-between px-4 py-3 text-base no-underline hover:bg-gray-50 active:bg-gray-100 border-b border-gray-100"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span>📻 HomeBRU</span>
+            </Link>
+            <Link
+              href="/avdp"
+              className="flex items-center justify-between px-4 py-3 text-base no-underline hover:bg-gray-50 active:bg-gray-100 border-b border-gray-100"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span>🎙️ AVDP Podcast</span>
+            </Link>
+            <Link
+              href="/dj-feed"
+              className="flex items-center justify-between px-4 py-3 text-base no-underline hover:bg-gray-50 active:bg-gray-100 border-b border-gray-100"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span>🎧 DJFeed</span>
+            </Link>
+            <Link
+              href="/year-in-music"
+              className="flex items-center justify-between px-4 py-3 text-base no-underline hover:bg-gray-50 active:bg-gray-100 border-b border-gray-100"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span>📊 Year in Music</span>
+            </Link>
+            <Link
+              href="/wax-shop"
+              className="flex items-center justify-between px-4 py-3 text-base no-underline hover:bg-gray-50 active:bg-gray-100 border-b border-gray-100"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span>💰 Wax Shop</span>
             </Link>
 
             {/* User Section */}
