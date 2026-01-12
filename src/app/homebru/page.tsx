@@ -79,7 +79,6 @@ async function getRelatedChannel() {
 }
 
 export default async function HomeBRUPage() {
-  const session = await auth()
   const [staffPicks, channel] = await Promise.all([
     getHomeBRUPicks(),
     getRelatedChannel(),

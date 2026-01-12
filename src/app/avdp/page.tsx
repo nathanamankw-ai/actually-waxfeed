@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma"
-import { auth } from "@/lib/auth"
 import Link from "next/link"
 import { format } from "date-fns"
 import { AlbumCard } from "@/components/album-card"
@@ -73,7 +72,6 @@ async function getDiscussedAlbums() {
 }
 
 export default async function AVDPPage() {
-  const session = await auth()
   const discussedAlbums = await getDiscussedAlbums()
   const latestEpisode = AVDP_EPISODES[0]
   const pastEpisodes = AVDP_EPISODES.slice(1)

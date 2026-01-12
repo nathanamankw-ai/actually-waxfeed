@@ -1,7 +1,4 @@
-import { prisma } from "@/lib/prisma"
-import { auth } from "@/lib/auth"
 import Link from "next/link"
-import { DefaultAvatar } from "@/components/default-avatar"
 
 export const dynamic = "force-dynamic"
 
@@ -92,8 +89,6 @@ const RECENT_MIXES = [
 ]
 
 export default async function DJFeedPage() {
-  const session = await auth()
-
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 lg:py-8">
       {/* Hero Section */}

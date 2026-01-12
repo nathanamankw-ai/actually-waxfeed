@@ -156,7 +156,7 @@ export async function POST(
         userId: session.user.id,
         content,
         type,
-        metadata: metadata || undefined,
+        metadata: metadata ? JSON.parse(JSON.stringify(metadata)) : undefined,
       },
       include: {
         user: {

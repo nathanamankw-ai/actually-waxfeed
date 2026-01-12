@@ -145,7 +145,7 @@ export default async function ChannelsPage({
       {/* Create Channel CTA */}
       {session && (
         <div className="mt-8 p-6 bg-[#111] border border-[#222] rounded-lg text-center">
-          <h3 className="font-bold mb-2">Can't find what you're looking for?</h3>
+          <h3 className="font-bold mb-2">Can&apos;t find what you&apos;re looking for?</h3>
           <p className="text-sm text-[#888] mb-4">Create your own channel and build a community</p>
           <Link
             href="/community/channels/new"
