@@ -34,6 +34,12 @@ model User {
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
+  // Account Type & Role System
+  accountType           String    @default("user") // user, artist, org, editor, dj, staff
+  accountTypeVerifiedAt DateTime? // When account type was verified by staff
+  badgeColor            String?   // Custom badge color (hex) for premium users
+  displayBadge          Boolean   @default(true) // Show/hide role badge
+
   // Streak tracking
   currentStreak         Int       @default(0)
   longestStreak         Int       @default(0)
@@ -48,6 +54,9 @@ model User {
   replies               Reply[]
   lists                 List[]
   reviewDrafts          ReviewDraft[]
+
+  // Verification & Role requests
+  verificationRequests  VerificationRequest[]
 
   // Social relations (friends only)
   friendRequestsSent    FriendRequest[] @relation("sender")
@@ -595,6 +604,38 @@ model UserYearlyStats {
   @@unique([userId, year])
   @@index([userId])
   @@index([year])
+}
+
+// ============================================
+// VERIFICATION & ROLE REQUESTS
+// ============================================
+
+model VerificationRequest {
+  id              String   @id @default(cuid())
+  userId          String
+  requestType     String   // "verification" or "account_type"
+  requestedType   String?  // For account_type requests: artist, org, editor, dj
+  status          String   @default("pending") // pending, approved, rejected
+  
+  // Supporting evidence
+  reason          String   @db.Text // Why they should be verified/given this role
+  proofUrl        String?  // Link to proof (artist page, org website, etc.)
+  socialLinks     Json?    // Additional social proof
+  
+  // Admin handling
+  reviewedBy      String?  // Staff user ID who reviewed
+  reviewedAt      DateTime?
+  reviewNote      String?  @db.Text // Admin note on decision
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([requestType])
+  @@index([createdAt])
 }
 
 // ============================================

@@ -6,6 +6,7 @@ import { auth } from "@/lib/auth"
 import { ProfileActions } from "./profile-actions"
 import Link from "next/link"
 import { format } from "date-fns"
+import { RoleBadge, VerifiedBadge, type AccountType } from "@/components/role-badge"
 
 interface Props {
   params: Promise<{ username: string }>
@@ -26,6 +27,10 @@ async function getUser(identifier: string) {
       premiumWaxScore: true,
       isPremium: true,
       isVerified: true,
+      accountType: true,
+      accountTypeVerifiedAt: true,
+      badgeColor: true,
+      displayBadge: true,
       createdAt: true,
       currentStreak: true,
       longestStreak: true,
@@ -55,6 +60,10 @@ async function getUser(identifier: string) {
         premiumWaxScore: true,
         isPremium: true,
         isVerified: true,
+        accountType: true,
+        accountTypeVerifiedAt: true,
+        badgeColor: true,
+        displayBadge: true,
         createdAt: true,
         currentStreak: true,
         longestStreak: true,
@@ -194,11 +203,18 @@ export default async function ProfilePage({ params }: Props) {
         <div className="flex-1 text-center sm:text-left w-full">
           <div className="flex items-center justify-center sm:justify-start gap-2 sm:gap-3 mb-2 flex-wrap">
             <h1 className="text-2xl sm:text-3xl font-bold">@{user.username || "user"}</h1>
-            {user.isVerified && (
-              <span className="text-[#888]" title="Verified">✓</span>
+            {user.isVerified && <VerifiedBadge className="w-5 h-5" />}
+            {user.displayBadge && user.accountType !== "user" && (
+              <RoleBadge
+                accountType={user.accountType as AccountType}
+                isVerified={!!user.accountTypeVerifiedAt}
+                showLabel={true}
+                size="md"
+                customColor={user.badgeColor}
+              />
             )}
             {user.isPremium && (
-              <span className="text-xs bg-[#222] px-2 py-1">PRO</span>
+              <span className="text-xs bg-[#222] px-2 py-1 rounded">PRO</span>
             )}
           </div>
 

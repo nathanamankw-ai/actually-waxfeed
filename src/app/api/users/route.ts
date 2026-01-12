@@ -13,6 +13,7 @@ const updateUserSchema = z.object({
     website: z.string().optional(),
   }).optional(),
   image: z.string().optional(),
+  displayBadge: z.boolean().optional(),
 })
 
 // GET /api/users - Search users or get by IDs
@@ -82,7 +83,7 @@ export async function PATCH(request: NextRequest) {
       return errorResponse(validation.error.errors[0].message, 400)
     }
 
-    const { username, bio, socialLinks, image } = validation.data
+    const { username, bio, socialLinks, image, displayBadge } = validation.data
 
     // Handle username change
     if (username) {
@@ -116,6 +117,7 @@ export async function PATCH(request: NextRequest) {
         bio,
         socialLinks: socialLinks as object,
         image,
+        displayBadge,
         usernameChangesUsed: username ? { increment: 1 } : undefined,
       },
       select: {
@@ -130,6 +132,9 @@ export async function PATCH(request: NextRequest) {
         premiumWaxScore: true,
         isPremium: true,
         isVerified: true,
+        accountType: true,
+        accountTypeVerifiedAt: true,
+        displayBadge: true,
         usernameChangesUsed: true,
         createdAt: true,
       }
