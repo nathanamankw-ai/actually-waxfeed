@@ -40,13 +40,22 @@ export function EventChat({ channelSlug, currentUserId, isLive }: EventChatProps
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await fetch(`/api/channels/${channelSlug}/messages?limit=100`)
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 8000) // 8 second timeout
+        
+        const res = await fetch(`/api/channels/${channelSlug}/messages?limit=100`, {
+          signal: controller.signal
+        })
+        clearTimeout(timeoutId)
+        
         if (res.ok) {
           const data = await res.json()
           setMessages(data.messages || [])
         }
       } catch (e) {
-        console.error("Error fetching messages:", e)
+        if ((e as Error).name !== 'AbortError') {
+          console.error("Error fetching messages:", e)
+        }
       }
     }
 

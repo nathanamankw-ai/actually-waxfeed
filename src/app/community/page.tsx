@@ -82,8 +82,11 @@ async function getRecentActivity() {
         },
       },
       orderBy: { createdAt: "desc" },
-      take: 10,
-      include: {
+      take: 5, // Reduced from 10 to 5
+      select: {
+        id: true,
+        content: true,
+        createdAt: true,
         user: {
           select: {
             id: true,
@@ -145,12 +148,17 @@ async function getDMConversations(userId: string | undefined) {
   try {
     const participations = await prisma.dMParticipant.findMany({
       where: { userId },
-      include: {
+      select: {
         conversation: {
-          include: {
+          select: {
+            id: true,
+            type: true,
+            name: true,
+            imageUrl: true,
+            updatedAt: true,
             participants: {
               where: { userId: { not: userId } },
-              include: {
+              select: {
                 user: {
                   select: {
                     id: true,
@@ -159,10 +167,16 @@ async function getDMConversations(userId: string | undefined) {
                   },
                 },
               },
+              take: 3, // Limit participants shown
             },
             messages: {
               orderBy: { createdAt: "desc" },
               take: 1,
+              select: {
+                id: true,
+                content: true,
+                createdAt: true,
+              },
             },
           },
         },
@@ -172,7 +186,7 @@ async function getDMConversations(userId: string | undefined) {
           updatedAt: "desc",
         },
       },
-      take: 5,
+      take: 3, // Reduced from 5 to 3
     })
     
     return participations.map(p => ({

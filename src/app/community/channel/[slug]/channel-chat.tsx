@@ -60,16 +60,28 @@ export function ChannelChat({
   useEffect(() => {
     const pollMessages = async () => {
       try {
-        const res = await fetch(`/api/channels/${channelSlug}/messages?limit=50`)
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 8000) // 8 second timeout
+        
+        const res = await fetch(`/api/channels/${channelSlug}/messages?limit=50`, {
+          signal: controller.signal
+        })
+        clearTimeout(timeoutId)
+        
         if (res.ok) {
           const data = await res.json()
           setMessages(data.messages)
         }
       } catch (e) {
-        console.error("Error polling messages:", e)
+        if ((e as Error).name !== 'AbortError') {
+          console.error("Error polling messages:", e)
+        }
       }
     }
 
+    // Initial load
+    pollMessages()
+    
     // Poll every 5 seconds
     const interval = setInterval(pollMessages, 5000)
     return () => clearInterval(interval)

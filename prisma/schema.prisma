@@ -667,6 +667,8 @@ model Channel {
   @@index([category])
   @@index([createdAt])
   @@index([memberCount])
+  @@index([type, isArchived, memberCount])
+  @@index([type, isArchived, createdAt])
 }
 
 model ChannelMember {
@@ -716,6 +718,8 @@ model ChannelMessage {
   @@index([userId])
   @@index([createdAt])
   @@index([replyToId])
+  @@index([channelId, isDeleted, createdAt])
+  @@index([isDeleted, createdAt])
 }
 
 model MessageReaction {
