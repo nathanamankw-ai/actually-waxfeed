@@ -11,114 +11,130 @@ export const dynamic = "force-dynamic"
 
 // Get recent reviews - no caching to avoid serialization issues
 async function getRecentReviews() {
-  return prisma.review.findMany({
-    take: 10,
-    orderBy: { createdAt: "desc" },
-    include: {
-      user: {
-        select: {
-          id: true,
-          username: true,
-          image: true,
-          isVerified: true,
+  try {
+    return await prisma.review.findMany({
+      take: 10,
+      orderBy: { createdAt: "desc" },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            image: true,
+            isVerified: true,
+          },
+        },
+        album: {
+          select: {
+            id: true,
+            spotifyId: true,
+            title: true,
+            artistName: true,
+            coverArtUrl: true,
+          },
+        },
+        _count: {
+          select: { replies: true },
         },
       },
-      album: {
-        select: {
-          id: true,
-          spotifyId: true,
-          title: true,
-          artistName: true,
-          coverArtUrl: true,
-        },
-      },
-      _count: {
-        select: { replies: true },
-      },
-    },
-  })
+    })
+  } catch {
+    return []
+  }
 }
 
 async function getFriendsActivity(userId: string | undefined) {
   if (!userId) return []
 
-  // Get users the current user is friends with
-  const friendships = await prisma.friendship.findMany({
-    where: {
-      OR: [
-        { user1Id: userId },
-        { user2Id: userId },
-      ],
-    },
-    select: { user1Id: true, user2Id: true },
-  })
+  try {
+    // Get users the current user is friends with
+    const friendships = await prisma.friendship.findMany({
+      where: {
+        OR: [
+          { user1Id: userId },
+          { user2Id: userId },
+        ],
+      },
+      select: { user1Id: true, user2Id: true },
+    })
 
-  // Extract friend IDs (the other person in each friendship)
-  const friendIds = friendships.map(f =>
-    f.user1Id === userId ? f.user2Id : f.user1Id
-  )
+    // Extract friend IDs (the other person in each friendship)
+    const friendIds = friendships.map(f =>
+      f.user1Id === userId ? f.user2Id : f.user1Id
+    )
 
-  if (friendIds.length === 0) return []
+    if (friendIds.length === 0) return []
 
-  // Get recent reviews from friends
-  return prisma.review.findMany({
-    where: { userId: { in: friendIds } },
-    take: 5,
-    orderBy: { createdAt: "desc" },
-    include: {
-      user: {
-        select: {
-          id: true,
-          username: true,
-          image: true,
-          isVerified: true,
+    // Get recent reviews from friends
+    return await prisma.review.findMany({
+      where: { userId: { in: friendIds } },
+      take: 5,
+      orderBy: { createdAt: "desc" },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            image: true,
+            isVerified: true,
+          },
+        },
+        album: {
+          select: {
+            id: true,
+            spotifyId: true,
+            title: true,
+            artistName: true,
+            coverArtUrl: true,
+          },
         },
       },
-      album: {
-        select: {
-          id: true,
-          spotifyId: true,
-          title: true,
-          artistName: true,
-          coverArtUrl: true,
-        },
-      },
-    },
-  })
+    })
+  } catch {
+    return []
+  }
 }
 
 // Get top albums
 async function getTopAlbums() {
-  // Get Billboard chart albums sorted by rank
-  // CRITICAL: NEVER show singles
-  return prisma.album.findMany({
-    take: 40,
-    where: {
-      billboardRank: { not: null },
-      albumType: { not: 'single' }
-    },
-    orderBy: { billboardRank: "asc" },
-    select: {
-      id: true,
-      spotifyId: true,
-      title: true,
-      artistName: true,
-      coverArtUrl: true,
-      averageRating: true,
-      totalReviews: true,
-    },
-  })
+  try {
+    // Get Billboard chart albums sorted by rank
+    // CRITICAL: NEVER show singles
+    return await prisma.album.findMany({
+      take: 40,
+      where: {
+        billboardRank: { not: null },
+        albumType: { not: 'single' }
+      },
+      orderBy: { billboardRank: "asc" },
+      select: {
+        id: true,
+        spotifyId: true,
+        title: true,
+        artistName: true,
+        coverArtUrl: true,
+        averageRating: true,
+        totalReviews: true,
+      },
+    })
+  } catch {
+    return []
+  }
 }
 
 // Get stats
 async function getStats() {
-  const [albumCount, reviewCount, userCount] = await Promise.all([
-    // CRITICAL: Only count albums (not singles)
-    prisma.album.count({ where: { albumType: { not: 'single' } } }),
-    prisma.review.count(),
-    prisma.user.count(),
-  ])
-  return { albumCount, reviewCount, userCount }
+  try {
+    const [albumCount, reviewCount, userCount] = await Promise.all([
+      // CRITICAL: Only count albums (not singles)
+      prisma.album.count({ where: { albumType: { not: 'single' } } }),
+      prisma.review.count(),
+      prisma.user.count(),
+    ])
+    return { albumCount, reviewCount, userCount }
+  } catch {
+    return { albumCount: 0, reviewCount: 0, userCount: 0 }
+  }
 }
 
 export default async function Home() {

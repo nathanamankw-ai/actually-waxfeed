@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 
 interface Props {
   username: string
+  userId: string
   isFriend: boolean
   hasPendingRequest: boolean
   pendingRequestSentByMe: boolean
@@ -13,6 +14,7 @@ interface Props {
 
 export function ProfileActions({
   username,
+  userId,
   isFriend: initialFriend,
   hasPendingRequest: initialPending,
   pendingRequestSentByMe: initialSentByMe,
@@ -23,6 +25,7 @@ export function ProfileActions({
   const [hasPendingRequest, setHasPendingRequest] = useState(initialPending)
   const [pendingRequestSentByMe, setPendingRequestSentByMe] = useState(initialSentByMe)
   const [loading, setLoading] = useState(false)
+  const [dmLoading, setDmLoading] = useState(false)
 
   const handleFriend = async () => {
     if (!isLoggedIn) {
@@ -83,6 +86,30 @@ export function ProfileActions({
     setLoading(false)
   }
 
+  const handleMessage = async () => {
+    if (!isLoggedIn) {
+      router.push("/login")
+      return
+    }
+
+    setDmLoading(true)
+    try {
+      const res = await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ participantIds: [userId] }),
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        router.push(`/messages/${data.conversation.id}`)
+      }
+    } catch (error) {
+      console.error("Message error:", error)
+    }
+    setDmLoading(false)
+  }
+
   // Determine button text and style
   let buttonText = "Add Friend"
   let buttonStyle = "bg-white text-black hover:bg-gray-100"
@@ -99,12 +126,28 @@ export function ProfileActions({
   }
 
   return (
-    <button
-      onClick={handleFriend}
-      disabled={loading}
-      className={`px-4 py-2 text-sm font-bold transition-colors ${buttonStyle} ${loading ? "opacity-50" : ""}`}
-    >
-      {loading ? "..." : buttonText}
-    </button>
+    <div className="flex items-center gap-2">
+      <button
+        onClick={handleFriend}
+        disabled={loading}
+        className={`px-4 py-2 text-sm font-bold transition-colors ${buttonStyle} ${loading ? "opacity-50" : ""}`}
+      >
+        {loading ? "..." : buttonText}
+      </button>
+      
+      {isFriend && (
+        <button
+          onClick={handleMessage}
+          disabled={dmLoading}
+          className="flex items-center gap-2 px-4 py-2 text-sm font-bold border border-[#333] hover:bg-[#111] transition-colors"
+          title="Send Message"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
+          {dmLoading ? "..." : "Message"}
+        </button>
+      )}
+    </div>
   )
 }

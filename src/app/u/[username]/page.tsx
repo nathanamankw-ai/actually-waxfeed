@@ -256,6 +256,7 @@ export default async function ProfilePage({ params }: Props) {
           {!isOwnProfile && (
             <ProfileActions
               username={user.username!}
+              userId={user.id}
               isFriend={relationship?.isFriend || false}
               hasPendingRequest={relationship?.hasPendingRequest || false}
               pendingRequestSentByMe={relationship?.pendingRequestSentByMe || false}

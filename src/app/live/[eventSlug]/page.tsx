@@ -1,0 +1,367 @@
+import { prisma } from "@/lib/prisma"
+import { auth } from "@/lib/auth"
+import { notFound } from "next/navigation"
+import Link from "next/link"
+import { format, formatDistanceToNow } from "date-fns"
+import { DefaultAvatar } from "@/components/default-avatar"
+import { EventChat } from "./event-chat"
+import { AttendButton } from "./attend-button"
+
+export const dynamic = "force-dynamic"
+
+async function getEvent(slug: string, userId: string | undefined) {
+  const event = await prisma.liveEvent.findUnique({
+    where: { slug },
+    include: {
+      createdBy: {
+        select: {
+          id: true,
+          username: true,
+          image: true,
+          isVerified: true,
+        },
+      },
+      channel: {
+        select: {
+          id: true,
+          slug: true,
+          memberCount: true,
+        },
+      },
+      attendees: {
+        take: 20,
+        orderBy: { createdAt: "desc" },
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              image: true,
+            },
+          },
+        },
+      },
+      setlist: {
+        orderBy: { position: "asc" },
+      },
+      _count: {
+        select: {
+          attendees: true,
+          setlist: true,
+          ratings: true,
+        },
+      },
+    },
+  })
+
+  if (!event) return null
+
+  // Check if user is attending
+  let userAttendance = null
+  if (userId) {
+    userAttendance = await prisma.eventAttendee.findUnique({
+      where: {
+        eventId_userId: {
+          eventId: event.id,
+          userId,
+        },
+      },
+    })
+  }
+
+  return {
+    ...event,
+    isAttending: !!userAttendance,
+    userAttendance,
+  }
+}
+
+export default async function EventPage({
+  params,
+}: {
+  params: Promise<{ eventSlug: string }>
+}) {
+  const { eventSlug } = await params
+  const session = await auth()
+  const event = await getEvent(eventSlug, session?.user?.id)
+
+  if (!event) {
+    notFound()
+  }
+
+  const getEventTypeIcon = (type: string) => {
+    switch (type) {
+      case "listening_party": return "🎧"
+      case "concert": return "🎤"
+      case "dj_set": return "🎛️"
+      case "radio_show": return "📻"
+      case "podcast_live": return "🎙️"
+      default: return "🎵"
+    }
+  }
+
+  const getEventTypeName = (type: string) => {
+    switch (type) {
+      case "listening_party": return "Listening Party"
+      case "concert": return "Concert"
+      case "dj_set": return "DJ Set"
+      case "radio_show": return "Radio Show"
+      case "podcast_live": return "Live Podcast"
+      default: return "Event"
+    }
+  }
+
+  const isLive = event.status === "live"
+  const isUpcoming = event.status === "scheduled"
+  const isEnded = event.status === "ended"
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-6 lg:py-8">
+      {/* Breadcrumb */}
+      <div className="mb-4">
+        <Link href="/live" className="text-sm text-[#888] hover:text-white no-underline">
+          ← Back to Events
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Content */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Event Header */}
+          <div className="bg-[#111] border border-[#222] rounded-lg overflow-hidden">
+            {/* Event Image */}
+            {event.imageUrl ? (
+              <img src={event.imageUrl} alt="" className="w-full h-48 lg:h-64 object-cover" />
+            ) : (
+              <div className="w-full h-48 lg:h-64 bg-gradient-to-br from-[#222] to-[#111] flex items-center justify-center text-6xl">
+                {getEventTypeIcon(event.type)}
+              </div>
+            )}
+
+            <div className="p-6">
+              {/* Status Badge */}
+              <div className="flex items-center gap-3 mb-4">
+                {isLive && (
+                  <span className="flex items-center gap-2 bg-red-500 text-white text-sm px-3 py-1 rounded-full font-bold">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                    </span>
+                    LIVE
+                  </span>
+                )}
+                {isUpcoming && (
+                  <span className="bg-yellow-500/20 text-yellow-500 text-sm px-3 py-1 rounded-full">
+                    {formatDistanceToNow(new Date(event.startTime), { addSuffix: true })}
+                  </span>
+                )}
+                {isEnded && (
+                  <span className="bg-[#333] text-[#888] text-sm px-3 py-1 rounded-full">
+                    Ended
+                  </span>
+                )}
+                <span className="text-sm text-[#888]">{getEventTypeName(event.type)}</span>
+              </div>
+
+              {/* Title */}
+              <h1 className="text-2xl lg:text-3xl font-bold mb-4">{event.name}</h1>
+
+              {/* Host */}
+              <div className="flex items-center gap-3 mb-4">
+                <Link href={`/u/${event.createdBy.username}`} className="flex items-center gap-2 no-underline">
+                  {event.createdBy.image ? (
+                    <img src={event.createdBy.image} alt="" className="w-10 h-10 rounded-full" />
+                  ) : (
+                    <DefaultAvatar size="md" />
+                  )}
+                  <div>
+                    <div className="flex items-center gap-1">
+                      <span className="font-medium hover:underline">{event.createdBy.username}</span>
+                      {event.createdBy.isVerified && (
+                        <svg className="w-4 h-4 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                        </svg>
+                      )}
+                    </div>
+                    <span className="text-sm text-[#888]">Host</span>
+                  </div>
+                </Link>
+              </div>
+
+              {/* Time & Location */}
+              <div className="space-y-2 text-sm mb-6">
+                <div className="flex items-center gap-2 text-[#888]">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>{format(new Date(event.startTime), "EEEE, MMMM d, yyyy 'at' h:mm a")}</span>
+                </div>
+                {event.city && (
+                  <div className="flex items-center gap-2 text-[#888]">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span>{event.venue ? `${event.venue}, ` : ""}{event.city}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Description */}
+              {event.description && (
+                <p className="text-[#ccc] whitespace-pre-wrap">{event.description}</p>
+              )}
+
+              {/* Attend Button */}
+              {session && !isEnded && (
+                <div className="mt-6">
+                  <AttendButton
+                    eventSlug={event.slug}
+                    isAttending={event.isAttending}
+                    currentStatus={event.userAttendance?.status || null}
+                    isLive={isLive}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Live Chat */}
+          {event.channel && (isLive || isUpcoming) && (
+            <div className="bg-[#111] border border-[#222] rounded-lg overflow-hidden">
+              <div className="p-4 border-b border-[#222]">
+                <h2 className="font-bold">Live Chat</h2>
+              </div>
+              <div style={{ height: "400px" }}>
+                <EventChat
+                  channelSlug={event.channel.slug}
+                  currentUserId={session?.user?.id}
+                  isLive={isLive}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Setlist */}
+          {event.setlist.length > 0 && (
+            <div className="bg-[#111] border border-[#222] rounded-lg p-4">
+              <h2 className="font-bold mb-4">Setlist ({event._count.setlist} tracks)</h2>
+              <div className="space-y-2">
+                {event.setlist.map((track, index) => (
+                  <div
+                    key={track.id}
+                    className="flex items-center gap-3 p-2 hover:bg-[#181818] rounded transition-colors"
+                  >
+                    <span className="text-[#666] w-6 text-right">{index + 1}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{track.trackName || "Unknown Track"}</p>
+                      <p className="text-sm text-[#888] truncate">{track.artistName || "Unknown Artist"}</p>
+                    </div>
+                    <span className="text-xs text-[#666]">
+                      {format(new Date(track.playedAt), "h:mm a")}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-4">
+          {/* Stats */}
+          <div className="bg-[#111] border border-[#222] rounded-lg p-4">
+            <h3 className="font-bold mb-4">Event Stats</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center p-3 bg-[#0a0a0a] rounded">
+                <p className="text-2xl font-bold">{event._count.attendees}</p>
+                <p className="text-xs text-[#888]">{isLive ? "Watching" : "Interested"}</p>
+              </div>
+              <div className="text-center p-3 bg-[#0a0a0a] rounded">
+                <p className="text-2xl font-bold">{event._count.setlist}</p>
+                <p className="text-xs text-[#888]">Tracks</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Attendees */}
+          <div className="bg-[#111] border border-[#222] rounded-lg p-4">
+            <h3 className="font-bold mb-4">
+              {isLive ? "Watching Now" : "Going"} ({event._count.attendees})
+            </h3>
+            {event.attendees.length === 0 ? (
+              <p className="text-sm text-[#888]">No attendees yet</p>
+            ) : (
+              <div className="space-y-2">
+                {event.attendees.map((attendee) => (
+                  <Link
+                    key={attendee.user.id}
+                    href={`/u/${attendee.user.username}`}
+                    className="flex items-center gap-2 p-2 hover:bg-[#181818] rounded transition-colors no-underline"
+                  >
+                    {attendee.user.image ? (
+                      <img src={attendee.user.image} alt="" className="w-8 h-8 rounded-full" />
+                    ) : (
+                      <DefaultAvatar size="sm" />
+                    )}
+                    <span className="text-sm font-medium truncate">{attendee.user.username}</span>
+                    {attendee.status === "checked_in" && (
+                      <span className="ml-auto text-xs bg-green-500/20 text-green-500 px-2 py-0.5 rounded">
+                        Here
+                      </span>
+                    )}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Quick Actions */}
+          <div className="bg-[#111] border border-[#222] rounded-lg p-4">
+            <h3 className="font-bold mb-4">Quick Links</h3>
+            <div className="space-y-2">
+              {event.streamUrl && (
+                <a
+                  href={event.streamUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 p-2 hover:bg-[#181818] rounded transition-colors no-underline text-sm"
+                >
+                  <span>🔗</span>
+                  <span>Stream Link</span>
+                </a>
+              )}
+              <Link
+                href="/community"
+                className="flex items-center gap-2 p-2 hover:bg-[#181818] rounded transition-colors no-underline text-sm"
+              >
+                <span>📢</span>
+                <span>Community Hub</span>
+              </Link>
+              <Link
+                href="/live"
+                className="flex items-center gap-2 p-2 hover:bg-[#181818] rounded transition-colors no-underline text-sm"
+              >
+                <span>🔴</span>
+                <span>All Events</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Sign In Prompt */}
+          {!session && (
+            <div className="bg-[#111] border border-[#222] rounded-lg p-4 text-center">
+              <p className="text-sm text-[#888] mb-3">Sign in to join this event</p>
+              <Link
+                href="/login"
+                className="inline-block bg-white text-black px-4 py-2 font-bold text-sm no-underline hover:bg-gray-100"
+              >
+                Sign In
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}

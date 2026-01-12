@@ -15,13 +15,32 @@ const updateUserSchema = z.object({
   image: z.string().optional(),
 })
 
-// GET /api/users - Search users
+// GET /api/users - Search users or get by IDs
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const { limit, skip } = getPagination(searchParams)
-    const query = searchParams.get('q')
+    const query = searchParams.get('q') || searchParams.get('search')
+    const ids = searchParams.get('ids')
 
+    // Get users by IDs
+    if (ids) {
+      const idList = ids.split(',').filter(Boolean)
+      const users = await prisma.user.findMany({
+        where: { id: { in: idList } },
+        select: {
+          id: true,
+          username: true,
+          name: true,
+          image: true,
+          bio: true,
+          isVerified: true,
+        }
+      })
+      return successResponse({ users })
+    }
+
+    // Search users
     if (!query || query.length < 2) {
       return errorResponse('Search query must be at least 2 characters', 400)
     }
@@ -45,7 +64,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    return successResponse(users)
+    return successResponse({ users })
   } catch (error) {
     console.error('Error searching users:', error)
     return errorResponse('Failed to search users', 500)

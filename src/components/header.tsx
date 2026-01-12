@@ -78,6 +78,9 @@ export function Header() {
           <Link href="/lists" className="no-underline hover:underline">
             Lists
           </Link>
+          <Link href="/community" className="no-underline hover:underline">
+            Community
+          </Link>
 
           {status === "loading" ? (
             <span className="text-gray-500">...</span>
@@ -239,6 +242,16 @@ export function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               <span>Lists</span>
+              <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+            <Link
+              href="/community"
+              className="flex items-center justify-between px-4 py-4 text-lg font-medium no-underline hover:bg-gray-50 active:bg-gray-100 border-b border-gray-100"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span>Community</span>
               <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
