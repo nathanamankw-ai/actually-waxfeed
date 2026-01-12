@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import Link from "next/link"
 
 interface Track {
@@ -30,6 +30,30 @@ export function TrackPlayer({ tracks, albumTitle, artistName, coverArtUrl }: Tra
   const [isPlaying, setIsPlaying] = useState(false)
   const [progress, setProgress] = useState(0)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  const playTrack = useCallback((track: Track) => {
+    if (!track.previewUrl) return
+
+    if (currentTrack?.id === track.id && audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause()
+        setIsPlaying(false)
+      } else {
+        audioRef.current.play()
+        setIsPlaying(true)
+      }
+      return
+    }
+
+    setCurrentTrack(track)
+    setProgress(0)
+
+    if (audioRef.current) {
+      audioRef.current.src = track.previewUrl
+      audioRef.current.play()
+      setIsPlaying(true)
+    }
+  }, [currentTrack, isPlaying])
 
   useEffect(() => {
     const audio = audioRef.current
@@ -63,31 +87,7 @@ export function TrackPlayer({ tracks, albumTitle, artistName, coverArtUrl }: Tra
       audio.removeEventListener("timeupdate", updateProgress)
       audio.removeEventListener("ended", handleEnded)
     }
-  }, [currentTrack, tracks])
-
-  const playTrack = (track: Track) => {
-    if (!track.previewUrl) return
-
-    if (currentTrack?.id === track.id && audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause()
-        setIsPlaying(false)
-      } else {
-        audioRef.current.play()
-        setIsPlaying(true)
-      }
-      return
-    }
-
-    setCurrentTrack(track)
-    setProgress(0)
-
-    if (audioRef.current) {
-      audioRef.current.src = track.previewUrl
-      audioRef.current.play()
-      setIsPlaying(true)
-    }
-  }
+  }, [currentTrack, tracks, playTrack])
 
   const tracksWithPreviews = tracks.filter(t => t.previewUrl)
 

@@ -2,6 +2,16 @@ import { prisma } from "@/lib/prisma"
 import { AlbumCard } from "@/components/album-card"
 import { ReviewCard } from "@/components/review-card"
 import { BillboardList } from "./billboard-list"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Trending",
+  description: "See what's trending on WAXFEED - Billboard 200 charts, hot reviews, and the most popular albums right now.",
+  openGraph: {
+    title: "Trending Music | WAXFEED",
+    description: "Billboard charts, hot reviews, and trending albums.",
+  },
+}
 
 export const dynamic = "force-dynamic"
 

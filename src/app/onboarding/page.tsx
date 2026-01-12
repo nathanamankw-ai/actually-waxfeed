@@ -137,7 +137,7 @@ export default function OnboardingPage() {
           <>
             <h1 className="text-4xl font-bold tracking-tighter mb-4">Welcome to Waxfeed</h1>
             <p className="text-[#888] mb-8">
-              First, choose your username. This is how you'll be known on Waxfeed.
+              First, choose your username. This is how you&apos;ll be known on Waxfeed.
             </p>
 
             <form onSubmit={handleUsernameSubmit} className="space-y-6">

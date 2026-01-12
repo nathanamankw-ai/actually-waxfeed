@@ -6,8 +6,15 @@ import { CustomCursor } from "@/components/custom-cursor";
 import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
-  title: "WAXFEED",
-  description: "A social music review platform - Letterboxd for music",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://waxfeed.com"),
+  title: {
+    default: "WAXFEED - Rate, Review & Discover Music",
+    template: "%s | WAXFEED",
+  },
+  description: "The social platform for music lovers. Rate albums, write reviews, create lists, and discover new music with a community of passionate listeners.",
+  keywords: ["music reviews", "album ratings", "music discovery", "music community", "album reviews", "music lists"],
+  authors: [{ name: "WAXFEED" }],
+  creator: "WAXFEED",
   icons: {
     icon: [
       { url: "/favicon.ico?v=4", sizes: "any" },
@@ -17,10 +24,28 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png?v=4",
   },
   openGraph: {
-    title: "WAXFEED",
-    description: "A social music review platform - Letterboxd for music",
+    title: "WAXFEED - Rate, Review & Discover Music",
+    description: "The social platform for music lovers. Rate albums, write reviews, create lists, and discover new music.",
     type: "website",
+    siteName: "WAXFEED",
+    images: [
+      {
+        url: "/logo/waxfeed-disc-512.png",
+        width: 512,
+        height: 512,
+        alt: "WAXFEED Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "WAXFEED - Rate, Review & Discover Music",
+    description: "The social platform for music lovers.",
     images: ["/logo/waxfeed-disc-512.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 

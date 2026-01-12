@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 import { z } from 'zod'
+import { checkRateLimit, getClientIp, rateLimits, rateLimitResponse } from '@/lib/rate-limit'
 
 const createMessageSchema = z.object({
   content: z.string().min(1).max(2000),
@@ -127,6 +128,12 @@ export async function POST(
     const session = await auth()
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
+    }
+
+    // Rate limit: 30 messages per minute per user
+    const rateLimit = checkRateLimit(session.user.id, { name: 'chat-messages', ...rateLimits.chat })
+    if (!rateLimit.allowed) {
+      return rateLimitResponse(rateLimit.resetAt)
     }
 
     const { slug } = await params

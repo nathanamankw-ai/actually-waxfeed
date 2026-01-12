@@ -2,6 +2,16 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import Link from "next/link"
 import { formatDistanceToNow, format } from "date-fns"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Live Events",
+  description: "Join live music events, listening parties, and 360 Sound sessions on WAXFEED.",
+  openGraph: {
+    title: "Live Events | WAXFEED",
+    description: "Join live music events and listening parties.",
+  },
+}
 
 export const dynamic = "force-dynamic"
 

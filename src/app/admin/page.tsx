@@ -21,13 +21,6 @@ export default function AdminPage() {
   const [billboardLoading, setBillboardLoading] = useState(false)
   const [billboardResult, setBillboardResult] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login")
-    }
-    fetchStats()
-  }, [status, router])
-
   const fetchStats = async () => {
     try {
       const res = await fetch("/api/albums/import")
@@ -39,6 +32,29 @@ export default function AdminPage() {
       console.error("Failed to fetch stats:", error)
     }
   }
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login")
+    }
+  }, [status, router])
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      // Fetch stats on auth
+      void (async () => {
+        try {
+          const res = await fetch("/api/albums/import")
+          const data = await res.json()
+          if (data.success) {
+            setStats(data.data)
+          }
+        } catch (error) {
+          console.error("Failed to fetch stats:", error)
+        }
+      })()
+    }
+  }, [status])
 
   const handleImport = async () => {
     setLoading(true)

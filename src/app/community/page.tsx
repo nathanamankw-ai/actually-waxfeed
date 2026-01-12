@@ -3,6 +3,16 @@ import { auth } from "@/lib/auth"
 import Link from "next/link"
 import { formatDistanceToNow } from "date-fns"
 import { DefaultAvatar } from "@/components/default-avatar"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Community",
+  description: "Join music discussions, chat with fellow listeners, and connect with the WAXFEED community.",
+  openGraph: {
+    title: "Community | WAXFEED",
+    description: "Join music discussions and connect with fellow listeners.",
+  },
+}
 
 export const dynamic = "force-dynamic"
 

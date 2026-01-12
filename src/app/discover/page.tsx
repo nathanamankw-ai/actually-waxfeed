@@ -2,6 +2,16 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { AlbumCard } from "@/components/album-card"
 import Link from "next/link"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Discover",
+  description: "Discover new music, get personalized recommendations, and find your next favorite album on WAXFEED.",
+  openGraph: {
+    title: "Discover Music | WAXFEED",
+    description: "Get personalized music recommendations and discover new albums.",
+  },
+}
 
 export const dynamic = "force-dynamic"
 
@@ -245,7 +255,7 @@ export default async function DiscoverPage() {
       {recommendations.becauseYouLiked && recommendations.becauseYouLiked.recommendations.length > 0 && (
         <section className="mb-10">
           <h2 className="text-lg font-bold mb-4">
-            Because you liked "{recommendations.becauseYouLiked.album.title}"
+            Because you liked &ldquo;{recommendations.becauseYouLiked.album.title}&rdquo;
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {recommendations.becauseYouLiked.recommendations.map((album) => (
