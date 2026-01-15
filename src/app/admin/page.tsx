@@ -122,7 +122,7 @@ export default function AdminPage() {
   if (status === "loading") {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <p className="text-[#888]">Loading...</p>
+        <p className="text-gray-500">Loading...</p>
       </div>
     )
   }
@@ -132,9 +132,9 @@ export default function AdminPage() {
       <h1 className="text-4xl font-bold tracking-tighter mb-8">Admin - Album Import</h1>
 
       {/* Billboard Update Section */}
-      <div className="mb-8 border border-[#222] p-6">
+      <div className="mb-8 border border-gray-200 p-6">
         <h2 className="font-bold mb-4">Billboard 200 Update</h2>
-        <p className="text-sm text-[#888] mb-4">
+        <p className="text-sm text-gray-500 mb-4">
           Manually trigger the Billboard 200 chart update. This runs automatically daily at midnight via cron job.
         </p>
         <button
@@ -153,45 +153,45 @@ export default function AdminPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 mb-8">
-        <div className="border border-[#222] p-4">
+        <div className="border border-gray-200 p-4">
           <p className="text-3xl font-bold">{stats.totalAlbums.toLocaleString()}</p>
-          <p className="text-sm text-[#888]">Total Albums</p>
+          <p className="text-sm text-gray-500">Total Albums</p>
         </div>
-        <div className="border border-[#222] p-4">
+        <div className="border border-gray-200 p-4">
           <p className="text-3xl font-bold">{stats.totalArtists.toLocaleString()}</p>
-          <p className="text-sm text-[#888]">Total Artists</p>
+          <p className="text-sm text-gray-500">Total Artists</p>
         </div>
-        <div className="border border-[#222] p-4">
+        <div className="border border-gray-200 p-4">
           <p className="text-3xl font-bold">{stats.recentImports.toLocaleString()}</p>
-          <p className="text-sm text-[#888]">Imported (24h)</p>
+          <p className="text-sm text-gray-500">Imported (24h)</p>
         </div>
       </div>
 
       {/* Import Method Selector */}
       <div className="mb-6">
-        <label className="block text-sm text-[#888] mb-2">Import Method</label>
+        <label className="block text-sm text-gray-500 mb-2">Import Method</label>
         <div className="flex gap-2">
           <button
             onClick={() => setImportMethod("search")}
-            className={`px-4 py-2 text-sm ${importMethod === "search" ? "bg-white text-black" : "border border-[#333]"}`}
+            className={`px-4 py-2 text-sm ${importMethod === "search" ? "bg-white text-black" : "border border-gray-300"}`}
           >
             Search Queries
           </button>
           <button
             onClick={() => setImportMethod("ids")}
-            className={`px-4 py-2 text-sm ${importMethod === "ids" ? "bg-white text-black" : "border border-[#333]"}`}
+            className={`px-4 py-2 text-sm ${importMethod === "ids" ? "bg-white text-black" : "border border-gray-300"}`}
           >
             Spotify IDs
           </button>
           <button
             onClick={() => setImportMethod("urls")}
-            className={`px-4 py-2 text-sm ${importMethod === "urls" ? "bg-white text-black" : "border border-[#333]"}`}
+            className={`px-4 py-2 text-sm ${importMethod === "urls" ? "bg-white text-black" : "border border-gray-300"}`}
           >
             Spotify URLs
           </button>
           <button
             onClick={() => setImportMethod("artist")}
-            className={`px-4 py-2 text-sm ${importMethod === "artist" ? "bg-white text-black" : "border border-[#333]"}`}
+            className={`px-4 py-2 text-sm ${importMethod === "artist" ? "bg-white text-black" : "border border-gray-300"}`}
           >
             Artist Name
           </button>
@@ -200,7 +200,7 @@ export default function AdminPage() {
 
       {/* Input */}
       <div className="mb-6">
-        <label className="block text-sm text-[#888] mb-2">
+        <label className="block text-sm text-gray-500 mb-2">
           {importMethod === "search" && "Search Queries (one per line)"}
           {importMethod === "ids" && "Spotify Album IDs (comma or newline separated)"}
           {importMethod === "urls" && "Spotify URLs (comma or newline separated)"}
@@ -218,7 +218,7 @@ export default function AdminPage() {
           }
           className="w-full"
         />
-        <p className="text-xs text-[#666] mt-1">
+        <p className="text-xs text-gray-400 mt-1">
           {importMethod === "search" && "Each search will import top results. Good for bulk importing popular albums."}
           {importMethod === "ids" && "Direct Spotify album IDs. Most efficient for specific albums."}
           {importMethod === "urls" && "Paste Spotify album URLs. IDs will be extracted automatically."}
@@ -237,26 +237,26 @@ export default function AdminPage() {
 
       {/* Results */}
       {result && (
-        <div className="mt-8 border border-[#222] p-6">
+        <div className="mt-8 border border-gray-200 p-6">
           <h2 className="font-bold mb-4">Import Results</h2>
           <div className="grid grid-cols-3 gap-4 mb-4">
             <div>
               <p className="text-2xl font-bold text-green-500">{result.imported}</p>
-              <p className="text-sm text-[#888]">Imported</p>
+              <p className="text-sm text-gray-500">Imported</p>
             </div>
             <div>
               <p className="text-2xl font-bold text-red-500">{result.failed}</p>
-              <p className="text-sm text-[#888]">Failed</p>
+              <p className="text-sm text-gray-500">Failed</p>
             </div>
             <div>
               <p className="text-2xl font-bold">{result.total}</p>
-              <p className="text-sm text-[#888]">Total Attempted</p>
+              <p className="text-sm text-gray-500">Total Attempted</p>
             </div>
           </div>
           {result.errors.length > 0 && (
             <div>
-              <p className="text-sm text-[#888] mb-2">Errors:</p>
-              <div className="bg-[#111] p-4 text-xs text-red-500 max-h-48 overflow-auto">
+              <p className="text-sm text-gray-500 mb-2">Errors:</p>
+              <div className="bg-gray-50 p-4 text-xs text-red-500 max-h-48 overflow-auto">
                 {result.errors.map((error, i) => (
                   <p key={i}>{error}</p>
                 ))}
@@ -267,9 +267,9 @@ export default function AdminPage() {
       )}
 
       {/* Quick Import Suggestions */}
-      <div className="mt-12 border-t border-[#222] pt-8">
+      <div className="mt-12 border-t border-gray-200 pt-8">
         <h2 className="font-bold mb-4">Quick Import Suggestions</h2>
-        <p className="text-sm text-[#888] mb-4">
+        <p className="text-sm text-gray-500 mb-4">
           Click to auto-fill search queries for popular album collections:
         </p>
         <div className="flex flex-wrap gap-2">
@@ -286,7 +286,7 @@ export default function AdminPage() {
                 setImportMethod("search")
                 setInput(preset.queries)
               }}
-              className="px-3 py-1 text-sm border border-[#333] hover:bg-[#111] transition-colors"
+              className="px-3 py-1 text-sm border border-gray-300 hover:bg-gray-50 transition-colors"
             >
               {preset.label}
             </button>

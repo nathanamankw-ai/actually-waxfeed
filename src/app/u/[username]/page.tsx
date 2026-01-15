@@ -6,7 +6,7 @@ import { auth } from "@/lib/auth"
 import { ProfileActions } from "./profile-actions"
 import Link from "next/link"
 import { format } from "date-fns"
-import { RoleBadge, VerifiedBadge, type AccountType } from "@/components/role-badge"
+import { VerifiedBadge } from "@/components/role-badge"
 
 interface Props {
   params: Promise<{ username: string }>
@@ -27,10 +27,6 @@ async function getUser(identifier: string) {
       premiumWaxScore: true,
       isPremium: true,
       isVerified: true,
-      accountType: true,
-      accountTypeVerifiedAt: true,
-      badgeColor: true,
-      displayBadge: true,
       createdAt: true,
       currentStreak: true,
       longestStreak: true,
@@ -60,10 +56,6 @@ async function getUser(identifier: string) {
         premiumWaxScore: true,
         isPremium: true,
         isVerified: true,
-        accountType: true,
-        accountTypeVerifiedAt: true,
-        badgeColor: true,
-        displayBadge: true,
         createdAt: true,
         currentStreak: true,
         longestStreak: true,
@@ -185,14 +177,14 @@ export default async function ProfilePage({ params }: Props) {
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 md:py-8">
       {/* Profile Header */}
-      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-8 mb-8 md:mb-12 pb-6 md:pb-8 border-b border-[#222]">
+      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-8 mb-8 md:mb-12 pb-6 md:pb-8 border-b border-gray-200">
         {/* Avatar */}
         <div className="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0">
           {user.image ? (
             <img
               src={user.image}
               alt=""
-              className="w-full h-full object-cover border border-[#333]"
+              className="w-full h-full object-cover border border-gray-300"
             />
           ) : (
             <DefaultAvatar size="lg" className="w-full h-full" />
@@ -204,66 +196,57 @@ export default async function ProfilePage({ params }: Props) {
           <div className="flex items-center justify-center sm:justify-start gap-2 sm:gap-3 mb-2 flex-wrap">
             <h1 className="text-2xl sm:text-3xl font-bold">@{user.username || "user"}</h1>
             {user.isVerified && <VerifiedBadge className="w-5 h-5" />}
-            {user.displayBadge && user.accountType !== "user" && (
-              <RoleBadge
-                accountType={user.accountType as AccountType}
-                isVerified={!!user.accountTypeVerifiedAt}
-                showLabel={true}
-                size="md"
-                customColor={user.badgeColor}
-              />
-            )}
             {user.isPremium && (
-              <span className="text-xs bg-[#222] px-2 py-1 rounded">PRO</span>
+              <span className="text-xs bg-gray-200 px-2 py-1 rounded">PRO</span>
             )}
           </div>
 
-          {user.name && <p className="text-[#888] mb-2">{user.name}</p>}
+          {user.name && <p className="text-gray-500 mb-2">{user.name}</p>}
           {user.bio && <p className="text-sm mb-4 max-w-xl mx-auto sm:mx-0">{user.bio}</p>}
 
-          {/* Stats */}
+          {/* Stats - Clickable */}
           <div className="flex justify-center sm:justify-start gap-4 sm:gap-6 text-sm mb-4">
-            <div>
+            <Link href={`/u/${user.username}#reviews`} className="no-underline hover:opacity-70 transition-opacity">
               <span className="font-bold">{user._count.reviews}</span>
-              <span className="text-[#888] ml-1">reviews</span>
-            </div>
-            <div>
+              <span className="text-gray-500 ml-1">reviews</span>
+            </Link>
+            <Link href={`/u/${user.username}/lists`} className="no-underline hover:opacity-70 transition-opacity">
               <span className="font-bold">{user._count.lists}</span>
-              <span className="text-[#888] ml-1">lists</span>
-            </div>
-            <div>
+              <span className="text-gray-500 ml-1">lists</span>
+            </Link>
+            <Link href={`/u/${user.username}/friends`} className="no-underline hover:opacity-70 transition-opacity">
               <span className="font-bold">{friendCount}</span>
-              <span className="text-[#888] ml-1">friends</span>
-            </div>
+              <span className="text-gray-500 ml-1">friends</span>
+            </Link>
           </div>
 
           {/* Streak & Wax Score */}
-          <div className="flex flex-wrap justify-center sm:justify-start gap-3 text-sm text-[#888] mb-4">
+          <div className="flex flex-wrap justify-center sm:justify-start gap-3 text-sm text-gray-500 mb-4">
             {user.currentStreak > 0 && (
               <span title={`Longest: ${user.longestStreak} days`}>
-                🔥 {user.currentStreak} day streak
+                {user.currentStreak} day streak
               </span>
             )}
             {user.waxScore > 0 && (
               <span>
-                🕯️ {user.waxScore} wax
+                {user.waxScore} wax
               </span>
             )}
             {user.premiumWaxScore > 0 && (
               <span>
-                ✨ {user.premiumWaxScore} premium
+                {user.premiumWaxScore} premium
               </span>
             )}
           </div>
 
           {/* Avg Rating & Join Date - Mobile */}
-          <div className="sm:hidden text-sm text-[#888] mb-4">
+          <div className="sm:hidden text-sm text-gray-500 mb-4">
             {avgRating !== null && (
               <span className="mr-3">
                 Avg: <span className="font-bold text-white">{avgRating.toFixed(1)}</span>
               </span>
             )}
-            <span className="text-[#666]">
+            <span className="text-gray-400">
               Joined {format(new Date(user.createdAt), "MMM yyyy")}
             </span>
           </div>
@@ -284,22 +267,22 @@ export default async function ProfilePage({ params }: Props) {
             <div className="flex gap-2">
               <Link
                 href="/settings"
-                className="inline-block border border-[#333] px-4 py-2 text-sm no-underline hover:bg-[#111]"
+                className="inline-block border border-gray-300 px-4 py-2 text-sm no-underline hover:bg-gray-50"
               >
                 Edit Profile
               </Link>
               <Link
                 href={`/u/${user.username}/stats`}
-                className="inline-block border border-[#333] px-4 py-2 text-sm no-underline hover:bg-[#111]"
+                className="inline-block border border-gray-300 px-4 py-2 text-sm no-underline hover:bg-gray-50"
               >
-                📊 Stats
+                Stats
               </Link>
             </div>
           )}
           {!isOwnProfile && (
             <Link
               href={`/u/${user.username}/stats`}
-              className="inline-block text-xs text-[#888] hover:text-white no-underline mt-2"
+              className="inline-block text-xs text-gray-500 hover:text-black no-underline mt-2"
             >
               View Stats →
             </Link>
@@ -310,11 +293,11 @@ export default async function ProfilePage({ params }: Props) {
         <div className="hidden sm:block text-right text-sm flex-shrink-0">
           {avgRating !== null && (
             <div className="mb-2">
-              <span className="text-[#888]">Avg rating: </span>
+              <span className="text-gray-500">Avg rating: </span>
               <span className="font-bold">{avgRating.toFixed(1)}</span>
             </div>
           )}
-          <p className="text-[#666]">
+          <p className="text-gray-400">
             Joined {format(new Date(user.createdAt), "MMMM yyyy")}
           </p>
         </div>
@@ -322,13 +305,13 @@ export default async function ProfilePage({ params }: Props) {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
         {/* Reviews */}
-        <div className="lg:col-span-2 order-2 lg:order-1">
+        <div id="reviews" className="lg:col-span-2 order-2 lg:order-1 scroll-mt-20">
           <div className="flex items-center justify-between mb-4 md:mb-6">
             <h2 className="text-lg md:text-xl font-bold">Recent Reviews</h2>
           </div>
 
           {reviews.length === 0 ? (
-            <p className="text-[#888]">No reviews yet.</p>
+            <p className="text-gray-500">No reviews yet.</p>
           ) : (
             <div className="space-y-4">
               {reviews.map((review) => (
@@ -364,20 +347,20 @@ export default async function ProfilePage({ params }: Props) {
             </div>
 
             {lists.length === 0 ? (
-              <p className="text-[#888] text-sm">No lists yet.</p>
+              <p className="text-gray-500 text-sm">No lists yet.</p>
             ) : (
               <div className="space-y-4">
                 {lists.map((list) => (
                   <Link
                     key={list.id}
                     href={`/list/${list.id}`}
-                    className="block border border-[#222] p-4 hover:border-[#444] transition-colors no-underline"
+                    className="block border border-gray-200 p-4 hover:border-gray-300 transition-colors no-underline"
                   >
                     <p className="font-bold truncate">{list.title}</p>
-                    <p className="text-xs text-[#888]">{list._count.items} albums</p>
+                    <p className="text-xs text-gray-500">{list._count.items} albums</p>
                     <div className="flex gap-1 mt-2">
                       {list.items.slice(0, 4).map((item, i) => (
-                        <div key={i} className="w-12 h-12 bg-[#222]">
+                        <div key={i} className="w-12 h-12 bg-gray-200">
                           {item.album.coverArtUrlMedium || item.album.coverArtUrl ? (
                             <img
                               src={item.album.coverArtUrlMedium || item.album.coverArtUrl || ""}
@@ -406,7 +389,7 @@ export default async function ProfilePage({ params }: Props) {
                       href={value.startsWith("http") ? value : `https://${value}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-[#888] hover:text-white"
+                      className="block text-gray-500 hover:text-black"
                     >
                       {key.charAt(0).toUpperCase() + key.slice(1)} →
                     </a>

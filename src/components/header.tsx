@@ -96,12 +96,12 @@ export function Header() {
               </svg>
             </button>
             <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-black shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-              <Link href="/homebru" className="block px-4 py-2 hover:bg-gray-100 no-underline">📻 HomeBRU</Link>
-              <Link href="/avdp" className="block px-4 py-2 hover:bg-gray-100 no-underline">🎙️ AVDP</Link>
-              <Link href="/dj-feed" className="block px-4 py-2 hover:bg-gray-100 no-underline">🎧 DJFeed</Link>
+              <Link href="/homebru" className="block px-4 py-2 hover:bg-gray-100 no-underline">HomeBRU</Link>
+              <Link href="/avdp" className="block px-4 py-2 hover:bg-gray-100 no-underline">AVDP</Link>
+              <Link href="/dj-feed" className="block px-4 py-2 hover:bg-gray-100 no-underline">DJFeed</Link>
               <div className="border-t border-gray-200" />
-              <Link href="/year-in-music" className="block px-4 py-2 hover:bg-gray-100 no-underline">📊 Year in Music</Link>
-              <Link href="/wax-shop" className="block px-4 py-2 hover:bg-gray-100 no-underline">💰 Wax Shop</Link>
+              <Link href="/year-in-music" className="block px-4 py-2 hover:bg-gray-100 no-underline">Year in Music</Link>
+              <Link href="/wax-shop" className="block px-4 py-2 hover:bg-gray-100 no-underline">Wax Shop</Link>
             </div>
           </div>
 
@@ -303,35 +303,35 @@ export function Header() {
               className="flex items-center justify-between px-4 py-3 text-base no-underline hover:bg-gray-50 active:bg-gray-100 border-b border-gray-100"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span>📻 HomeBRU</span>
+              <span>HomeBRU</span>
             </Link>
             <Link
               href="/avdp"
               className="flex items-center justify-between px-4 py-3 text-base no-underline hover:bg-gray-50 active:bg-gray-100 border-b border-gray-100"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span>🎙️ AVDP Podcast</span>
+              <span>AVDP</span>
             </Link>
             <Link
               href="/dj-feed"
               className="flex items-center justify-between px-4 py-3 text-base no-underline hover:bg-gray-50 active:bg-gray-100 border-b border-gray-100"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span>🎧 DJFeed</span>
+              <span>DJFeed</span>
             </Link>
             <Link
               href="/year-in-music"
               className="flex items-center justify-between px-4 py-3 text-base no-underline hover:bg-gray-50 active:bg-gray-100 border-b border-gray-100"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span>📊 Year in Music</span>
+              <span>Year in Music</span>
             </Link>
             <Link
               href="/wax-shop"
               className="flex items-center justify-between px-4 py-3 text-base no-underline hover:bg-gray-50 active:bg-gray-100 border-b border-gray-100"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span>💰 Wax Shop</span>
+              <span>Wax Shop</span>
             </Link>
 
             {/* User Section */}

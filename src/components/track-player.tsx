@@ -92,12 +92,12 @@ export function TrackPlayer({ tracks, albumTitle, artistName, coverArtUrl }: Tra
   const tracksWithPreviews = tracks.filter(t => t.previewUrl)
 
   return (
-    <div className="border border-[#222] bg-[#0a0a0a]">
+    <div className="border border-gray-200 bg-gray-100">
       <audio ref={audioRef} className="hidden" />
 
       {/* Header */}
-      <div className="flex items-center gap-3 p-3 border-b border-[#222]">
-        <div className="text-xs text-[#888]">
+      <div className="flex items-center gap-3 p-3 border-b border-gray-200">
+        <div className="text-xs text-gray-500">
           {tracksWithPreviews.length} / {tracks.length} tracks with previews
         </div>
       </div>
@@ -112,8 +112,8 @@ export function TrackPlayer({ tracks, albumTitle, artistName, coverArtUrl }: Tra
             <div
               key={track.id}
               className={`flex items-center gap-3 px-3 py-2 border-b border-[#181818] last:border-0 ${
-                hasPreview ? "cursor-pointer hover:bg-[#181818]" : "opacity-50"
-              } ${isActive ? "bg-[#181818]" : ""}`}
+                hasPreview ? "cursor-pointer hover:bg-gray-100" : "opacity-50"
+              } ${isActive ? "bg-gray-100" : ""}`}
               onClick={() => hasPreview && playTrack(track)}
             >
               {/* Track Number / Play Button */}
@@ -125,22 +125,22 @@ export function TrackPlayer({ tracks, albumTitle, artistName, coverArtUrl }: Tra
                       <rect x="14" y="4" width="4" height="16" />
                     </svg>
                   ) : (
-                    <svg className="w-4 h-4 mx-auto text-[#888] group-hover:text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 mx-auto text-gray-500 group-hover:text-black" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z" />
                     </svg>
                   )
                 ) : (
-                  <span className="text-xs text-[#666]">{track.trackNumber}</span>
+                  <span className="text-xs text-gray-400">{track.trackNumber}</span>
                 )}
               </div>
 
               {/* Track Info */}
               <div className="flex-1 min-w-0">
-                <p className={`text-sm truncate ${isActive ? "text-white" : "text-[#ccc]"}`}>
+                <p className={`text-sm truncate ${isActive ? "text-white" : "text-gray-600"}`}>
                   {track.name}
                 </p>
                 {isActive && (
-                  <div className="mt-1 h-1 bg-[#333] rounded-full overflow-hidden">
+                  <div className="mt-1 h-1 bg-gray-300 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-white transition-all duration-100"
                       style={{ width: `${progress}%` }}
@@ -150,14 +150,14 @@ export function TrackPlayer({ tracks, albumTitle, artistName, coverArtUrl }: Tra
               </div>
 
               {/* Duration */}
-              <div className="text-xs text-[#666]">
+              <div className="text-xs text-gray-400">
                 {formatDuration(track.durationMs)}
               </div>
 
               {/* Lyrics Link */}
               <Link
                 href={`/lyrics/${track.id}`}
-                className="text-[#666] hover:text-white p-1"
+                className="text-gray-400 hover:text-black p-1"
                 onClick={(e) => e.stopPropagation()}
                 title="View lyrics"
               >
@@ -188,13 +188,13 @@ export function TrackPlayer({ tracks, albumTitle, artistName, coverArtUrl }: Tra
 
       {/* Now Playing Bar */}
       {currentTrack && (
-        <div className="flex items-center gap-3 p-3 border-t border-[#222] bg-[#111]">
+        <div className="flex items-center gap-3 p-3 border-t border-gray-200 bg-gray-50">
           {coverArtUrl && (
             <img src={coverArtUrl} alt="" className="w-10 h-10 object-cover" />
           )}
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate">{currentTrack.name}</p>
-            <p className="text-xs text-[#888] truncate">{artistName}</p>
+            <p className="text-xs text-gray-500 truncate">{artistName}</p>
           </div>
           <button
             onClick={() => playTrack(currentTrack)}

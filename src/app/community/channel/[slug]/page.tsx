@@ -12,13 +12,6 @@ async function getChannel(slug: string, userId: string | undefined) {
   const channel = await prisma.channel.findUnique({
     where: { slug },
     include: {
-      createdBy: {
-        select: {
-          id: true,
-          username: true,
-          image: true,
-        },
-      },
       members: {
         take: 20,
         orderBy: { joinedAt: "asc" },
@@ -122,10 +115,10 @@ export default async function ChannelPage({
     return (
       <div className="max-w-7xl mx-auto px-4 py-12 text-center">
         <h1 className="text-2xl font-bold mb-4">Private Channel</h1>
-        <p className="text-[#888]">You need an invite to access this channel.</p>
+        <p className="text-gray-500">You need an invite to access this channel.</p>
         <Link
           href="/community"
-          className="inline-block mt-4 text-sm text-[#888] hover:text-white no-underline"
+          className="inline-block mt-4 text-sm text-gray-500 hover:text-black no-underline"
         >
           ← Back to Community
         </Link>
@@ -135,11 +128,11 @@ export default async function ChannelPage({
 
   const getCategoryIcon = (category: string | null) => {
     switch (category) {
-      case "genre": return "🎵"
-      case "artist": return "🎤"
-      case "event": return "🎪"
-      case "show": return "📻"
-      case "release": return "💿"
+      case "genre": return "#"
+      case "artist": return "#"
+      case "event": return "#"
+      case "show": return "#"
+      case "release": return "#"
       default: return "#"
     }
   }
@@ -148,7 +141,7 @@ export default async function ChannelPage({
     <div className="max-w-7xl mx-auto px-4 py-6 lg:py-8">
       {/* Breadcrumb */}
       <div className="mb-4">
-        <Link href="/community" className="text-sm text-[#888] hover:text-white no-underline">
+        <Link href="/community" className="text-sm text-gray-500 hover:text-black no-underline">
           ← Back to Community
         </Link>
       </div>
@@ -157,19 +150,19 @@ export default async function ChannelPage({
         {/* Main Chat Area */}
         <div className="lg:col-span-3">
           {/* Channel Header */}
-          <div className="bg-[#111] border border-[#222] rounded-t-lg p-4">
+          <div className="bg-gray-50 border border-gray-200 rounded-t-lg p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="text-3xl">{getCategoryIcon(channel.category)}</span>
                 <div>
                   <h1 className="text-xl font-bold">{channel.name}</h1>
                   {channel.description && (
-                    <p className="text-sm text-[#888]">{channel.description}</p>
+                    <p className="text-sm text-gray-500">{channel.description}</p>
                   )}
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-[#888]">
+                <span className="text-sm text-gray-500">
                   {channel._count.members} members
                 </span>
                 {session && !channel.isMember && (
@@ -183,7 +176,7 @@ export default async function ChannelPage({
           </div>
 
           {/* Chat Area */}
-          <div className="bg-[#0a0a0a] border-x border-b border-[#222] rounded-b-lg" style={{ height: "60vh" }}>
+          <div className="bg-gray-100 border-x border-b border-gray-200 rounded-b-lg" style={{ height: "60vh" }}>
             <ChannelChat
               channelId={channel.id}
               channelSlug={channel.slug}
@@ -197,17 +190,17 @@ export default async function ChannelPage({
         {/* Sidebar */}
         <div className="space-y-4">
           {/* Members */}
-          <div className="bg-[#111] border border-[#222] rounded-lg p-4">
+          <div className="bg-gray-50 border border-gray-200  p-4">
             <h3 className="font-bold mb-3">Members ({channel._count.members})</h3>
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {channel.members.map((member) => (
                 <Link
                   key={member.user.id}
                   href={`/u/${member.user.username}`}
-                  className="flex items-center gap-2 p-2 hover:bg-[#181818] rounded transition-colors no-underline"
+                  className="flex items-center gap-2 p-2 hover:bg-gray-100 transition-colors no-underline"
                 >
                   {member.user.image ? (
-                    <img src={member.user.image} alt="" className="w-8 h-8 rounded-full" />
+                    <img src={member.user.image} alt="" className="w-8 h-8 " />
                   ) : (
                     <DefaultAvatar size="sm" />
                   )}
@@ -221,7 +214,7 @@ export default async function ChannelPage({
                       )}
                     </div>
                     {member.role !== "member" && (
-                      <span className="text-xs text-[#888] capitalize">{member.role}</span>
+                      <span className="text-xs text-gray-500 capitalize">{member.role}</span>
                     )}
                   </div>
                 </Link>
@@ -230,26 +223,20 @@ export default async function ChannelPage({
           </div>
 
           {/* Channel Info */}
-          <div className="bg-[#111] border border-[#222] rounded-lg p-4">
+          <div className="bg-gray-50 border border-gray-200  p-4">
             <h3 className="font-bold mb-3">About</h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-[#888]">Created by</span>
-                <Link href={`/u/${channel.createdBy.username}`} className="hover:underline no-underline">
-                  {channel.createdBy.username}
-                </Link>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-[#888]">Messages</span>
+                <span className="text-gray-500">Messages</span>
                 <span>{channel._count.messages.toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#888]">Type</span>
+                <span className="text-gray-500">Type</span>
                 <span className="capitalize">{channel.type}</span>
               </div>
               {channel.category && (
                 <div className="flex justify-between">
-                  <span className="text-[#888]">Category</span>
+                  <span className="text-gray-500">Category</span>
                   <span className="capitalize">{channel.category}</span>
                 </div>
               )}
@@ -258,8 +245,8 @@ export default async function ChannelPage({
 
           {/* Not logged in prompt */}
           {!session && (
-            <div className="bg-[#111] border border-[#222] rounded-lg p-4 text-center">
-              <p className="text-sm text-[#888] mb-3">Sign in to join the conversation</p>
+            <div className="bg-gray-50 border border-gray-200  p-4 text-center">
+              <p className="text-sm text-gray-500 mb-3">Sign in to join the conversation</p>
               <Link
                 href="/login"
                 className="inline-block bg-white text-black px-4 py-2 font-bold text-sm no-underline hover:bg-gray-100"
@@ -294,7 +281,7 @@ function LeaveButton({ slug }: { slug: string }) {
     <form action={`/api/channels/${slug}/join`} method="DELETE">
       <button
         type="submit"
-        className="border border-[#444] text-[#888] px-4 py-2 text-sm hover:text-white hover:border-white"
+        className="border border-gray-300 text-gray-500 px-4 py-2 text-sm hover:text-black hover:border-white"
       >
         Leave
       </button>

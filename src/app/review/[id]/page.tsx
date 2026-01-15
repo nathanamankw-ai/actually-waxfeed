@@ -92,7 +92,7 @@ export default async function ReviewPage({ params }: PageProps) {
       {/* Album Header */}
       <Link
         href={`/album/${review.album.spotifyId || review.album.id}`}
-        className="flex items-center gap-4 mb-6 p-4 bg-[#111] border border-[#222] hover:border-[#333] transition-colors no-underline"
+        className="flex items-center gap-4 mb-6 p-4 bg-gray-50 border border-gray-200 hover:border-gray-300 transition-colors no-underline"
       >
         {review.album.coverArtUrl ? (
           <img
@@ -101,18 +101,18 @@ export default async function ReviewPage({ params }: PageProps) {
             className="w-16 h-16 sm:w-20 sm:h-20 object-cover"
           />
         ) : (
-          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-[#222] flex items-center justify-center text-[#666]">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-200 flex items-center justify-center text-gray-400">
             No Cover
           </div>
         )}
         <div className="min-w-0 flex-1">
           <h2 className="font-bold text-base sm:text-lg truncate">{review.album.title}</h2>
-          <p className="text-sm text-[#888] truncate">{review.album.artistName}</p>
+          <p className="text-sm text-gray-500 truncate">{review.album.artistName}</p>
         </div>
       </Link>
 
       {/* Review Card */}
-      <div className="border border-[#222] p-4 sm:p-6 mb-6">
+      <div className="border border-gray-200 p-4 sm:p-6 mb-6">
         {/* User Info */}
         <div className="flex items-start gap-3 mb-4">
           <Link href={`/u/${review.user.username}`} className="flex-shrink-0">
@@ -120,7 +120,7 @@ export default async function ReviewPage({ params }: PageProps) {
               <img
                 src={review.user.image}
                 alt={review.user.username || ""}
-                className="w-10 h-10 sm:w-12 sm:h-12 object-cover border border-[#333]"
+                className="w-10 h-10 sm:w-12 sm:h-12 object-cover border border-gray-300"
               />
             ) : (
               <DefaultAvatar size="md" />
@@ -137,16 +137,16 @@ export default async function ReviewPage({ params }: PageProps) {
               {review.user.isVerified && (
                 <span className="text-blue-400 text-xs">✓</span>
               )}
-              <span className="text-[#666] text-sm">·</span>
-              <span className="text-[#666] text-sm">
+              <span className="text-gray-400 text-sm">·</span>
+              <span className="text-gray-400 text-sm">
                 {formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}
               </span>
               {review.isEdited && (
-                <span className="text-[#666] text-xs">(edited)</span>
+                <span className="text-gray-400 text-xs">(edited)</span>
               )}
             </div>
             {review.user.bio && (
-              <p className="text-xs text-[#666] mt-0.5 truncate">{review.user.bio}</p>
+              <p className="text-xs text-gray-400 mt-0.5 truncate">{review.user.bio}</p>
             )}
           </div>
           {/* Rating */}
@@ -175,8 +175,8 @@ export default async function ReviewPage({ params }: PageProps) {
       </div>
 
       {/* Replies Section */}
-      <div className="border border-[#222]">
-        <div className="p-4 border-b border-[#222]">
+      <div className="border border-gray-200">
+        <div className="p-4 border-b border-gray-200">
           <h3 className="font-bold">
             Replies ({review._count.replies})
           </h3>
@@ -186,7 +186,7 @@ export default async function ReviewPage({ params }: PageProps) {
         {session ? (
           <ReplyForm reviewId={review.id} />
         ) : (
-          <div className="p-4 border-b border-[#222] text-center">
+          <div className="p-4 border-b border-gray-200 text-center">
             <Link href="/login" className="text-white hover:underline">
               Sign in to reply
             </Link>
@@ -195,7 +195,7 @@ export default async function ReviewPage({ params }: PageProps) {
 
         {/* Replies List */}
         {review.replies.length > 0 ? (
-          <div className="divide-y divide-[#222]">
+          <div className="divide-y divide-gray-200">
             {review.replies.map((reply) => (
               <div key={reply.id} className="p-4">
                 <div className="flex items-start gap-3">
@@ -204,7 +204,7 @@ export default async function ReviewPage({ params }: PageProps) {
                       <img
                         src={reply.user.image}
                         alt={reply.user.username || ""}
-                        className="w-8 h-8 object-cover border border-[#333]"
+                        className="w-8 h-8 object-cover border border-gray-300"
                       />
                     ) : (
                       <DefaultAvatar size="sm" />
@@ -221,7 +221,7 @@ export default async function ReviewPage({ params }: PageProps) {
                       {reply.user.isVerified && (
                         <span className="text-blue-400 text-xs">✓</span>
                       )}
-                      <span className="text-[#666] text-xs">
+                      <span className="text-gray-400 text-xs">
                         {formatDistanceToNow(new Date(reply.createdAt), { addSuffix: true })}
                       </span>
                     </div>
@@ -232,7 +232,7 @@ export default async function ReviewPage({ params }: PageProps) {
             ))}
           </div>
         ) : (
-          <div className="p-8 text-center text-[#666]">
+          <div className="p-8 text-center text-gray-400">
             No replies yet. Be the first to comment!
           </div>
         )}

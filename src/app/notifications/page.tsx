@@ -113,7 +113,7 @@ export default function NotificationsPage() {
   if (status === "loading" || loading) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8">
-        <p className="text-[#888]">Loading...</p>
+        <p className="text-gray-500">Loading...</p>
       </div>
     )
   }
@@ -125,7 +125,7 @@ export default function NotificationsPage() {
         {unreadCount > 0 && (
           <button
             onClick={markAllAsRead}
-            className="text-sm text-[#888] hover:text-white"
+            className="text-sm text-gray-500 hover:text-black"
           >
             Mark all as read
           </button>
@@ -133,26 +133,26 @@ export default function NotificationsPage() {
       </div>
 
       {notifications.length === 0 ? (
-        <div className="border border-[#222] p-8 text-center">
-          <p className="text-[#888]">No notifications yet.</p>
+        <div className="border border-gray-200 p-8 text-center">
+          <p className="text-gray-500">No notifications yet.</p>
         </div>
       ) : (
-        <div className="divide-y divide-[#222]">
+        <div className="divide-y divide-gray-200">
           {notifications.map((notification) => (
             <Link
               key={notification.id}
               href={getNotificationLink(notification)}
-              className={`block py-4 no-underline hover:bg-[#111] -mx-4 px-4 transition-colors ${
-                !notification.isRead ? "bg-[#111]/50" : ""
+              className={`block py-4 no-underline hover:bg-gray-50 -mx-4 px-4 transition-colors ${
+                !notification.isRead ? "bg-gray-50/50" : ""
               }`}
             >
               <div className="flex items-start gap-3">
                 {!notification.isRead && (
-                  <div className="w-2 h-2 bg-white rounded-full mt-2 flex-shrink-0" />
+                  <div className="w-2 h-2 bg-white  mt-2 flex-shrink-0" />
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm">{getNotificationText(notification)}</p>
-                  <p className="text-xs text-[#666] mt-1">
+                  <p className="text-xs text-gray-400 mt-1">
                     {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
                   </p>
                 </div>

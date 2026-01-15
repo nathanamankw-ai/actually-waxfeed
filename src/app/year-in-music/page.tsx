@@ -114,12 +114,12 @@ export default async function YearInMusicPage() {
 
   // Calculate personality based on stats
   const getListenerPersonality = () => {
-    if (stats.totalReviews === 0) return { title: "The Newcomer", emoji: "🌱", desc: "Just getting started on your music journey!" }
-    if (stats.averageRating >= 8) return { title: "The Optimist", emoji: "☀️", desc: "You love finding the good in every album!" }
-    if (stats.averageRating <= 5) return { title: "The Critic", emoji: "🎭", desc: "High standards make for great taste!" }
-    if (stats.topGenres.length === 1) return { title: "The Specialist", emoji: "🎯", desc: "Deep expertise in your favorite genre!" }
-    if (stats.topGenres.length >= 4) return { title: "The Explorer", emoji: "🧭", desc: "Always discovering new sounds!" }
-    return { title: "The Balanced Listener", emoji: "⚖️", desc: "A well-rounded music taste!" }
+    if (stats.totalReviews === 0) return { title: "The Newcomer", desc: "Just getting started on your music journey!" }
+    if (stats.averageRating >= 8) return { title: "The Optimist", desc: "You love finding the good in every album!" }
+    if (stats.averageRating <= 5) return { title: "The Critic", desc: "High standards make for great taste!" }
+    if (stats.topGenres.length === 1) return { title: "The Specialist", desc: "Deep expertise in your favorite genre!" }
+    if (stats.topGenres.length >= 4) return { title: "The Explorer", desc: "Always discovering new sounds!" }
+    return { title: "The Balanced Listener", desc: "A well-music taste!" }
   }
 
   const personality = getListenerPersonality()
@@ -128,20 +128,17 @@ export default async function YearInMusicPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 lg:py-8">
       {/* Hero */}
-      <div className="relative bg-gradient-to-br from-violet-900/50 via-purple-900/40 to-fuchsia-900/30 rounded-2xl p-8 mb-8 overflow-hidden text-center">
-        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5" />
-        <div className="relative z-10">
-          <p className="text-violet-300 mb-2">Your</p>
-          <h1 className="text-4xl lg:text-6xl font-bold mb-2">{currentYear} in Music</h1>
-          <p className="text-xl text-[#ccc]">@{session.user.username || session.user.name}</p>
-        </div>
+      <div className="border-b border-gray-200 pb-8 mb-8 text-center">
+        <p className="text-gray-500 mb-2">Your</p>
+        <h1 className="text-4xl lg:text-6xl font-bold text-black mb-2">{currentYear} in Music</h1>
+        <p className="text-xl text-gray-600">@{session.user.username || session.user.name}</p>
       </div>
 
       {stats.totalReviews === 0 ? (
-        <div className="text-center py-12 bg-[#111] border border-[#222] rounded-lg">
-          <span className="text-6xl mb-4 block">📝</span>
+        <div className="text-center py-12 bg-gray-50 border border-gray-200 ">
+          
           <h2 className="text-xl font-bold mb-2">No reviews yet this year!</h2>
-          <p className="text-[#888] mb-4">Start reviewing albums to see your Year in Music stats</p>
+          <p className="text-gray-500 mb-4">Start reviewing albums to see your Year in Music stats</p>
           <Link
             href="/discover"
             className="inline-block bg-white text-black px-6 py-3 font-bold no-underline hover:bg-gray-100"
@@ -152,40 +149,39 @@ export default async function YearInMusicPage() {
       ) : (
         <div className="space-y-8">
           {/* Personality Card */}
-          <div className="bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 border border-violet-500/30 rounded-lg p-6 text-center">
-            <span className="text-6xl mb-4 block">{personality.emoji}</span>
+          <div className="bg-gray-50 border border-gray-200 p-6 text-center">
             <h2 className="text-2xl font-bold mb-2">{personality.title}</h2>
-            <p className="text-[#ccc]">{personality.desc}</p>
+            <p className="text-gray-600">{personality.desc}</p>
           </div>
 
           {/* Key Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-[#111] border border-[#222] rounded-lg p-4 text-center">
-              <p className="text-4xl font-bold text-violet-400">{stats.totalReviews}</p>
-              <p className="text-sm text-[#888]">Albums Reviewed</p>
+            <div className="bg-gray-50 border border-gray-200  p-4 text-center">
+              <p className="text-4xl font-bold text-black">{stats.totalReviews}</p>
+              <p className="text-sm text-gray-500">Albums Reviewed</p>
             </div>
-            <div className="bg-[#111] border border-[#222] rounded-lg p-4 text-center">
-              <p className="text-4xl font-bold text-fuchsia-400">{stats.averageRating.toFixed(1)}</p>
-              <p className="text-sm text-[#888]">Average Rating</p>
+            <div className="bg-gray-50 border border-gray-200  p-4 text-center">
+              <p className="text-4xl font-bold text-black">{stats.averageRating.toFixed(1)}</p>
+              <p className="text-sm text-gray-500">Average Rating</p>
             </div>
-            <div className="bg-[#111] border border-[#222] rounded-lg p-4 text-center">
-              <p className="text-4xl font-bold text-pink-400">{stats.longestStreak}</p>
-              <p className="text-sm text-[#888]">Longest Streak</p>
+            <div className="bg-gray-50 border border-gray-200  p-4 text-center">
+              <p className="text-4xl font-bold text-black">{stats.longestStreak}</p>
+              <p className="text-sm text-gray-500">Longest Streak</p>
             </div>
-            <div className="bg-[#111] border border-[#222] rounded-lg p-4 text-center">
-              <p className="text-4xl font-bold text-amber-400">{stats.waxScore}</p>
-              <p className="text-sm text-[#888]">Wax Score</p>
+            <div className="bg-gray-50 border border-gray-200  p-4 text-center">
+              <p className="text-4xl font-bold text-black">{stats.waxScore}</p>
+              <p className="text-sm text-gray-500">Wax Score</p>
             </div>
           </div>
 
           {/* Top Albums */}
           {stats.topAlbums.length > 0 && (
-            <div className="bg-[#111] border border-[#222] rounded-lg p-6">
-              <h2 className="text-xl font-bold mb-4">🏆 Your Top Albums</h2>
+            <div className="bg-gray-50 border border-gray-200  p-6">
+              <h2 className="text-xl font-bold mb-4">Your Top Albums</h2>
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                 {stats.topAlbums.map((album, index) => (
                   <div key={album.id} className="relative">
-                    <div className="absolute -top-2 -left-2 w-6 h-6 bg-violet-500 rounded-full flex items-center justify-center text-xs font-bold z-10">
+                    <div className="absolute -top-2 -left-2 w-6 h-6 bg-black  flex items-center justify-center text-xs font-bold z-10">
                       {index + 1}
                     </div>
                     <AlbumCard
@@ -205,20 +201,20 @@ export default async function YearInMusicPage() {
 
           {/* Top Genres */}
           {stats.topGenres.length > 0 && (
-            <div className="bg-[#111] border border-[#222] rounded-lg p-6">
-              <h2 className="text-xl font-bold mb-4">🎵 Your Top Genres</h2>
+            <div className="bg-gray-50 border border-gray-200  p-6">
+              <h2 className="text-xl font-bold mb-4">Your Top Genres</h2>
               <div className="space-y-3">
                 {stats.topGenres.map((item, index) => (
                   <div key={item.genre} className="flex items-center gap-4">
-                    <span className="text-2xl w-8">{["🥇", "🥈", "🥉", "4️⃣", "5️⃣"][index]}</span>
+                    <span className="text-lg font-bold w-8 text-gray-500">#{index + 1}</span>
                     <div className="flex-1">
                       <div className="flex justify-between mb-1">
                         <span className="font-medium capitalize">{item.genre}</span>
-                        <span className="text-[#888]">{item.count} albums</span>
+                        <span className="text-gray-500">{item.count} albums</span>
                       </div>
-                      <div className="h-2 bg-[#222] rounded-full overflow-hidden">
+                      <div className="h-2 bg-gray-200  overflow-hidden">
                         <div 
-                          className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full"
+                          className="h-full bg-black "
                           style={{ width: `${(item.count / stats.topGenres[0].count) * 100}%` }}
                         />
                       </div>
@@ -231,15 +227,15 @@ export default async function YearInMusicPage() {
 
           {/* Top Artists */}
           {stats.topArtists.length > 0 && (
-            <div className="bg-[#111] border border-[#222] rounded-lg p-6">
-              <h2 className="text-xl font-bold mb-4">🎤 Your Top Artists</h2>
+            <div className="bg-gray-50 border border-gray-200  p-6">
+              <h2 className="text-xl font-bold mb-4">Your Top Artists</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {stats.topArtists.map((item, index) => (
-                  <div key={item.artist} className="flex items-center gap-3 bg-[#0a0a0a] p-3 rounded-lg">
-                    <span className="text-2xl">{["🥇", "🥈", "🥉", "4️⃣", "5️⃣"][index]}</span>
+                  <div key={item.artist} className="flex items-center gap-3 bg-gray-100 p-3 ">
+                    <span className="text-lg font-bold text-gray-500">#{index + 1}</span>
                     <div>
                       <p className="font-medium">{item.artist}</p>
-                      <p className="text-sm text-[#888]">{item.count} album{item.count !== 1 ? "s" : ""} reviewed</p>
+                      <p className="text-sm text-gray-500">{item.count} album{item.count !== 1 ? "s" : ""} reviewed</p>
                     </div>
                   </div>
                 ))}
@@ -248,46 +244,46 @@ export default async function YearInMusicPage() {
           )}
 
           {/* Monthly Activity */}
-          <div className="bg-[#111] border border-[#222] rounded-lg p-6">
-            <h2 className="text-xl font-bold mb-4">📅 Monthly Activity</h2>
+          <div className="bg-gray-50 border border-gray-200  p-6">
+            <h2 className="text-xl font-bold mb-4">Monthly Activity</h2>
             <div className="flex items-end gap-2 h-32">
               {stats.monthlyActivity.map((count, index) => (
                 <div key={index} className="flex-1 flex flex-col items-center gap-1">
                   <div 
-                    className="w-full bg-gradient-to-t from-violet-500 to-fuchsia-500 rounded-t transition-all"
+                    className="w-full bg-black rounded-t transition-all"
                     style={{ height: `${(count / maxMonthly) * 100}%`, minHeight: count > 0 ? "8px" : "0" }}
                   />
-                  <span className="text-xs text-[#666]">{months[index]}</span>
+                  <span className="text-xs text-gray-400">{months[index]}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Rating Distribution */}
-          <div className="bg-[#111] border border-[#222] rounded-lg p-6">
-            <h2 className="text-xl font-bold mb-4">⭐ Rating Distribution</h2>
+          <div className="bg-gray-50 border border-gray-200  p-6">
+            <h2 className="text-xl font-bold mb-4">Rating Distribution</h2>
             <div className="space-y-2">
               {[10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0].map((rating) => (
                 <div key={rating} className="flex items-center gap-3">
-                  <span className="w-8 text-right text-sm text-[#888]">{rating}</span>
-                  <div className="flex-1 h-4 bg-[#222] rounded-full overflow-hidden">
+                  <span className="w-8 text-right text-sm text-gray-500">{rating}</span>
+                  <div className="flex-1 h-4 bg-gray-200  overflow-hidden">
                     <div 
-                      className="h-full bg-amber-500 rounded-full transition-all"
+                      className="h-full bg-black  transition-all"
                       style={{ width: `${(stats.ratingDistribution[rating] / Math.max(...stats.ratingDistribution, 1)) * 100}%` }}
                     />
                   </div>
-                  <span className="w-8 text-sm text-[#888]">{stats.ratingDistribution[rating]}</span>
+                  <span className="w-8 text-sm text-gray-500">{stats.ratingDistribution[rating]}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Share Card */}
-          <div className="bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 border border-violet-500/30 rounded-lg p-6 text-center">
+          <div className="bg-gray-50 border border-gray-200  p-6 text-center">
             <h2 className="text-xl font-bold mb-2">Share Your Year in Music</h2>
-            <p className="text-[#888] mb-4">Show off your music taste to friends!</p>
-            <button className="bg-white text-black px-6 py-3 font-bold hover:bg-gray-100 transition-colors">
-              📸 Generate Share Image
+            <p className="text-gray-500 mb-4">Show off your music taste to friends!</p>
+            <button className="bg-black text-white px-6 py-3 font-bold hover:bg-gray-800 transition-colors">
+              Generate Share Image
             </button>
           </div>
         </div>

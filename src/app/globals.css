@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --muted: #888888;
-  --border: #222222;
-  --accent: #ffffff;
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --muted: #666666;
+  --border: #e0e0e0;
+  --accent: #000000;
 }
 
 @theme inline {
@@ -105,7 +105,7 @@ button {
 
   .cursor.active {
     --size: 32px;
-    background-color: #ffffff;
+    background-color: #000000;
   }
 }
 
@@ -132,13 +132,14 @@ main input:focus, main textarea:focus {
 
 /* Select dropdown styling */
 select {
-  background-color: #111;
+  background-color: #ffffff;
   color: var(--foreground);
   font-size: 14px;
+  border: 1px solid var(--border);
 }
 
 select option {
-  background-color: #111;
+  background-color: #ffffff;
   color: var(--foreground);
 }
 

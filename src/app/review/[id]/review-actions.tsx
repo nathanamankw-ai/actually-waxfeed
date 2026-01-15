@@ -78,12 +78,12 @@ export function ReviewActions({
   }
 
   return (
-    <div className="flex items-center gap-4 pt-4 border-t border-[#222]">
+    <div className="flex items-center gap-4 pt-4 border-t border-gray-200">
       <button
         onClick={handleLike}
         disabled={isLoading}
         className={`flex items-center gap-2 transition-colors ${
-          hasLiked ? "text-red-500" : "text-[#888] hover:text-white"
+          hasLiked ? "text-red-500" : "text-gray-500 hover:text-black"
         } disabled:opacity-50`}
       >
         <span className="text-lg">{hasLiked ? "♥" : "♡"}</span>
@@ -98,11 +98,11 @@ export function ReviewActions({
             ? "text-yellow-500"
             : isOwner
             ? "text-[#444] cursor-not-allowed"
-            : "text-[#888] hover:text-yellow-500"
+            : "text-gray-500 hover:text-yellow-500"
         } disabled:opacity-50`}
         title={isOwner ? "Can't wax your own review" : hasGivenWax ? "Already waxed" : "Give wax"}
       >
-        <span className="text-lg">💿</span>
+        <span className="text-lg"></span>
         <span className="text-sm">{waxCount} wax</span>
       </button>
 

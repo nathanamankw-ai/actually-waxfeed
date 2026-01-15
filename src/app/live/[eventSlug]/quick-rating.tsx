@@ -13,9 +13,9 @@ export function QuickRating({ eventSlug, currentUserId }: QuickRatingProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const reactions = [
-    { id: "fire", emoji: "🔥", label: "Fire" },
-    { id: "mid", emoji: "😐", label: "Mid" },
-    { id: "skip", emoji: "⏭️", label: "Skip" },
+    { id: "fire", emoji: "F", label: "Fire" },
+    { id: "mid", emoji: "M", label: "Mid" },
+    { id: "skip", emoji: "S", label: "Skip" },
   ]
 
   const handleReaction = async (reactionId: string) => {
@@ -37,14 +37,14 @@ export function QuickRating({ eventSlug, currentUserId }: QuickRatingProps) {
 
   if (!currentUserId) {
     return (
-      <div className="text-center py-4 text-[#888] text-sm">
+      <div className="text-center py-4 text-gray-500 text-sm">
         Sign in to rate
       </div>
     )
   }
 
   return (
-    <div className="bg-[#111] border border-[#222] rounded-lg p-4">
+    <div className="bg-gray-50 border border-gray-200  p-4">
       <h3 className="font-bold mb-3 text-sm">⚡ Quick Rate</h3>
       
       {/* Quick Reactions */}
@@ -53,31 +53,31 @@ export function QuickRating({ eventSlug, currentUserId }: QuickRatingProps) {
           <button
             key={reaction.id}
             onClick={() => handleReaction(reaction.id)}
-            className={`flex-1 flex flex-col items-center gap-1 p-3 rounded-lg transition-all ${
+            className={`flex-1 flex flex-col items-center gap-1 p-3  transition-all ${
               selectedReaction === reaction.id
                 ? "bg-white/10 border-2 border-white/30 scale-105"
-                : "bg-[#0a0a0a] border border-[#333] hover:border-[#555]"
+                : "bg-gray-100 border border-gray-300 hover:border-[#555]"
             }`}
           >
             <span className="text-2xl">{reaction.emoji}</span>
-            <span className="text-xs text-[#888]">{reaction.label}</span>
+            <span className="text-xs text-gray-500">{reaction.label}</span>
           </button>
         ))}
       </div>
 
       {/* Detailed Rating */}
       <div>
-        <p className="text-xs text-[#888] mb-2">Or rate 1-10:</p>
+        <p className="text-xs text-gray-500 mb-2">Or rate 1-10:</p>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
             <button
               key={value}
               onClick={() => handleRating(value)}
               disabled={isSubmitting}
-              className={`flex-1 py-2 text-xs font-bold rounded transition-all ${
+              className={`flex-1 py-2 text-xs font-bold transition-all ${
                 rating === value
-                  ? "bg-amber-500 text-black"
-                  : "bg-[#222] hover:bg-[#333]"
+                  ? "bg-black text-white"
+                  : "bg-gray-200 hover:bg-gray-300"
               } ${isSubmitting ? "opacity-50" : ""}`}
             >
               {value}
@@ -88,7 +88,7 @@ export function QuickRating({ eventSlug, currentUserId }: QuickRatingProps) {
 
       {/* Feedback */}
       {(selectedReaction || rating) && (
-        <div className="mt-3 pt-3 border-t border-[#222] text-center">
+        <div className="mt-3 pt-3 border-t border-gray-200 text-center">
           <p className="text-sm text-green-500">
             {selectedReaction && `You voted: ${reactions.find(r => r.id === selectedReaction)?.label}`}
             {rating && ` Rated: ${rating}/10`}

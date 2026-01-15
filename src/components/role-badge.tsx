@@ -23,7 +23,7 @@ const ROLE_CONFIG: Record<AccountType, { icon: string; label: string; color: str
     bgColor: "bg-gray-100",
   },
   artist: {
-    icon: "🎵",
+    icon: "",
     label: "Artist",
     color: "text-purple-600",
     bgColor: "bg-purple-100",

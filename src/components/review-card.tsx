@@ -119,12 +119,12 @@ export const ReviewCard = memo(function ReviewCard({
   )
 
   return (
-    <article className="border border-[#222] p-3 sm:p-4 hover:border-[#333] transition-colors">
+    <article className="border border-gray-200 p-3 sm:p-4 hover:border-gray-300 transition-colors">
       <div className="flex gap-3 sm:gap-4">
         {/* Album Cover */}
         {showAlbum && (
           <Link href={`/album/${album.spotifyId}`} className="flex-shrink-0">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-[#181818]">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100">
               {album.coverArtUrl ? (
                 <img
                   src={album.coverArtUrl}
@@ -132,7 +132,7 @@ export const ReviewCard = memo(function ReviewCard({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-[#666] text-xs">
+                <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
                   No Cover
                 </div>
               )}
@@ -153,7 +153,7 @@ export const ReviewCard = memo(function ReviewCard({
                   {user.username || "Anonymous"}
                 </Link>
                 {user.isVerified && (
-                  <span className="text-[#888] text-xs">✓</span>
+                  <span className="text-gray-500 text-xs">✓</span>
                 )}
                 <span className="text-[#555] text-xs">
                   {formatDistanceToNow(date, { addSuffix: true })}
@@ -163,7 +163,7 @@ export const ReviewCard = memo(function ReviewCard({
               {showAlbum && (
                 <Link
                   href={`/album/${album.spotifyId}`}
-                  className="text-xs sm:text-sm text-[#888] hover:underline no-underline line-clamp-1"
+                  className="text-xs sm:text-sm text-gray-500 hover:underline no-underline line-clamp-1"
                 >
                   {album.title} — {album.artistName}
                 </Link>
@@ -178,16 +178,16 @@ export const ReviewCard = memo(function ReviewCard({
 
           {/* Review Text */}
           {text && (
-            <p className={`text-sm mb-2 sm:mb-3 text-[#ccc] leading-relaxed ${compact ? "line-clamp-2" : "line-clamp-4 sm:line-clamp-none"}`}>
+            <p className={`text-sm mb-2 sm:mb-3 text-gray-600 leading-relaxed ${compact ? "line-clamp-2" : "line-clamp-4 sm:line-clamp-none"}`}>
               {text}
             </p>
           )}
 
           {/* Actions */}
-          <div className="flex items-center gap-2 sm:gap-3 text-xs text-[#666] flex-wrap">
+          <div className="flex items-center gap-2 sm:gap-3 text-xs text-gray-400 flex-wrap">
             <button
               onClick={handleLike}
-              className={`hover:text-white transition-colors flex items-center gap-1 ${liked ? "text-red-500" : ""}`}
+              className={`hover:text-black transition-colors flex items-center gap-1 ${liked ? "text-red-500" : ""}`}
             >
               <span>{liked ? "♥" : "♡"}</span>
               <span>{likeCount}</span>
@@ -197,20 +197,20 @@ export const ReviewCard = memo(function ReviewCard({
             <div className="relative">
               <button
                 onClick={() => setShowReactions(!showReactions)}
-                className="hover:text-white transition-colors flex items-center gap-1"
+                className="hover:text-black transition-colors flex items-center gap-1"
               >
                 <span>✨</span>
                 <span>{totalReactions}</span>
               </button>
 
               {showReactions && (
-                <div className="absolute bottom-full left-0 mb-1 bg-[#1a1a1a] border border-[#333] p-1 flex gap-1 z-10">
+                <div className="absolute bottom-full left-0 mb-1 bg-gray-200 border border-gray-300 p-1 flex gap-1 z-10">
                   {REACTIONS.map(({ type, emoji, label }) => (
                     <button
                       key={type}
                       onClick={() => handleReaction(type)}
-                      className={`p-1.5 hover:bg-[#333] rounded transition-colors ${
-                        userReactions.includes(type) ? "bg-[#333]" : ""
+                      className={`p-1.5 hover:bg-gray-300 rounded transition-colors ${
+                        userReactions.includes(type) ? "bg-gray-300" : ""
                       }`}
                       title={`${label} (${reactionCounts[type as keyof typeof reactionCounts]})`}
                     >
@@ -236,14 +236,14 @@ export const ReviewCard = memo(function ReviewCard({
 
             <Link
               href={`/review/${id}`}
-              className="hover:text-white transition-colors no-underline flex items-center gap-1"
+              className="hover:text-black transition-colors no-underline flex items-center gap-1"
             >
               <span>💬</span>
               <span>{replyCount || 0}</span>
             </Link>
             <Link
               href={`/review/${id}`}
-              className="hover:text-white transition-colors no-underline ml-auto"
+              className="hover:text-black transition-colors no-underline ml-auto"
             >
               View →
             </Link>

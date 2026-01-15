@@ -30,8 +30,8 @@ export function ListContent({ items, isRanked }: ListContentProps) {
 
   if (items.length === 0) {
     return (
-      <div className="border border-[#222] p-8 text-center">
-        <p className="text-[#888]">This list is empty.</p>
+      <div className="border border-gray-200 p-8 text-center">
+        <p className="text-gray-500">This list is empty.</p>
       </div>
     )
   }
@@ -47,7 +47,7 @@ export function ListContent({ items, isRanked }: ListContentProps) {
           {items.map((item, index) => (
             <div
               key={item.id}
-              className="flex items-center gap-4 border border-[#222] p-4 hover:border-[#444] transition-colors"
+              className="flex items-center gap-4 border border-gray-200 p-4 hover:border-gray-300 transition-colors"
             >
               {isRanked && (
                 <div className="w-8 text-2xl font-bold text-[#444]">
@@ -56,7 +56,7 @@ export function ListContent({ items, isRanked }: ListContentProps) {
               )}
 
               <Link href={`/album/${item.album.spotifyId}`} className="shrink-0">
-                <div className="w-16 h-16 bg-[#222]">
+                <div className="w-16 h-16 bg-gray-200">
                   {item.album.coverArtUrlMedium || item.album.coverArtUrl ? (
                     <img
                       src={item.album.coverArtUrlMedium || item.album.coverArtUrl || ""}
@@ -70,11 +70,11 @@ export function ListContent({ items, isRanked }: ListContentProps) {
               <div className="flex-1 min-w-0">
                 <Link
                   href={`/album/${item.album.spotifyId}`}
-                  className="font-bold hover:text-[#888] block truncate transition-colors"
+                  className="font-bold hover:text-gray-500 block truncate transition-colors"
                 >
                   {item.album.title}
                 </Link>
-                <p className="text-[#888] text-sm truncate">{item.album.artistName}</p>
+                <p className="text-gray-500 text-sm truncate">{item.album.artistName}</p>
               </div>
 
               {item.album.averageRating !== null && (
@@ -82,14 +82,14 @@ export function ListContent({ items, isRanked }: ListContentProps) {
                   <div className="text-xl font-bold">
                     {item.album.averageRating.toFixed(1)}
                   </div>
-                  <div className="text-xs text-[#888]">
+                  <div className="text-xs text-gray-500">
                     {item.album.totalReviews} reviews
                   </div>
                 </div>
               )}
 
               {item.notes && (
-                <div className="text-sm text-[#888] italic max-w-xs truncate">
+                <div className="text-sm text-gray-500 italic max-w-xs truncate">
                   &ldquo;{item.notes}&rdquo;
                 </div>
               )}

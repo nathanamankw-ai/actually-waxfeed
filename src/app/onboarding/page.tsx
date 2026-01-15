@@ -119,7 +119,7 @@ export default function OnboardingPage() {
   if (status === "loading") {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
-        <p className="text-[#888]">Loading...</p>
+        <p className="text-gray-500">Loading...</p>
       </div>
     )
   }
@@ -129,22 +129,22 @@ export default function OnboardingPage() {
       <div className="max-w-md w-full">
         {/* Progress indicator */}
         <div className="flex gap-2 mb-8">
-          <div className={`h-1 flex-1 ${step >= 1 ? "bg-white" : "bg-[#333]"}`} />
-          <div className={`h-1 flex-1 ${step >= 2 ? "bg-white" : "bg-[#333]"}`} />
+          <div className={`h-1 flex-1 ${step >= 1 ? "bg-white" : "bg-gray-300"}`} />
+          <div className={`h-1 flex-1 ${step >= 2 ? "bg-white" : "bg-gray-300"}`} />
         </div>
 
         {step === 1 && (
           <>
             <h1 className="text-4xl font-bold tracking-tighter mb-4">Welcome to Waxfeed</h1>
-            <p className="text-[#888] mb-8">
+            <p className="text-gray-500 mb-8">
               First, choose your username. This is how you&apos;ll be known on Waxfeed.
             </p>
 
             <form onSubmit={handleUsernameSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm text-[#888] mb-2">Username</label>
+                <label className="block text-sm text-gray-500 mb-2">Username</label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#666]">@</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">@</span>
                   <input
                     type="text"
                     value={username}
@@ -164,12 +164,12 @@ export default function OnboardingPage() {
                   />
                 </div>
                 {checking && (
-                  <p className="text-xs text-[#888] mt-1">Checking availability...</p>
+                  <p className="text-xs text-gray-500 mt-1">Checking availability...</p>
                 )}
                 {error && (
                   <p className="text-xs text-red-500 mt-1">{error}</p>
                 )}
-                <p className="text-xs text-[#666] mt-2">
+                <p className="text-xs text-gray-400 mt-2">
                   3-30 characters, letters, numbers, and underscores only
                 </p>
               </div>
@@ -188,7 +188,7 @@ export default function OnboardingPage() {
         {step === 2 && (
           <>
             <h1 className="text-4xl font-bold tracking-tighter mb-4">Add a Profile Picture</h1>
-            <p className="text-[#888] mb-8">
+            <p className="text-gray-500 mb-8">
               Help your friends recognize you. You can always change this later.
             </p>
 
@@ -201,7 +201,7 @@ export default function OnboardingPage() {
                   <img
                     src={image}
                     alt=""
-                    className="w-full h-full object-cover border border-[#333]"
+                    className="w-full h-full object-cover border border-gray-300"
                   />
                 ) : (
                   <DefaultAvatar size="lg" className="w-full h-full" />
@@ -224,7 +224,7 @@ export default function OnboardingPage() {
                 </div>
                 {uploading && (
                   <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
-                    <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <div className="w-8 h-8 border-2 border-white border-t-transparent  animate-spin" />
                   </div>
                 )}
               </div>
@@ -235,7 +235,7 @@ export default function OnboardingPage() {
                 onChange={handleImageUpload}
                 className="hidden"
               />
-              <p className="text-sm text-[#888]">
+              <p className="text-sm text-gray-500">
                 Click to upload • Max 5MB
               </p>
               {error && (
@@ -246,7 +246,7 @@ export default function OnboardingPage() {
             <div className="flex gap-3">
               <button
                 onClick={handleComplete}
-                className="flex-1 border border-[#333] py-4 px-6 font-bold text-lg hover:bg-[#111] transition-colors"
+                className="flex-1 border border-gray-300 py-4 px-6 font-bold text-lg hover:bg-gray-50 transition-colors"
               >
                 Skip for now
               </button>

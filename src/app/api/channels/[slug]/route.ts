@@ -14,13 +14,6 @@ export async function GET(
     const channel = await prisma.channel.findUnique({
       where: { slug },
       include: {
-        createdBy: {
-          select: {
-            id: true,
-            username: true,
-            image: true,
-          },
-        },
         members: {
           take: 10,
           orderBy: { joinedAt: 'asc' },

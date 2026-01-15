@@ -108,7 +108,7 @@ export function AttendButton({
         <button
           onClick={handleLeave}
           disabled={isLoading}
-          className="text-[#888] hover:text-white text-sm underline"
+          className="text-gray-500 hover:text-black text-sm underline"
         >
           Cancel
         </button>
@@ -133,7 +133,7 @@ export function AttendButton({
         <button
           onClick={() => handleAttend("interested")}
           disabled={isLoading}
-          className="border border-[#444] text-[#ccc] px-6 py-3 hover:text-white hover:border-white disabled:opacity-50"
+          className="border border-gray-300 text-gray-600 px-6 py-3 hover:text-black hover:border-white disabled:opacity-50"
         >
           Interested
         </button>

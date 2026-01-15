@@ -110,7 +110,7 @@ export default async function TrendingPage() {
         <div className="lg:col-span-3">
           <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">Billboard 200</h2>
           {trendingAlbums.length === 0 ? (
-            <p className="text-[#888]">No trending albums yet.</p>
+            <p className="text-gray-500">No trending albums yet.</p>
           ) : (
             <BillboardList albums={trendingAlbums} />
           )}
@@ -120,7 +120,7 @@ export default async function TrendingPage() {
         <div className="lg:col-span-2">
           <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">Hot Reviews</h2>
           {trendingReviews.length === 0 ? (
-            <p className="text-[#888]">No recent reviews.</p>
+            <p className="text-gray-500">No recent reviews.</p>
           ) : (
             <div className="space-y-4">
               {trendingReviews.map((review) => (
@@ -147,7 +147,7 @@ export default async function TrendingPage() {
       <section>
         <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">Recent Releases</h2>
         {recentReleases.length === 0 ? (
-          <p className="text-[#888]">No recent releases.</p>
+          <p className="text-gray-500">No recent releases.</p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
             {recentReleases.map((album) => (

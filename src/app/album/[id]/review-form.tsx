@@ -82,7 +82,7 @@ export function AlbumReviewForm({ albumId, existingReview }: Props) {
       <RatingSlider value={rating} onChange={setRating} disabled={loading} />
 
       <div>
-        <label className="block text-sm text-[#888] mb-2">
+        <label className="block text-sm text-gray-500 mb-2">
           Review (optional)
         </label>
         <textarea
@@ -94,7 +94,7 @@ export function AlbumReviewForm({ albumId, existingReview }: Props) {
           disabled={loading}
           className="w-full resize-none"
         />
-        <p className="text-xs text-[#666] mt-1">{text.length}/5000</p>
+        <p className="text-xs text-gray-400 mt-1">{text.length}/5000</p>
       </div>
 
       {error && <p className="text-red-500 text-sm">{error}</p>}

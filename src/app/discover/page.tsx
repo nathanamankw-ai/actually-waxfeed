@@ -233,7 +233,7 @@ export default async function DiscoverPage() {
       {recommendations.forYou.length > 0 && (
         <section className="mb-10">
           <h2 className="text-lg font-bold mb-4">For You</h2>
-          <p className="text-xs text-[#888] mb-4">Based on your listening history</p>
+          <p className="text-xs text-gray-500 mb-4">Based on your listening history</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
             {recommendations.forYou.map((album) => (
               <AlbumCard
@@ -323,7 +323,7 @@ export default async function DiscoverPage() {
         <section className="mb-10">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold">Trending</h2>
-            <Link href="/trending" className="text-sm text-[#888] hover:text-white no-underline">
+            <Link href="/trending" className="text-sm text-gray-500 hover:text-black no-underline">
               View All →
             </Link>
           </div>
@@ -346,8 +346,8 @@ export default async function DiscoverPage() {
 
       {/* No reviews prompt */}
       {session && recommendations.forYou.length === 0 && (
-        <div className="text-center py-12 border border-[#222]">
-          <p className="text-[#888] mb-2">Start reviewing albums to get personalized recommendations!</p>
+        <div className="text-center py-12 border border-gray-200">
+          <p className="text-gray-500 mb-2">Start reviewing albums to get personalized recommendations!</p>
           <Link
             href="/search"
             className="inline-block bg-white text-black px-4 py-2 font-bold no-underline hover:bg-gray-100"
@@ -359,8 +359,8 @@ export default async function DiscoverPage() {
 
       {/* Not logged in prompt */}
       {!session && (
-        <div className="text-center py-12 border border-[#222]">
-          <p className="text-[#888] mb-2">Sign in to get personalized recommendations</p>
+        <div className="text-center py-12 border border-gray-200">
+          <p className="text-gray-500 mb-2">Sign in to get personalized recommendations</p>
           <Link
             href="/login"
             className="inline-block bg-white text-black px-4 py-2 font-bold no-underline hover:bg-gray-100"

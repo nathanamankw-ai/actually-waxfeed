@@ -2,11 +2,14 @@ import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { ReviewCard } from "@/components/review-card"
 import { AlbumReviewForm } from "./review-form"
+import { AlbumDescription } from "./album-description"
 import { auth } from "@/lib/auth"
 import Link from "next/link"
 import { format } from "date-fns"
 import { StreamingLinks } from "@/components/streaming-links"
 import { TrackPlayer } from "@/components/track-player"
+
+// Note: Description fields are fetched via API, not from initial album query
 
 interface Props {
   params: Promise<{ id: string }>
@@ -44,6 +47,7 @@ async function getAlbum(spotifyId: string) {
     }
   })
 }
+
 
 async function getUserReview(userId: string, albumId: string) {
   return prisma.review.findUnique({
@@ -83,7 +87,7 @@ export default async function AlbumPage({ params }: Props) {
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
             {/* Album Cover */}
             <div className="w-full sm:w-64 md:w-80 lg:w-96 flex-shrink-0">
-              <div className="aspect-square w-full max-w-[384px] mx-auto sm:max-w-none sm:mx-0 bg-[#181818]">
+              <div className="aspect-square w-full max-w-[384px] mx-auto sm:max-w-none sm:mx-0 bg-gray-100">
                 {album.coverArtUrlLarge || album.coverArtUrl ? (
                   <img
                     src={album.coverArtUrlLarge || album.coverArtUrl || ""}
@@ -91,7 +95,7 @@ export default async function AlbumPage({ params }: Props) {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-[#666]">
+                  <div className="w-full h-full flex items-center justify-center text-gray-400">
                     No Cover
                   </div>
                 )}
@@ -100,15 +104,15 @@ export default async function AlbumPage({ params }: Props) {
 
             {/* Album Info */}
             <div className="flex-1 min-w-0 text-center sm:text-left">
-              <p className="text-xs sm:text-sm text-[#888] uppercase tracking-wider mb-1">
+              <p className="text-xs sm:text-sm text-gray-500 uppercase tracking-wider mb-1">
                 {album.albumType}
               </p>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight mb-1 line-clamp-2">
                 {album.title}
               </h1>
-              <p className="text-base sm:text-lg text-[#888] mb-3">{album.artistName}</p>
+              <p className="text-base sm:text-lg text-gray-500 mb-3">{album.artistName}</p>
 
-              <div className="flex items-center justify-center sm:justify-start gap-2 text-xs sm:text-sm text-[#666] mb-3 flex-wrap">
+              <div className="flex items-center justify-center sm:justify-start gap-2 text-xs sm:text-sm text-gray-400 mb-3 flex-wrap">
                 <span>{format(new Date(album.releaseDate), "MMM d, yyyy")}</span>
                 <span className="text-[#444]">•</span>
                 <span>{album.totalTracks} tracks</span>
@@ -122,7 +126,7 @@ export default async function AlbumPage({ params }: Props) {
                   {album.genres.slice(0, 3).map((genre) => (
                     <span
                       key={genre}
-                      className="px-2 py-0.5 border border-[#333] text-xs text-[#888]"
+                      className="px-2 py-0.5 border border-gray-300 text-xs text-gray-500"
                     >
                       {genre}
                     </span>
@@ -136,11 +140,11 @@ export default async function AlbumPage({ params }: Props) {
                   <span className="text-3xl sm:text-4xl font-bold">
                     {album.averageRating !== null ? album.averageRating.toFixed(1) : "—"}
                   </span>
-                  <span className="text-sm text-[#666]">
+                  <span className="text-sm text-gray-400">
                     / 10
                   </span>
                 </div>
-                <span className="text-sm text-[#666]">
+                <span className="text-sm text-gray-400">
                   ({album._count.reviews} {album._count.reviews === 1 ? "review" : "reviews"})
                 </span>
               </div>
@@ -151,7 +155,7 @@ export default async function AlbumPage({ params }: Props) {
                   {Object.entries(album.ratingDistribution as Record<string, number>).map(([rating, count]) => (
                     <div
                       key={rating}
-                      className="w-2 bg-[#333] hover:bg-white transition-colors"
+                      className="w-2 bg-gray-300 hover:bg-white transition-colors"
                       style={{
                         height: `${Math.max(4, (count / Math.max(...Object.values(album.ratingDistribution as Record<string, number>))) * 32)}px`
                       }}
@@ -185,8 +189,13 @@ export default async function AlbumPage({ params }: Props) {
         )}
       </div>
 
+      {/* Album Description - Full width section */}
+      <section className="mb-6 md:mb-8">
+        <AlbumDescription albumId={album.id} />
+      </section>
+
       {/* Write a Review */}
-      <section className="mb-6 md:mb-8 border border-[#222] p-4 sm:p-6">
+      <section className="mb-6 md:mb-8 border border-gray-200 p-4 sm:p-6">
         <h2 className="text-lg sm:text-xl font-bold mb-4">
           {userReview ? "Your Review" : "Write a Review"}
         </h2>
@@ -197,7 +206,7 @@ export default async function AlbumPage({ params }: Props) {
           />
         ) : (
           <div className="text-center py-6 sm:py-8">
-            <p className="text-[#888] mb-4 text-sm sm:text-base">Sign in to write a review</p>
+            <p className="text-gray-500 mb-4 text-sm sm:text-base">Sign in to write a review</p>
             <Link
               href="/login"
               className="inline-block bg-white px-6 py-3 font-bold no-underline hover:bg-gray-100 transition-colors text-sm sm:text-base"
@@ -213,7 +222,7 @@ export default async function AlbumPage({ params }: Props) {
       <section>
         <div className="flex items-center justify-between mb-4 gap-4">
           <h2 className="text-lg sm:text-xl font-bold">Reviews</h2>
-          <select className="bg-[#111] border border-[#333] px-3 py-2 text-sm min-w-[140px]">
+          <select className="bg-gray-50 border border-gray-300 px-3 py-2 text-sm min-w-[140px]">
             <option value="popular">Most Popular</option>
             <option value="recent">Most Recent</option>
             <option value="highest">Highest Rated</option>
@@ -222,8 +231,8 @@ export default async function AlbumPage({ params }: Props) {
         </div>
 
         {album.reviews.length === 0 ? (
-          <div className="border border-[#222] p-6 sm:p-8 text-center">
-            <p className="text-[#888] text-sm sm:text-base">No reviews yet. Be the first!</p>
+          <div className="border border-gray-200 p-6 sm:p-8 text-center">
+            <p className="text-gray-500 text-sm sm:text-base">No reviews yet. Be the first!</p>
           </div>
         ) : (
           <div className="space-y-3 sm:space-y-4">

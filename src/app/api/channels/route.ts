@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'A channel with this name already exists' }, { status: 409 })
     }
 
-    // Create channel and add creator as owner
+    // Create channel and add creator as admin
     const channel = await prisma.channel.create({
       data: {
         name,
@@ -103,21 +103,11 @@ export async function POST(request: NextRequest) {
         description,
         type,
         category,
-        createdById: session.user.id,
         memberCount: 1,
         members: {
           create: {
             userId: session.user.id,
-            role: 'owner',
-          },
-        },
-      },
-      include: {
-        createdBy: {
-          select: {
-            id: true,
-            username: true,
-            image: true,
+            role: 'admin',
           },
         },
       },

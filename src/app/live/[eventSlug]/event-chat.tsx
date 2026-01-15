@@ -102,8 +102,8 @@ export function EventChat({ channelSlug, currentUserId, isLive }: EventChatProps
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {messages.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-[#888]">No messages yet</p>
-            <p className="text-sm text-[#666]">Be the first to say something!</p>
+            <p className="text-gray-500">No messages yet</p>
+            <p className="text-sm text-gray-400">Be the first to say something!</p>
           </div>
         ) : (
           messages.map((message) => {
@@ -114,9 +114,9 @@ export function EventChat({ channelSlug, currentUserId, isLive }: EventChatProps
                 {/* Avatar */}
                 <Link href={`/u/${message.user.username}`} className="flex-shrink-0">
                   {message.user.image ? (
-                    <img src={message.user.image} alt="" className="w-6 h-6 rounded-full" />
+                    <img src={message.user.image} alt="" className="w-6 h-6 " />
                   ) : (
-                    <div className="w-6 h-6 rounded-full bg-[#333]" />
+                    <div className="w-6 h-6  bg-gray-300" />
                   )}
                 </Link>
 
@@ -134,11 +134,11 @@ export function EventChat({ channelSlug, currentUserId, isLive }: EventChatProps
                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                       </svg>
                     )}
-                    <span className="text-xs text-[#666]">
+                    <span className="text-xs text-gray-400">
                       {formatDistanceToNow(new Date(message.createdAt), { addSuffix: true })}
                     </span>
                   </div>
-                  <p className="text-sm text-[#ededed] break-words">{message.content}</p>
+                  <p className="text-sm text-gray-900 break-words">{message.content}</p>
                 </div>
               </div>
             )
@@ -148,7 +148,7 @@ export function EventChat({ channelSlug, currentUserId, isLive }: EventChatProps
       </div>
 
       {/* Message Input */}
-      <div className="border-t border-[#222] p-3">
+      <div className="border-t border-gray-200 p-3">
         {error && <p className="text-red-500 text-xs mb-2">{error}</p>}
         
         {currentUserId ? (
@@ -160,7 +160,7 @@ export function EventChat({ channelSlug, currentUserId, isLive }: EventChatProps
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder={isLive ? "Chat about the event..." : "Send a message..."}
               disabled={isLoading}
-              className="flex-1 bg-[#0a0a0a] border border-[#333] rounded px-3 py-2 text-sm focus:outline-none focus:border-[#555] disabled:opacity-50"
+              className="flex-1 bg-gray-100 border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-[#555] disabled:opacity-50"
             />
             <button
               type="submit"
@@ -174,7 +174,7 @@ export function EventChat({ channelSlug, currentUserId, isLive }: EventChatProps
           <div className="text-center py-2">
             <Link
               href="/login"
-              className="text-sm text-[#888] hover:text-white no-underline"
+              className="text-sm text-gray-500 hover:text-black no-underline"
             >
               Sign in to chat
             </Link>

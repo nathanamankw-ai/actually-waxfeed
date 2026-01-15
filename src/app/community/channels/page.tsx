@@ -5,12 +5,12 @@ import Link from "next/link"
 export const dynamic = "force-dynamic"
 
 const CATEGORIES = [
-  { value: "all", label: "All Channels", icon: "📢" },
-  { value: "genre", label: "Genre", icon: "🎵" },
-  { value: "artist", label: "Artist", icon: "🎤" },
-  { value: "event", label: "Events", icon: "🎪" },
-  { value: "show", label: "Shows", icon: "📻" },
-  { value: "release", label: "Releases", icon: "💿" },
+  { value: "all", label: "All Channels", icon: "#" },
+  { value: "genre", label: "Genre", icon: "#" },
+  { value: "artist", label: "Artist", icon: "#" },
+  { value: "event", label: "Events", icon: "#" },
+  { value: "show", label: "Shows", icon: "#" },
+  { value: "release", label: "Releases", icon: "#" },
 ]
 
 async function getChannels(category: string | null) {
@@ -76,11 +76,11 @@ export default async function ChannelsPage({
     <div className="max-w-7xl mx-auto px-4 py-6 lg:py-8">
       {/* Header */}
       <div className="mb-8">
-        <Link href="/community" className="text-sm text-[#888] hover:text-white no-underline">
+        <Link href="/community" className="text-sm text-gray-500 hover:text-black no-underline">
           ← Back to Community
         </Link>
         <h1 className="text-2xl lg:text-3xl font-bold mt-4">Browse Channels</h1>
-        <p className="text-[#888] text-sm mt-1">Find communities that match your interests</p>
+        <p className="text-gray-500 text-sm mt-1">Find communities that match your interests</p>
       </div>
 
       {/* Category Filter */}
@@ -89,10 +89,10 @@ export default async function ChannelsPage({
           <Link
             key={cat.value}
             href={cat.value === "all" ? "/community/channels" : `/community/channels?category=${cat.value}`}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm no-underline transition-colors ${
+            className={`flex items-center gap-2 px-4 py-2  text-sm no-underline transition-colors ${
               (category === cat.value || (!category && cat.value === "all"))
                 ? "bg-white text-black"
-                : "bg-[#111] border border-[#333] hover:border-[#555]"
+                : "bg-gray-50 border border-gray-300 hover:border-[#555]"
             }`}
           >
             <span>{cat.icon}</span>
@@ -103,9 +103,9 @@ export default async function ChannelsPage({
 
       {/* Channels Grid */}
       {channels.length === 0 ? (
-        <div className="text-center py-12 border border-[#222] rounded-lg">
-          <p className="text-[#888] mb-2">No channels found</p>
-          <p className="text-sm text-[#666]">Try selecting a different category</p>
+        <div className="text-center py-12 border border-gray-200 ">
+          <p className="text-gray-500 mb-2">No channels found</p>
+          <p className="text-sm text-gray-400">Try selecting a different category</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -116,7 +116,7 @@ export default async function ChannelsPage({
               <Link
                 key={channel.id}
                 href={`/community/channel/${channel.slug}`}
-                className="flex flex-col p-4 bg-[#111] border border-[#222] hover:border-[#444] transition-colors no-underline rounded-lg"
+                className="flex flex-col p-4 bg-gray-50 border border-gray-200 hover:border-gray-300 transition-colors no-underline "
               >
                 <div className="flex items-start gap-3 mb-3">
                   <span className="text-3xl">{getCategoryIcon(channel.category)}</span>
@@ -129,10 +129,10 @@ export default async function ChannelsPage({
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-[#888] line-clamp-2 mt-1">{channel.description}</p>
+                    <p className="text-sm text-gray-500 line-clamp-2 mt-1">{channel.description}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 text-xs text-[#666] mt-auto pt-3 border-t border-[#222]">
+                <div className="flex items-center gap-4 text-xs text-gray-400 mt-auto pt-3 border-t border-gray-200">
                   <span>{channel.memberCount.toLocaleString()} members</span>
                   <span>{channel.messageCount.toLocaleString()} messages</span>
                 </div>
@@ -144,9 +144,9 @@ export default async function ChannelsPage({
 
       {/* Create Channel CTA */}
       {session && (
-        <div className="mt-8 p-6 bg-[#111] border border-[#222] rounded-lg text-center">
+        <div className="mt-8 p-6 bg-gray-50 border border-gray-200  text-center">
           <h3 className="font-bold mb-2">Can&apos;t find what you&apos;re looking for?</h3>
-          <p className="text-sm text-[#888] mb-4">Create your own channel and build a community</p>
+          <p className="text-sm text-gray-500 mb-4">Create your own channel and build a community</p>
           <Link
             href="/community/channels/new"
             className="inline-block bg-white text-black px-6 py-2 font-bold text-sm no-underline hover:bg-gray-100"

@@ -63,13 +63,13 @@ export function SetlistManager({
   }
 
   return (
-    <div className="bg-[#111] border border-[#222] rounded-lg p-4">
+    <div className="bg-gray-50 border border-gray-200  p-4">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-bold">🎵 Setlist ({setlist.length} tracks)</h3>
+        <h3 className="font-bold"> Setlist ({setlist.length} tracks)</h3>
         {isHost && isLive && (
           <button
             onClick={() => setIsAdding(!isAdding)}
-            className="text-sm text-cyan-400 hover:text-cyan-300"
+            className="text-sm text-black hover:text-gray-600"
           >
             {isAdding ? "Cancel" : "+ Add Track"}
           </button>
@@ -78,25 +78,25 @@ export function SetlistManager({
 
       {/* Add Track Form */}
       {isAdding && (
-        <form onSubmit={handleAddTrack} className="mb-4 p-3 bg-[#0a0a0a] rounded-lg">
+        <form onSubmit={handleAddTrack} className="mb-4 p-3 bg-gray-100 ">
           <input
             type="text"
             value={trackName}
             onChange={(e) => setTrackName(e.target.value)}
             placeholder="Track name"
-            className="w-full bg-[#111] border border-[#333] rounded px-3 py-2 text-sm mb-2 focus:outline-none focus:border-[#555]"
+            className="w-full bg-gray-50 border border-gray-300 px-3 py-2 text-sm mb-2 focus:outline-none focus:border-[#555]"
           />
           <input
             type="text"
             value={artistName}
             onChange={(e) => setArtistName(e.target.value)}
             placeholder="Artist name (optional)"
-            className="w-full bg-[#111] border border-[#333] rounded px-3 py-2 text-sm mb-2 focus:outline-none focus:border-[#555]"
+            className="w-full bg-gray-50 border border-gray-300 px-3 py-2 text-sm mb-2 focus:outline-none focus:border-[#555]"
           />
           <button
             type="submit"
             disabled={isSubmitting || !trackName.trim()}
-            className="w-full bg-cyan-500 text-black py-2 font-bold text-sm rounded hover:bg-cyan-400 disabled:opacity-50"
+            className="w-full bg-black text-white py-2 font-bold text-sm hover:bg-gray-800 disabled:opacity-50"
           >
             {isSubmitting ? "Adding..." : "Add to Setlist"}
           </button>
@@ -105,7 +105,7 @@ export function SetlistManager({
 
       {/* Setlist */}
       {setlist.length === 0 ? (
-        <p className="text-sm text-[#888] text-center py-4">
+        <p className="text-sm text-gray-500 text-center py-4">
           {isLive ? "No tracks played yet" : "Setlist not available"}
         </p>
       ) : (
@@ -113,18 +113,18 @@ export function SetlistManager({
           {setlist.map((track, index) => (
             <div
               key={track.id}
-              className="flex items-center gap-3 p-2 bg-[#0a0a0a] rounded"
+              className="flex items-center gap-3 p-2 bg-gray-100 rounded"
             >
-              <span className="text-[#666] w-6 text-right text-sm">{index + 1}</span>
+              <span className="text-gray-400 w-6 text-right text-sm">{index + 1}</span>
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm truncate">
                   {track.trackName || "Unknown Track"}
                 </p>
                 {track.artistName && (
-                  <p className="text-xs text-[#888] truncate">{track.artistName}</p>
+                  <p className="text-xs text-gray-500 truncate">{track.artistName}</p>
                 )}
               </div>
-              <span className="text-xs text-[#666]">
+              <span className="text-xs text-gray-400">
                 {format(new Date(track.playedAt), "h:mm a")}
               </span>
             </div>
@@ -134,17 +134,17 @@ export function SetlistManager({
 
       {/* Now Playing Indicator */}
       {isLive && setlist.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-[#222]">
+        <div className="mt-4 pt-4 border-t border-gray-200">
           <div className="flex items-center gap-2">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full  bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex  h-2 w-2 bg-green-500"></span>
             </span>
             <span className="text-sm text-green-500">Now Playing</span>
           </div>
           <p className="font-bold mt-1">{setlist[setlist.length - 1]?.trackName}</p>
           {setlist[setlist.length - 1]?.artistName && (
-            <p className="text-sm text-[#888]">{setlist[setlist.length - 1]?.artistName}</p>
+            <p className="text-sm text-gray-500">{setlist[setlist.length - 1]?.artistName}</p>
           )}
         </div>
       )}

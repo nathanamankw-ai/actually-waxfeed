@@ -33,7 +33,7 @@ export const AlbumCard = memo(function AlbumCard({
   return (
     <Link href={`/album/${spotifyId}`} className="group block">
       <div className={`${sizeClasses[size]}`}>
-        <div className="aspect-square bg-[#181818] relative overflow-hidden group-hover:opacity-80 transition-opacity">
+        <div className="aspect-square bg-gray-100 relative overflow-hidden group-hover:opacity-80 transition-opacity">
           {coverArtUrl ? (
             <img
               src={coverArtUrl}
@@ -51,7 +51,7 @@ export const AlbumCard = memo(function AlbumCard({
         </div>
         <div className="mt-1.5">
           <p className="text-xs font-medium truncate leading-tight">{title}</p>
-          <p className="text-[#666] text-xs truncate leading-tight">{artistName}</p>
+          <p className="text-gray-400 text-xs truncate leading-tight">{artistName}</p>
         </div>
       </div>
     </Link>

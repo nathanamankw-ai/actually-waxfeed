@@ -116,10 +116,10 @@ export function ProfileActions({
 
   if (isFriend) {
     buttonText = "Friends"
-    buttonStyle = "border border-[#333] hover:bg-[#111] hover:border-red-500 hover:text-red-500"
+    buttonStyle = "border border-gray-300 hover:bg-gray-50 hover:border-red-500 hover:text-red-500"
   } else if (hasPendingRequest && pendingRequestSentByMe) {
     buttonText = "Request Sent"
-    buttonStyle = "border border-[#333] text-[#888] hover:bg-[#111] hover:border-red-500 hover:text-red-500"
+    buttonStyle = "border border-gray-300 text-gray-500 hover:bg-gray-50 hover:border-red-500 hover:text-red-500"
   } else if (hasPendingRequest && !pendingRequestSentByMe) {
     buttonText = "Accept Request"
     buttonStyle = "bg-white text-black hover:bg-gray-100"
@@ -139,7 +139,7 @@ export function ProfileActions({
         <button
           onClick={handleMessage}
           disabled={dmLoading}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-bold border border-[#333] hover:bg-[#111] transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-bold border border-gray-300 hover:bg-gray-50 transition-colors"
           title="Send Message"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

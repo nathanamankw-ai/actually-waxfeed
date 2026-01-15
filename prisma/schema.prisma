@@ -15,88 +15,75 @@ datasource db {
 // ============================================
 
 model User {
-  id                    String    @id @default(cuid())
-  email                 String    @unique
-  password              String?   // Hashed password for credentials auth
-  emailVerified         DateTime?
-  username              String?   @unique
-  name                  String?
-  image                 String?
-  bio                   String?   @db.VarChar(150)
-  socialLinks           Json?     // { instagram, twitter, spotify, etc. }
-  waxScore              Int       @default(0)
-  premiumWaxScore       Int       @default(0)
-  isPremium             Boolean   @default(false)
-  premiumExpiresAt      DateTime?
-  isVerified            Boolean   @default(false)
-  verifiedAt            DateTime?
-  usernameChangesUsed   Int       @default(0)
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  id                  String    @id @default(cuid())
+  email               String    @unique
+  password            String? // Hashed password for credentials auth
+  emailVerified       DateTime?
+  username            String?   @unique
+  name                String?
+  image               String?
+  bio                 String?   @db.VarChar(150)
+  socialLinks         Json? // { instagram, twitter, spotify, etc. }
+  waxScore            Int       @default(0)
+  premiumWaxScore     Int       @default(0)
+  isPremium           Boolean   @default(false)
+  premiumExpiresAt    DateTime?
+  isVerified          Boolean   @default(false)
+  verifiedAt          DateTime?
+  usernameChangesUsed Int       @default(0)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 
-  // Account Type & Role System
-  accountType           String    @default("user") // user, artist, org, editor, dj, staff
-  accountTypeVerifiedAt DateTime? // When account type was verified by staff
-  badgeColor            String?   // Custom badge color (hex) for premium users
-  displayBadge          Boolean   @default(true) // Show/hide role badge
+  // Presence tracking
+  lastSeenAt DateTime @default(now())
+  isOnline   Boolean  @default(false)
 
   // Streak tracking
-  currentStreak         Int       @default(0)
-  longestStreak         Int       @default(0)
-  lastReviewDate        DateTime?
+  currentStreak  Int       @default(0)
+  longestStreak  Int       @default(0)
+  lastReviewDate DateTime?
 
   // Auth relations (NextAuth)
-  accounts              Account[]
-  sessions              Session[]
+  accounts Account[]
+  sessions Session[]
 
   // Content relations
-  reviews               Review[]
-  replies               Reply[]
-  lists                 List[]
-  reviewDrafts          ReviewDraft[]
-
-  // Verification & Role requests
-  verificationRequests  VerificationRequest[]
+  reviews      Review[]
+  replies      Reply[]
+  lists        List[]
+  reviewDrafts ReviewDraft[]
 
   // Social relations (friends only)
-  friendRequestsSent    FriendRequest[] @relation("sender")
+  friendRequestsSent     FriendRequest[] @relation("sender")
   friendRequestsReceived FriendRequest[] @relation("receiver")
-  friendshipsAsUser1    Friendship[]   @relation("user1")
-  friendshipsAsUser2    Friendship[]   @relation("user2")
+  friendshipsAsUser1     Friendship[]    @relation("user1")
+  friendshipsAsUser2     Friendship[]    @relation("user2")
 
   // Engagement relations
-  reviewLikes           ReviewLike[]
-  reviewReactions       ReviewReaction[]
-  replyLikes            ReplyLike[]
-  listLikes             ListLike[]
-  listComments          ListComment[]
-  waxGiven              WaxAward[]     @relation("giver")
+  reviewLikes     ReviewLike[]
+  reviewReactions ReviewReaction[]
+  replyLikes      ReplyLike[]
+  listLikes       ListLike[]
+  listComments    ListComment[]
+
+  // Messaging relations
+  dmParticipants    DMParticipant[]
+  channelMemberships ChannelMember[]
+  channelMessages   ChannelMessage[]
+  waxGiven          WaxAward[]      @relation("giver")
 
   // Moderation relations
-  blocksInitiated       Block[]        @relation("blocker")
-  blocksReceived        Block[]        @relation("blocked")
-  reportsSubmitted      Report[]       @relation("reporter")
-  notifications         Notification[]
+  blocksInitiated  Block[]        @relation("blocker")
+  blocksReceived   Block[]        @relation("blocked")
+  reportsSubmitted Report[]       @relation("reporter")
+  notifications    Notification[]
 
   // Notification settings
-  notificationSettings  NotificationSettings?
+  notificationSettings NotificationSettings?
 
   // Pinned content
-  pinnedReviewId        String?
-  pinnedListId          String?
-
-  // Community & Messaging relations
-  channelsCreated       Channel[]        @relation("channelCreator")
-  channelMemberships    ChannelMember[]
-  channelMessages       ChannelMessage[]
-  dmParticipations      DMParticipant[]
-  directMessages        DirectMessage[]
-  messageReactions      MessageReaction[]
-  
-  // Live Events relations
-  eventsCreated         LiveEvent[]      @relation("eventCreator")
-  eventAttendances      EventAttendee[]
-  eventRatings          EventRating[]
+  pinnedReviewId String?
+  pinnedListId   String?
 
   @@index([username])
   @@index([email])
@@ -147,45 +134,45 @@ model VerificationToken {
 // ============================================
 
 model Album {
-  id              String    @id @default(cuid())
-  spotifyId       String    @unique
-  title           String
-  artistName      String
-  artistSpotifyId String?
-  releaseDate     DateTime
-  releaseDatePrecision String @default("day") // day, month, year
-  coverArtUrl     String?
-  coverArtUrlSmall String?  // 64px
-  coverArtUrlMedium String? // 300px
-  coverArtUrlLarge String?  // 640px
-  genres          String[]  // From Spotify
-  albumType       String    @default("album") // album, single, ep, compilation
-  totalTracks     Int       @default(0)
-  spotifyUrl      String?
-  appleMusicUrl   String?
-  tidalUrl        String?
-  youtubeMusicUrl String?
+  id                   String   @id @default(cuid())
+  spotifyId            String   @unique
+  title                String
+  artistName           String
+  artistSpotifyId      String?
+  releaseDate          DateTime
+  releaseDatePrecision String   @default("day") // day, month, year
+  coverArtUrl          String?
+  coverArtUrlSmall     String? // 64px
+  coverArtUrlMedium    String? // 300px
+  coverArtUrlLarge     String? // 640px
+  genres               String[] // From Spotify
+  albumType            String   @default("album") // album, single, ep, compilation
+  totalTracks          Int      @default(0)
+  spotifyUrl           String?
+  appleMusicUrl        String?
+  tidalUrl             String?
+  youtubeMusicUrl      String?
 
   // Billboard tracking
-  billboardRank   Int?      // Current Billboard 200 position (null if not on chart)
-  billboardDate   DateTime? // Date of the chart position
+  billboardRank Int? // Current Billboard 200 position (null if not on chart)
+  billboardDate DateTime? // Date of the chart position
 
   // Cached stats
-  averageRating   Float?
-  totalReviews    Int       @default(0)
-  totalRatings    Int       @default(0)
-  ratingDistribution Json?  // { "0": 5, "1": 3, ... "10": 20 }
+  averageRating      Float?
+  totalReviews       Int    @default(0)
+  totalRatings       Int    @default(0)
+  ratingDistribution Json? // { "0": 5, "1": 3, ... "10": 20 }
 
   // Timestamps
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  lastSyncedAt    DateTime  @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  lastSyncedAt DateTime @default(now())
 
   // Relations
-  reviews         Review[]
-  listItems       ListItem[]
-  tracks          Track[]
-  userTags        AlbumTag[]
+  reviews   Review[]
+  listItems ListItem[]
+  tracks    Track[]
+  userTags  AlbumTag[]
 
   @@index([spotifyId])
   @@index([artistName])
@@ -196,32 +183,32 @@ model Album {
 }
 
 model Track {
-  id              String  @id @default(cuid())
-  spotifyId       String  @unique
-  albumId         String
-  name            String
-  trackNumber     Int
-  discNumber      Int     @default(1)
-  durationMs      Int
-  previewUrl      String? // 30-second Spotify preview
-  spotifyUrl      String?
+  id          String  @id @default(cuid())
+  spotifyId   String  @unique
+  albumId     String
+  name        String
+  trackNumber Int
+  discNumber  Int     @default(1)
+  durationMs  Int
+  previewUrl  String? // 30-second Spotify preview
+  spotifyUrl  String?
 
-  album           Album   @relation(fields: [albumId], references: [id], onDelete: Cascade)
-  lyrics          Lyrics?
+  album  Album   @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  lyrics Lyrics?
 
   @@index([albumId])
 }
 
 model Artist {
-  id              String   @id @default(cuid())
-  spotifyId       String   @unique
-  name            String
-  imageUrl        String?
-  genres          String[]
-  popularity      Int?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  lastSyncedAt    DateTime @default(now())
+  id           String   @id @default(cuid())
+  spotifyId    String   @unique
+  name         String
+  imageUrl     String?
+  genres       String[]
+  popularity   Int?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  lastSyncedAt DateTime @default(now())
 
   @@index([spotifyId])
   @@index([name])
@@ -234,7 +221,7 @@ model AlbumTag {
   tag       String   @db.VarChar(50)
   createdAt DateTime @default(now())
 
-  album     Album    @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  album Album @relation(fields: [albumId], references: [id], onDelete: Cascade)
 
   @@unique([albumId, userId, tag])
   @@index([albumId])
@@ -246,35 +233,35 @@ model AlbumTag {
 // ============================================
 
 model Review {
-  id            String    @id @default(cuid())
-  userId        String
-  albumId       String
-  rating        Float     // 0-10, supports decimals like 7.5
-  text          String?   @db.Text // 5000 char limit enforced in app
-  isEdited      Boolean   @default(false)
-  editHistory   Json?     // [{ text, rating, editedAt }]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id          String   @id @default(cuid())
+  userId      String
+  albumId     String
+  rating      Float // 0-10, supports decimals like 7.5
+  text        String?  @db.Text // 5000 char limit enforced in app
+  isEdited    Boolean  @default(false)
+  editHistory Json? // [{ text, rating, editedAt }]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   // Stats
-  likeCount     Int       @default(0)
-  waxCount      Int       @default(0)
-  premiumWaxCount Int     @default(0)
-  replyCount    Int       @default(0)
+  likeCount       Int @default(0)
+  waxCount        Int @default(0)
+  premiumWaxCount Int @default(0)
+  replyCount      Int @default(0)
 
   // Reaction counts
-  fireCount         Int   @default(0)
-  insightfulCount   Int   @default(0)
-  funnyCount        Int   @default(0)
-  controversialCount Int  @default(0)
+  fireCount          Int @default(0)
+  insightfulCount    Int @default(0)
+  funnyCount         Int @default(0)
+  controversialCount Int @default(0)
 
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  album         Album     @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  album Album @relation(fields: [albumId], references: [id], onDelete: Cascade)
 
-  replies       Reply[]
-  likes         ReviewLike[]
-  reactions     ReviewReaction[]
-  waxAwards     WaxAward[]
+  replies   Reply[]
+  likes     ReviewLike[]
+  reactions ReviewReaction[]
+  waxAwards WaxAward[]
 
   @@unique([userId, albumId])
   @@index([userId])
@@ -293,27 +280,27 @@ model ReviewDraft {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, albumId])
   @@index([userId])
 }
 
 model Reply {
-  id            String   @id @default(cuid())
-  reviewId      String
-  userId        String
-  text          String   @db.Text // 2000 char limit enforced in app
-  isEdited      Boolean  @default(false)
-  editHistory   Json?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id          String   @id @default(cuid())
+  reviewId    String
+  userId      String
+  text        String   @db.Text // 2000 char limit enforced in app
+  isEdited    Boolean  @default(false)
+  editHistory Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  likeCount     Int      @default(0)
+  likeCount Int @default(0)
 
-  review        Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  likes         ReplyLike[]
+  review Review      @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  user   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likes  ReplyLike[]
 
   @@index([reviewId])
   @@index([userId])
@@ -327,8 +314,8 @@ model ReviewLike {
   userId    String
   createdAt DateTime @default(now())
 
-  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([reviewId, userId])
   @@index([reviewId])
@@ -339,11 +326,11 @@ model ReviewReaction {
   id        String   @id @default(cuid())
   reviewId  String
   userId    String
-  type      String   // "fire", "insightful", "funny", "controversial"
+  type      String // "fire", "insightful", "funny", "controversial"
   createdAt DateTime @default(now())
 
-  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([reviewId, userId, type])
   @@index([reviewId])
@@ -357,8 +344,8 @@ model ReplyLike {
   userId    String
   createdAt DateTime @default(now())
 
-  reply     Reply    @relation(fields: [replyId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reply Reply @relation(fields: [replyId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([replyId, userId])
   @@index([replyId])
@@ -370,28 +357,28 @@ model ReplyLike {
 // ============================================
 
 model List {
-  id              String    @id @default(cuid())
-  userId          String
-  title           String    @db.VarChar(200)
-  description     String?   @db.Text
-  isRanked        Boolean   @default(true)
-  isPublic        Boolean   @default(true)
-  allowRemix      Boolean   @default(true)
-  remixedFromId   String?   // If this list was remixed from another
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  publishedAt     DateTime?
+  id            String    @id @default(cuid())
+  userId        String
+  title         String    @db.VarChar(200)
+  description   String?   @db.Text
+  isRanked      Boolean   @default(true)
+  isPublic      Boolean   @default(true)
+  allowRemix    Boolean   @default(true)
+  remixedFromId String? // If this list was remixed from another
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  publishedAt   DateTime?
 
-  likeCount       Int       @default(0)
-  commentCount    Int       @default(0)
+  likeCount    Int @default(0)
+  commentCount Int @default(0)
 
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  remixedFrom     List?     @relation("remixes", fields: [remixedFromId], references: [id])
-  remixes         List[]    @relation("remixes")
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  remixedFrom List?  @relation("remixes", fields: [remixedFromId], references: [id])
+  remixes     List[] @relation("remixes")
 
-  items           ListItem[]
-  likes           ListLike[]
-  comments        ListComment[]
+  items              ListItem[]
+  likes              ListLike[]
+  comments           ListComment[]
   reorderSuggestions ListReorderSuggestion[]
 
   @@index([userId])
@@ -402,14 +389,14 @@ model List {
 }
 
 model ListItem {
-  id        String  @id @default(cuid())
-  listId    String
-  albumId   String
-  position  Int
-  notes     String? @db.Text
+  id       String  @id @default(cuid())
+  listId   String
+  albumId  String
+  position Int
+  notes    String? @db.Text
 
-  list      List    @relation(fields: [listId], references: [id], onDelete: Cascade)
-  album     Album   @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  list  List  @relation(fields: [listId], references: [id], onDelete: Cascade)
+  album Album @relation(fields: [albumId], references: [id], onDelete: Cascade)
 
   @@unique([listId, albumId])
   @@index([listId])
@@ -422,8 +409,8 @@ model ListLike {
   userId    String
   createdAt DateTime @default(now())
 
-  list      List     @relation(fields: [listId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  list List @relation(fields: [listId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([listId, userId])
   @@index([listId])
@@ -439,23 +426,23 @@ model ListComment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  list      List     @relation(fields: [listId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  list List @relation(fields: [listId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([listId])
   @@index([userId])
 }
 
 model ListReorderSuggestion {
-  id              String   @id @default(cuid())
-  listId          String
-  suggesterId     String
-  suggestedOrder  Json     // Array of album IDs in suggested order
-  rationale       String   @db.Text
-  status          String   @default("pending") // pending, accepted, rejected
-  createdAt       DateTime @default(now())
+  id             String   @id @default(cuid())
+  listId         String
+  suggesterId    String
+  suggestedOrder Json // Array of album IDs in suggested order
+  rationale      String   @db.Text
+  status         String   @default("pending") // pending, accepted, rejected
+  createdAt      DateTime @default(now())
 
-  list            List     @relation(fields: [listId], references: [id], onDelete: Cascade)
+  list List @relation(fields: [listId], references: [id], onDelete: Cascade)
 
   @@index([listId])
   @@index([status])
@@ -466,15 +453,15 @@ model ListReorderSuggestion {
 // ============================================
 
 model FriendRequest {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   senderId    String
   receiverId  String
-  status      String   @default("pending") // pending, accepted, rejected
-  createdAt   DateTime @default(now())
+  status      String    @default("pending") // pending, accepted, rejected
+  createdAt   DateTime  @default(now())
   respondedAt DateTime?
 
-  sender      User     @relation("sender", fields: [senderId], references: [id], onDelete: Cascade)
-  receiver    User     @relation("receiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  sender   User @relation("sender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("receiver", fields: [receiverId], references: [id], onDelete: Cascade)
 
   @@unique([senderId, receiverId])
   @@index([senderId])
@@ -488,8 +475,8 @@ model Friendship {
   user2Id   String
   createdAt DateTime @default(now())
 
-  user1     User     @relation("user1", fields: [user1Id], references: [id], onDelete: Cascade)
-  user2     User     @relation("user2", fields: [user2Id], references: [id], onDelete: Cascade)
+  user1 User @relation("user1", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2 User @relation("user2", fields: [user2Id], references: [id], onDelete: Cascade)
 
   @@unique([user1Id, user2Id])
   @@index([user1Id])
@@ -502,8 +489,8 @@ model Block {
   blockedId String
   createdAt DateTime @default(now())
 
-  blocker   User     @relation("blocker", fields: [blockerId], references: [id], onDelete: Cascade)
-  blocked   User     @relation("blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+  blocker User @relation("blocker", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked User @relation("blocked", fields: [blockedId], references: [id], onDelete: Cascade)
 
   @@unique([blockerId, blockedId])
   @@index([blockerId])
@@ -521,8 +508,8 @@ model WaxAward {
   waxType   String   @default("standard") // standard, premium
   createdAt DateTime @default(now())
 
-  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-  giver     User     @relation("giver", fields: [giverId], references: [id], onDelete: Cascade)
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  giver  User   @relation("giver", fields: [giverId], references: [id], onDelete: Cascade)
 
   @@unique([reviewId, giverId])
   @@index([reviewId])
@@ -537,12 +524,12 @@ model WaxAward {
 model Notification {
   id        String   @id @default(cuid())
   userId    String
-  type      String   // reply, like, friend_request, friend_accept, review_trending, friend_review
-  content   Json     // { actorId, actorName, reviewId, albumTitle, etc. }
+  type      String // reply, like, friend_request, friend_accept, review_trending, friend_review
+  content   Json // { actorId, actorName, reviewId, albumTitle, etc. }
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([isRead])
@@ -551,15 +538,15 @@ model Notification {
 }
 
 model NotificationSettings {
-  id                String  @id @default(cuid())
-  userId            String  @unique
-  replies           Boolean @default(true)
-  likes             Boolean @default(true)
-  friendRequests    Boolean @default(true)
-  friendReviews     Boolean @default(true)
-  reviewTrending    Boolean @default(true)
+  id             String  @id @default(cuid())
+  userId         String  @unique
+  replies        Boolean @default(true)
+  likes          Boolean @default(true)
+  friendRequests Boolean @default(true)
+  friendReviews  Boolean @default(true)
+  reviewTrending Boolean @default(true)
 
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // ============================================
@@ -567,18 +554,18 @@ model NotificationSettings {
 // ============================================
 
 model Report {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   reporterId  String
-  contentType String   // review, reply, list, user
+  contentType String // review, reply, list, user
   contentId   String
-  reason      String   // spam, offensive, harassment, other
-  details     String?  @db.Text
-  status      String   @default("pending") // pending, reviewed, resolved, dismissed
-  createdAt   DateTime @default(now())
+  reason      String // spam, offensive, harassment, other
+  details     String?   @db.Text
+  status      String    @default("pending") // pending, reviewed, resolved, dismissed
+  createdAt   DateTime  @default(now())
   resolvedAt  DateTime?
   resolvedBy  String?
 
-  reporter    User     @relation("reporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  reporter User @relation("reporter", fields: [reporterId], references: [id], onDelete: Cascade)
 
   @@index([reporterId])
   @@index([contentType])
@@ -590,52 +577,20 @@ model Report {
 // ============================================
 
 model UserYearlyStats {
-  id              String @id @default(cuid())
-  userId          String
-  year            Int
-  totalReviews    Int    @default(0)
-  totalLists      Int    @default(0)
-  averageRating   Float?
-  topGenres       Json?  // [{ genre, count }]
-  topArtists      Json?  // [{ artistName, count }]
+  id                 String @id @default(cuid())
+  userId             String
+  year               Int
+  totalReviews       Int    @default(0)
+  totalLists         Int    @default(0)
+  averageRating      Float?
+  topGenres          Json? // [{ genre, count }]
+  topArtists         Json? // [{ artistName, count }]
   ratingDistribution Json? // { "0": 1, ... "10": 5 }
-  monthlyActivity Json?  // { "1": 5, "2": 10, ... }
+  monthlyActivity    Json? // { "1": 5, "2": 10, ... }
 
   @@unique([userId, year])
   @@index([userId])
   @@index([year])
-}
-
-// ============================================
-// VERIFICATION & ROLE REQUESTS
-// ============================================
-
-model VerificationRequest {
-  id              String   @id @default(cuid())
-  userId          String
-  requestType     String   // "verification" or "account_type"
-  requestedType   String?  // For account_type requests: artist, org, editor, dj
-  status          String   @default("pending") // pending, approved, rejected
-  
-  // Supporting evidence
-  reason          String   @db.Text // Why they should be verified/given this role
-  proofUrl        String?  // Link to proof (artist page, org website, etc.)
-  socialLinks     Json?    // Additional social proof
-  
-  // Admin handling
-  reviewedBy      String?  // Staff user ID who reviewed
-  reviewedAt      DateTime?
-  reviewNote      String?  @db.Text // Admin note on decision
-  
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([status])
-  @@index([requestType])
-  @@index([createdAt])
 }
 
 // ============================================
@@ -658,124 +613,123 @@ model SpotifyCache {
 // ============================================
 
 model Lyrics {
-  id          String   @id @default(cuid())
-  trackId     String   @unique // Our internal track ID
-  geniusId    String?  // Genius song ID for linking
-  geniusUrl   String?  // Link to Genius page
-  lyrics      String?  @db.Text // The actual lyrics text
-  syncedLyrics Json?   // Synced/timed lyrics if available
-  source      String   @default("genius") // genius, musixmatch, etc
-  notFound    Boolean  @default(false) // True if we searched and found nothing
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default(cuid())
+  trackId      String   @unique // Our internal track ID
+  geniusId     String? // Genius song ID for linking
+  geniusUrl    String? // Link to Genius page
+  lyrics       String?  @db.Text // The actual lyrics text
+  syncedLyrics Json? // Synced/timed lyrics if available
+  source       String   @default("genius") // genius, musixmatch, etc
+  notFound     Boolean  @default(false) // True if we searched and found nothing
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  track       Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
 
   @@index([trackId])
   @@index([geniusId])
 }
 
 // ============================================
-// COMMUNITY CHANNELS (Slack-like)
+// COMMUNITY CHANNELS (Slack-style)
 // ============================================
 
 model Channel {
-  id          String   @id @default(cuid())
-  name        String   @db.VarChar(100)
-  slug        String   @unique @db.VarChar(100)
-  description String?  @db.Text
-  type        String   @default("public") // public, private, event, show
-  category    String?  // genre, artist, event, show, release
-  imageUrl    String?
-  isArchived  Boolean  @default(false)
-  createdById String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  description  String?  @db.Text
+  imageUrl     String?
+  category     String? // genre, artist, event, show, release
+  type         String   @default("public") // public, private
+  isArchived   Boolean  @default(false)
+  createdById  String?
+  memberCount  Int      @default(0)
+  messageCount Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  // Stats
-  memberCount  Int @default(0)
-  messageCount Int @default(0)
-
-  // Relations
-  createdBy   User            @relation("channelCreator", fields: [createdById], references: [id], onDelete: Cascade)
-  members     ChannelMember[]
-  messages    ChannelMessage[]
+  members        ChannelMember[]
+  messages       ChannelMessage[]
   pinnedMessages ChannelMessage[] @relation("pinnedMessages")
-  liveEvents  LiveEvent[]
 
   @@index([slug])
-  @@index([type])
   @@index([category])
-  @@index([createdAt])
+  @@index([type])
   @@index([memberCount])
-  @@index([type, isArchived, memberCount])
-  @@index([type, isArchived, createdAt])
 }
 
 model ChannelMember {
-  id        String   @id @default(cuid())
-  channelId String
-  userId    String
-  role      String   @default("member") // owner, admin, moderator, member
-  joinedAt  DateTime @default(now())
-  mutedUntil DateTime?
-  
-  // Notification preferences for this channel
-  notificationsEnabled Boolean @default(true)
-  lastReadAt           DateTime?
+  id         String    @id @default(cuid())
+  channelId  String
+  userId     String
+  role       String    @default("member") // admin, moderator, member
+  joinedAt   DateTime  @default(now())
+  lastReadAt DateTime?
+  isMuted    Boolean   @default(false)
 
-  channel   Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([channelId, userId])
   @@index([channelId])
   @@index([userId])
-  @@index([role])
 }
 
 model ChannelMessage {
-  id        String   @id @default(cuid())
-  channelId String
-  userId    String
-  content   String   @db.Text
-  type      String   @default("text") // text, album_share, review_share, list_share, image
-  metadata  Json?    // For embeds: { albumId, reviewId, listId, imageUrl, etc. }
-  replyToId String?  // For threaded replies
-  isPinned  Boolean  @default(false)
-  pinnedInId String? // Channel where this is pinned
-  isEdited  Boolean  @default(false)
-  isDeleted Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  channelId   String
+  userId      String
+  content     String   @db.Text
+  type        String   @default("text") // text, image, album, system
+  metadata    Json? // For album cards, images, etc.
+  isEdited    Boolean  @default(false)
+  isDeleted   Boolean  @default(false)
+  isPinned    Boolean  @default(false)
+  replyToId   String? // For threaded replies
+  threadCount Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  channel   Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  replyTo   ChannelMessage?  @relation("messageReplies", fields: [replyToId], references: [id])
-  replies   ChannelMessage[] @relation("messageReplies")
-  pinnedIn  Channel? @relation("pinnedMessages", fields: [pinnedInId], references: [id])
-  reactions MessageReaction[]
+  channel   Channel                  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  user      User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pinnedIn  Channel?                 @relation("pinnedMessages", fields: [channelId], references: [id], onDelete: Cascade, map: "pinnedMessages")
+  replyTo   ChannelMessage?          @relation("replies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies   ChannelMessage[]         @relation("replies")
+  reactions ChannelMessageReaction[]
+  mentions  ChannelMessageMention[]
 
   @@index([channelId])
   @@index([userId])
   @@index([createdAt])
   @@index([replyToId])
-  @@index([channelId, isDeleted, createdAt])
-  @@index([isDeleted, createdAt])
 }
 
-model MessageReaction {
+model ChannelMessageReaction {
   id        String   @id @default(cuid())
   messageId String
   userId    String
-  emoji     String   @db.VarChar(50) // emoji code or custom emoji id
+  emoji     String
   createdAt DateTime @default(now())
 
-  message   ChannelMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
-  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message ChannelMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
 
   @@unique([messageId, userId, emoji])
   @@index([messageId])
   @@index([userId])
+}
+
+model ChannelMessageMention {
+  id              String   @id @default(cuid())
+  messageId       String
+  mentionedUserId String
+  createdAt       DateTime @default(now())
+
+  message ChannelMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, mentionedUserId])
+  @@index([messageId])
+  @@index([mentionedUserId])
 }
 
 // ============================================
@@ -784,9 +738,9 @@ model MessageReaction {
 
 model DMConversation {
   id        String   @id @default(cuid())
-  type      String   @default("direct") // direct (1:1), group
-  name      String?  @db.VarChar(100) // For group chats
-  imageUrl  String?  // For group chats
+  type      String   @default("direct") // direct, group
+  name      String? // For group chats
+  imageUrl  String? // For group chats
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -797,13 +751,14 @@ model DMConversation {
 }
 
 model DMParticipant {
-  id             String   @id @default(cuid())
+  id             String    @id @default(cuid())
   conversationId String
   userId         String
-  joinedAt       DateTime @default(now())
-  leftAt         DateTime?
+  role           String    @default("member") // admin (for group), member
+  joinedAt       DateTime  @default(now())
   lastReadAt     DateTime?
-  isMuted        Boolean  @default(false)
+  leftAt         DateTime? // For leaving group chats
+  isMuted        Boolean   @default(false)
 
   conversation DMConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -818,65 +773,61 @@ model DirectMessage {
   conversationId String
   userId         String
   content        String   @db.Text
-  type           String   @default("text") // text, album_share, review_share, list_share, image
-  metadata       Json?    // For embeds
+  type           String   @default("text") // text, image, album
+  metadata       Json? // For album cards, images, etc.
   isEdited       Boolean  @default(false)
   isDeleted      Boolean  @default(false)
+  replyToId      String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  conversation DMConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversation DMConversation          @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  replyTo      DirectMessage?          @relation("dmReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies      DirectMessage[]         @relation("dmReplies")
+  reactions    DirectMessageReaction[]
 
   @@index([conversationId])
   @@index([userId])
   @@index([createdAt])
 }
 
+model DirectMessageReaction {
+  id        String   @id @default(cuid())
+  messageId String
+  userId    String
+  emoji     String
+  createdAt DateTime @default(now())
+
+  message DirectMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+  @@index([messageId])
+}
+
 // ============================================
-// LIVE EVENTS (360 Sound Integration)
+// LIVE EVENTS (360 Sound, etc.)
 // ============================================
 
 model LiveEvent {
-  id          String    @id @default(cuid())
-  name        String    @db.VarChar(200)
-  slug        String    @unique @db.VarChar(200)
-  description String?   @db.Text
-  type        String    @default("listening_party") // listening_party, concert, dj_set, radio_show, podcast_live
-  imageUrl    String?
-  
-  // Timing
-  startTime   DateTime
-  endTime     DateTime?
-  timezone    String    @default("America/New_York")
-  status      String    @default("scheduled") // scheduled, live, ended, cancelled
-  
-  // Location (for in-person events)
-  venue       String?
-  address     String?
-  city        String?
-  
-  // Virtual event info
-  streamUrl   String?
-  
-  // Associated channel for chat
-  channelId   String?
-  
-  // Creator
-  createdById String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id            String    @id @default(cuid())
+  name          String
+  slug          String    @unique
+  description   String?   @db.Text
+  imageUrl      String?
+  type          String    @default("dj_set") // dj_set, listening_party, interview, podcast
+  status        String    @default("scheduled") // scheduled, live, ended, cancelled
+  streamUrl     String? // YouTube, Twitch, etc.
+  startTime     DateTime
+  endTime       DateTime?
+  hostId        String?
+  attendeeCount Int       @default(0)
+  messageCount  Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  // Stats
-  attendeeCount Int @default(0)
-  peakAttendees Int @default(0)
-
-  // Relations
-  createdBy   User            @relation("eventCreator", fields: [createdById], references: [id], onDelete: Cascade)
-  channel     Channel?        @relation(fields: [channelId], references: [id])
-  attendees   EventAttendee[]
-  setlist     EventSetlist[]
-  ratings     EventRating[]
+  attendees LiveEventAttendee[]
+  messages  LiveEventMessage[]
+  setlist   LiveEventSetlistItem[]
 
   @@index([slug])
   @@index([status])
@@ -884,52 +835,64 @@ model LiveEvent {
   @@index([type])
 }
 
-model EventAttendee {
-  id          String    @id @default(cuid())
-  eventId     String
-  userId      String
-  status      String    @default("interested") // interested, going, checked_in
-  checkedInAt DateTime?
-  createdAt   DateTime  @default(now())
+model LiveEventAttendee {
+  id       String    @id @default(cuid())
+  eventId  String
+  userId   String
+  joinedAt DateTime  @default(now())
+  leftAt   DateTime?
 
-  event       LiveEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event LiveEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@unique([eventId, userId])
   @@index([eventId])
   @@index([userId])
-  @@index([status])
 }
 
-model EventSetlist {
-  id        String   @id @default(cuid())
-  eventId   String
-  albumId   String?  // Can be null if track isn't in our DB
-  trackName String?  // For tracks not in DB
-  artistName String?
-  position  Int
-  playedAt  DateTime @default(now())
-  addedById String?  // Who logged this track
-
-  event     LiveEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
-
-  @@index([eventId])
-  @@index([position])
-}
-
-model EventRating {
+model LiveEventMessage {
   id        String   @id @default(cuid())
   eventId   String
   userId    String
-  albumId   String?  // Rating for specific album played
-  rating    Int      // 1-10 quick rating
-  reaction  String?  // fire, mid, skip
+  content   String   @db.Text
+  type      String   @default("text") // text, reaction, system
+  metadata  Json?
+  isDeleted Boolean  @default(false)
   createdAt DateTime @default(now())
 
-  event     LiveEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event     LiveEvent                  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  reactions LiveEventMessageReaction[]
 
-  @@unique([eventId, userId, albumId])
   @@index([eventId])
   @@index([userId])
+  @@index([createdAt])
+}
+
+model LiveEventMessageReaction {
+  id        String   @id @default(cuid())
+  messageId String
+  userId    String
+  emoji     String
+  createdAt DateTime @default(now())
+
+  message LiveEventMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+  @@index([messageId])
+}
+
+model LiveEventSetlistItem {
+  id         String    @id @default(cuid())
+  eventId    String
+  albumId    String? // Link to WaxFeed album
+  trackName  String
+  artistName String
+  position   Int
+  playedAt   DateTime?
+  addedById  String?
+  createdAt  DateTime  @default(now())
+
+  event LiveEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@index([position])
 }

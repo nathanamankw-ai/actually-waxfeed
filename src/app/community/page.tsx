@@ -217,11 +217,11 @@ export default async function CommunityPage() {
 
   const getCategoryIcon = (category: string | null) => {
     switch (category) {
-      case "genre": return "🎵"
-      case "artist": return "🎤"
-      case "event": return "🎪"
-      case "show": return "📻"
-      case "release": return "💿"
+      case "genre": return "#"
+      case "artist": return "#"
+      case "event": return "#"
+      case "show": return "#"
+      case "release": return "#"
       default: return "#"
     }
   }
@@ -229,9 +229,9 @@ export default async function CommunityPage() {
   const getEventStatusBadge = (status: string) => {
     switch (status) {
       case "live":
-        return <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full animate-pulse">LIVE</span>
+        return <span className="bg-red-500 text-white text-xs px-2 py-0.5  animate-pulse">LIVE</span>
       case "scheduled":
-        return <span className="bg-yellow-500/20 text-yellow-500 text-xs px-2 py-0.5 rounded-full">Upcoming</span>
+        return <span className="bg-yellow-500/20 text-yellow-500 text-xs px-2 py-0.5 ">Upcoming</span>
       default:
         return null
     }
@@ -243,7 +243,7 @@ export default async function CommunityPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold">Community</h1>
-          <p className="text-[#888] text-sm mt-1">Connect with music lovers worldwide</p>
+          <p className="text-gray-500 text-sm mt-1">Connect with music lovers worldwide</p>
         </div>
         {session && (
           <Link
@@ -260,9 +260,12 @@ export default async function CommunityPage() {
 
       {/* Live Events Banner */}
       {liveEvents.length > 0 && (
-        <section className="mb-8 p-4 bg-gradient-to-r from-red-500/10 to-orange-500/10 border border-red-500/20 rounded-lg">
+        <section className="mb-8 p-4 bg-gradient-to-r from-red-500/10 to-orange-500/10 border border-red-500/20 ">
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-lg">🔴</span>
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full  bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex  h-2 w-2 bg-red-500"></span>
+            </span>
             <h2 className="font-bold">Live & Upcoming Events</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -270,13 +273,13 @@ export default async function CommunityPage() {
               <Link
                 key={event.id}
                 href={`/live/${event.slug}`}
-                className="flex items-center gap-3 p-3 bg-[#111] rounded hover:bg-[#181818] transition-colors no-underline"
+                className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors no-underline"
               >
                 {event.imageUrl ? (
-                  <img src={event.imageUrl} alt="" className="w-12 h-12 rounded object-cover" />
+                  <img src={event.imageUrl} alt="" className="w-12 h-12 object-cover" />
                 ) : (
-                  <div className="w-12 h-12 rounded bg-[#222] flex items-center justify-center text-2xl">
-                    🎵
+                  <div className="w-12 h-12 bg-gray-200 flex items-center justify-center text-2xl">
+                    
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
@@ -284,7 +287,7 @@ export default async function CommunityPage() {
                     <span className="font-medium truncate">{event.name}</span>
                     {getEventStatusBadge(event.status)}
                   </div>
-                  <p className="text-xs text-[#888]">
+                  <p className="text-xs text-gray-500">
                     {event.status === "live" 
                       ? `${event.attendeeCount} watching`
                       : formatDistanceToNow(new Date(event.startTime), { addSuffix: true })
@@ -311,12 +314,12 @@ export default async function CommunityPage() {
                   <Link
                     key={channel.id}
                     href={`/community/channel/${channel.slug}`}
-                    className="flex items-center gap-3 p-4 bg-[#111] border border-[#222] hover:border-[#444] transition-colors no-underline rounded"
+                    className="flex items-center gap-3 p-4 bg-gray-50 border border-gray-200 hover:border-gray-300 transition-colors no-underline rounded"
                   >
                     <span className="text-2xl">{getCategoryIcon(channel.category)}</span>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-medium truncate">{channel.name}</h3>
-                      <p className="text-xs text-[#888]">{channel.memberCount} members</p>
+                      <p className="text-xs text-gray-500">{channel.memberCount} members</p>
                     </div>
                   </Link>
                 ))}
@@ -328,14 +331,14 @@ export default async function CommunityPage() {
           <section>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold">Popular Channels</h2>
-              <Link href="/community/channels" className="text-sm text-[#888] hover:text-white no-underline">
+              <Link href="/community/channels" className="text-sm text-gray-500 hover:text-black no-underline">
                 Browse All →
               </Link>
             </div>
             {publicChannels.length === 0 ? (
-              <div className="text-center py-12 border border-[#222] rounded">
-                <p className="text-[#888] mb-2">No channels yet</p>
-                <p className="text-xs text-[#666]">Channels are coming soon!</p>
+              <div className="text-center py-12 border border-gray-200 rounded">
+                <p className="text-gray-500 mb-2">No channels yet</p>
+                <p className="text-xs text-gray-400">Channels are coming soon!</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -343,13 +346,13 @@ export default async function CommunityPage() {
                   <Link
                     key={channel.id}
                     href={`/community/channel/${channel.slug}`}
-                    className="flex items-center gap-3 p-4 bg-[#111] border border-[#222] hover:border-[#444] transition-colors no-underline rounded"
+                    className="flex items-center gap-3 p-4 bg-gray-50 border border-gray-200 hover:border-gray-300 transition-colors no-underline rounded"
                   >
                     <span className="text-2xl">{getCategoryIcon(channel.category)}</span>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-medium truncate">{channel.name}</h3>
-                      <p className="text-xs text-[#888] truncate">{channel.description}</p>
-                      <p className="text-xs text-[#666] mt-1">{channel.memberCount} members · {channel.messageCount} messages</p>
+                      <p className="text-xs text-gray-500 truncate">{channel.description}</p>
+                      <p className="text-xs text-gray-400 mt-1">{channel.memberCount} members · {channel.messageCount} messages</p>
                     </div>
                   </Link>
                 ))}
@@ -362,13 +365,13 @@ export default async function CommunityPage() {
                 {DEFAULT_CHANNELS.map((channel) => (
                   <div
                     key={channel.slug}
-                    className="flex items-center gap-3 p-4 bg-[#111] border border-[#222] rounded opacity-50"
+                    className="flex items-center gap-3 p-4 bg-gray-50 border border-gray-200 opacity-50"
                   >
                     <span className="text-2xl">{getCategoryIcon(channel.category)}</span>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-medium truncate">{channel.name}</h3>
-                      <p className="text-xs text-[#888] truncate">{channel.description}</p>
-                      <p className="text-xs text-[#666] mt-1">Coming soon</p>
+                      <p className="text-xs text-gray-500 truncate">{channel.description}</p>
+                      <p className="text-xs text-gray-400 mt-1">Coming soon</p>
                     </div>
                   </div>
                 ))}
@@ -380,9 +383,9 @@ export default async function CommunityPage() {
           <section>
             <h2 className="text-lg font-bold mb-4">Recent Activity</h2>
             {recentActivity.length === 0 ? (
-              <div className="text-center py-12 border border-[#222] rounded">
-                <p className="text-[#888] mb-2">No activity yet</p>
-                <p className="text-xs text-[#666]">Be the first to start a conversation!</p>
+              <div className="text-center py-12 border border-gray-200 rounded">
+                <p className="text-gray-500 mb-2">No activity yet</p>
+                <p className="text-xs text-gray-400">Be the first to start a conversation!</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -390,23 +393,23 @@ export default async function CommunityPage() {
                   <Link
                     key={message.id}
                     href={`/community/channel/${message.channel.slug}`}
-                    className="flex items-start gap-3 p-3 bg-[#111] border border-[#222] hover:border-[#444] transition-colors no-underline rounded"
+                    className="flex items-start gap-3 p-3 bg-gray-50 border border-gray-200 hover:border-gray-300 transition-colors no-underline rounded"
                   >
                     {message.user.image ? (
-                      <img src={message.user.image} alt="" className="w-8 h-8 rounded-full" />
+                      <img src={message.user.image} alt="" className="w-8 h-8 " />
                     ) : (
                       <DefaultAvatar size="sm" />
                     )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 text-sm">
                         <span className="font-medium">{message.user.username}</span>
-                        <span className="text-[#666]">in</span>
-                        <span className="text-[#888]">#{message.channel.name}</span>
-                        <span className="text-[#666] text-xs">
+                        <span className="text-gray-400">in</span>
+                        <span className="text-gray-500">#{message.channel.name}</span>
+                        <span className="text-gray-400 text-xs">
                           {formatDistanceToNow(new Date(message.createdAt), { addSuffix: true })}
                         </span>
                       </div>
-                      <p className="text-sm text-[#ccc] truncate mt-1">{message.content}</p>
+                      <p className="text-sm text-gray-600 truncate mt-1">{message.content}</p>
                     </div>
                   </Link>
                 ))}
@@ -419,15 +422,15 @@ export default async function CommunityPage() {
         <div className="space-y-6">
           {/* Direct Messages */}
           {session && (
-            <section className="bg-[#111] border border-[#222] rounded p-4">
+            <section className="bg-gray-50 border border-gray-200 p-4">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold">Direct Messages</h3>
-                <Link href="/messages" className="text-xs text-[#888] hover:text-white no-underline">
+                <Link href="/messages" className="text-xs text-gray-500 hover:text-black no-underline">
                   View All
                 </Link>
               </div>
               {dmConversations.length === 0 ? (
-                <p className="text-sm text-[#888]">No messages yet</p>
+                <p className="text-sm text-gray-500">No messages yet</p>
               ) : (
                 <div className="space-y-3">
                   {dmConversations.map((conv) => {
@@ -437,17 +440,17 @@ export default async function CommunityPage() {
                       <Link
                         key={conv.id}
                         href={`/messages/${conv.id}`}
-                        className="flex items-center gap-3 p-2 hover:bg-[#181818] rounded transition-colors no-underline"
+                        className="flex items-center gap-3 p-2 hover:bg-gray-100 transition-colors no-underline"
                       >
                         {otherUser?.image ? (
-                          <img src={otherUser.image} alt="" className="w-8 h-8 rounded-full" />
+                          <img src={otherUser.image} alt="" className="w-8 h-8 " />
                         ) : (
                           <DefaultAvatar size="sm" />
                         )}
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-sm truncate">{otherUser?.username || "Unknown"}</p>
                           {lastMessage && (
-                            <p className="text-xs text-[#888] truncate">{lastMessage.content}</p>
+                            <p className="text-xs text-gray-500 truncate">{lastMessage.content}</p>
                           )}
                         </div>
                       </Link>
@@ -459,47 +462,43 @@ export default async function CommunityPage() {
           )}
 
           {/* Quick Links */}
-          <section className="bg-[#111] border border-[#222] rounded p-4">
+          <section className="bg-gray-50 border border-gray-200 p-4">
             <h3 className="font-bold mb-4">Quick Links</h3>
             <div className="space-y-2">
               <Link
                 href="/community/channels"
-                className="flex items-center gap-2 p-2 hover:bg-[#181818] rounded transition-colors no-underline text-sm"
+                className="flex items-center gap-2 p-2 hover:bg-gray-100 transition-colors no-underline text-sm"
               >
-                <span>📢</span>
-                <span>Browse All Channels</span>
+                Browse All Channels
               </Link>
               <Link
                 href="/live"
-                className="flex items-center gap-2 p-2 hover:bg-[#181818] rounded transition-colors no-underline text-sm"
+                className="flex items-center gap-2 p-2 hover:bg-gray-100 transition-colors no-underline text-sm"
               >
-                <span>🔴</span>
-                <span>Live Events</span>
+                Live Events
               </Link>
               <Link
                 href="/trending"
-                className="flex items-center gap-2 p-2 hover:bg-[#181818] rounded transition-colors no-underline text-sm"
+                className="flex items-center gap-2 p-2 hover:bg-gray-100 transition-colors no-underline text-sm"
               >
-                <span>📈</span>
-                <span>Trending Albums</span>
+                Trending Albums
               </Link>
               <Link
                 href="/lists"
-                className="flex items-center gap-2 p-2 hover:bg-[#181818] rounded transition-colors no-underline text-sm"
+                className="flex items-center gap-2 p-2 hover:bg-gray-100 transition-colors no-underline text-sm"
               >
-                <span>📝</span>
-                <span>Curated Lists</span>
+                Curated Lists
               </Link>
             </div>
           </section>
 
           {/* Sign In Prompt */}
           {!session && (
-            <section className="bg-[#111] border border-[#222] rounded p-4 text-center">
-              <p className="text-sm text-[#888] mb-3">Sign in to join channels and message other users</p>
+            <section className="bg-gray-50 border border-gray-200 p-4 text-center">
+              <p className="text-sm text-gray-500 mb-3">Sign in to join channels and message other users</p>
               <Link
                 href="/login"
-                className="inline-block bg-white text-black px-4 py-2 font-bold text-sm no-underline hover:bg-gray-100"
+                className="inline-block bg-black text-white px-4 py-2 font-bold text-sm no-underline hover:bg-gray-800"
               >
                 Sign In
               </Link>
