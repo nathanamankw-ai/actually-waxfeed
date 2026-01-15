@@ -104,16 +104,15 @@ export async function GET(
 
     const reactions = await prisma.directMessageReaction.findMany({
       where: { messageId },
-      include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            image: true,
-          },
-        },
-      },
     })
+
+    // Get unique user IDs
+    const userIds = [...new Set(reactions.map(r => r.userId))]
+    const users = await prisma.user.findMany({
+      where: { id: { in: userIds } },
+      select: { id: true, username: true, image: true },
+    })
+    const userMap = new Map(users.map(u => [u.id, u]))
 
     // Group by emoji
     const grouped = reactions.reduce((acc, r) => {
@@ -121,17 +120,18 @@ export async function GET(
         acc[r.emoji] = {
           emoji: r.emoji,
           count: 0,
-          users: [],
+          users: [] as { id: string; username: string | null; image: string | null }[],
           userReacted: false,
         }
       }
       acc[r.emoji].count++
-      acc[r.emoji].users.push(r.user)
+      const user = userMap.get(r.userId)
+      if (user) acc[r.emoji].users.push(user)
       if (r.userId === session.user.id) {
         acc[r.emoji].userReacted = true
       }
       return acc
-    }, {} as Record<string, { emoji: string; count: number; users: any[]; userReacted: boolean }>)
+    }, {} as Record<string, { emoji: string; count: number; users: { id: string; username: string | null; image: string | null }[]; userReacted: boolean }>)
 
     return NextResponse.json(Object.values(grouped))
   } catch (error) {
