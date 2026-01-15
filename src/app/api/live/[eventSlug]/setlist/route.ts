@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 const addTrackSchema = z.object({
   trackName: z.string().min(1).max(200),
-  artistName: z.string().max(200).optional(),
+  artistName: z.string().max(200),
   albumId: z.string().optional(),
 })
 
@@ -26,7 +26,7 @@ export async function GET(
       return NextResponse.json({ error: 'Event not found' }, { status: 404 })
     }
 
-    const setlist = await prisma.eventSetlist.findMany({
+    const setlist = await prisma.liveEventSetlistItem.findMany({
       where: { eventId: event.id },
       orderBy: { position: 'asc' },
     })
@@ -62,14 +62,14 @@ export async function POST(
     // Get event and check if user is host
     const event = await prisma.liveEvent.findUnique({
       where: { slug: eventSlug },
-      select: { id: true, createdById: true, status: true },
+      select: { id: true, hostId: true, status: true },
     })
 
     if (!event) {
       return NextResponse.json({ error: 'Event not found' }, { status: 404 })
     }
 
-    if (event.createdById !== session.user.id) {
+    if (event.hostId !== session.user.id) {
       return NextResponse.json({ error: 'Only the host can manage the setlist' }, { status: 403 })
     }
 
@@ -78,7 +78,7 @@ export async function POST(
     }
 
     // Get next position
-    const lastTrack = await prisma.eventSetlist.findFirst({
+    const lastTrack = await prisma.liveEventSetlistItem.findFirst({
       where: { eventId: event.id },
       orderBy: { position: 'desc' },
     })
@@ -86,7 +86,7 @@ export async function POST(
     const nextPosition = (lastTrack?.position ?? 0) + 1
 
     // Add track
-    const track = await prisma.eventSetlist.create({
+    const track = await prisma.liveEventSetlistItem.create({
       data: {
         eventId: event.id,
         trackName,
