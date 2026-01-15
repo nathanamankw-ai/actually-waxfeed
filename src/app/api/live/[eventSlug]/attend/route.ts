@@ -20,7 +20,7 @@ export async function POST(
     // Get event
     const event = await prisma.liveEvent.findUnique({
       where: { slug: eventSlug },
-      select: { id: true, status: true, channelId: true },
+      select: { id: true, status: true },
     })
 
     if (!event) {
@@ -28,7 +28,7 @@ export async function POST(
     }
 
     // Check if already attending
-    const existingAttendance = await prisma.eventAttendee.findUnique({
+    const existingAttendance = await prisma.liveEventAttendee.findUnique({
       where: {
         eventId_userId: {
           eventId: event.id,
@@ -39,7 +39,7 @@ export async function POST(
 
     if (existingAttendance) {
       // Update attendance status
-      const updated = await prisma.eventAttendee.update({
+      const updated = await prisma.liveEventAttendee.update({
         where: { id: existingAttendance.id },
         data: {
           status,
@@ -52,7 +52,7 @@ export async function POST(
 
     // Create new attendance
     const [attendance] = await prisma.$transaction([
-      prisma.eventAttendee.create({
+      prisma.liveEventAttendee.create({
         data: {
           eventId: event.id,
           userId: session.user.id,
@@ -65,34 +65,6 @@ export async function POST(
         data: { attendeeCount: { increment: 1 } },
       }),
     ])
-
-    // Auto-join event channel if exists
-    if (event.channelId) {
-      const existingMembership = await prisma.channelMember.findUnique({
-        where: {
-          channelId_userId: {
-            channelId: event.channelId,
-            userId: session.user.id,
-          },
-        },
-      })
-
-      if (!existingMembership) {
-        await prisma.$transaction([
-          prisma.channelMember.create({
-            data: {
-              channelId: event.channelId,
-              userId: session.user.id,
-              role: 'member',
-            },
-          }),
-          prisma.channel.update({
-            where: { id: event.channelId },
-            data: { memberCount: { increment: 1 } },
-          }),
-        ])
-      }
-    }
 
     return NextResponse.json({ attendance, isNew: true }, { status: 201 })
   } catch (error) {
@@ -126,7 +98,7 @@ export async function DELETE(
 
     // Delete attendance
     await prisma.$transaction([
-      prisma.eventAttendee.delete({
+      prisma.liveEventAttendee.delete({
         where: {
           eventId_userId: {
             eventId: event.id,

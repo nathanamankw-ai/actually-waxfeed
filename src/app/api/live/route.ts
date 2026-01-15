@@ -6,11 +6,9 @@ import { z } from 'zod'
 const createEventSchema = z.object({
   name: z.string().min(1).max(200),
   description: z.string().max(2000).optional(),
-  type: z.enum(['listening_party', 'concert', 'dj_set', 'radio_show', 'podcast_live']).default('listening_party'),
+  type: z.enum(['dj_set', 'listening_party', 'interview', 'podcast']).default('listening_party'),
   startTime: z.string().datetime(),
   endTime: z.string().datetime().optional(),
-  venue: z.string().max(200).optional(),
-  city: z.string().max(100).optional(),
   streamUrl: z.string().url().optional(),
   imageUrl: z.string().url().optional(),
 })
@@ -61,26 +59,21 @@ export async function GET(request: NextRequest) {
         ],
         skip: offset,
         take: limit,
-        include: {
-          createdBy: {
-            select: {
-              id: true,
-              username: true,
-              image: true,
-            },
-          },
-          channel: {
-            select: {
-              id: true,
-              slug: true,
-            },
-          },
-          _count: {
-            select: {
-              attendees: true,
-              setlist: true,
-            },
-          },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          description: true,
+          type: true,
+          status: true,
+          startTime: true,
+          endTime: true,
+          streamUrl: true,
+          imageUrl: true,
+          hostId: true,
+          attendeeCount: true,
+          messageCount: true,
+          createdAt: true,
         },
       }),
       prisma.liveEvent.count({ where }),
@@ -116,7 +109,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: validation.error.errors[0].message }, { status: 400 })
     }
 
-    const { name, description, type, startTime, endTime, venue, city, streamUrl, imageUrl } = validation.data
+    const { name, description, type, startTime, endTime, streamUrl, imageUrl } = validation.data
 
     // Generate slug
     const slug = name
@@ -126,60 +119,20 @@ export async function POST(request: NextRequest) {
       '-' +
       Date.now().toString(36)
 
-    // Create event with associated channel
-    const event = await prisma.$transaction(async (tx) => {
-      // Create channel for the event
-      const channel = await tx.channel.create({
-        data: {
-          name: `${name} Live`,
-          slug: `live-${slug}`,
-          description: `Live chat for ${name}`,
-          type: 'public',
-          category: 'event',
-          createdById: session.user.id,
-          memberCount: 1,
-          members: {
-            create: {
-              userId: session.user.id,
-              role: 'owner',
-            },
-          },
-        },
-      })
-
-      // Create event
-      return tx.liveEvent.create({
-        data: {
-          name,
-          slug,
-          description,
-          type,
-          startTime: new Date(startTime),
-          endTime: endTime ? new Date(endTime) : null,
-          venue,
-          city,
-          streamUrl,
-          imageUrl,
-          channelId: channel.id,
-          createdById: session.user.id,
-          status: 'scheduled',
-        },
-        include: {
-          channel: {
-            select: {
-              id: true,
-              slug: true,
-            },
-          },
-          createdBy: {
-            select: {
-              id: true,
-              username: true,
-              image: true,
-            },
-          },
-        },
-      })
+    // Create event
+    const event = await prisma.liveEvent.create({
+      data: {
+        name,
+        slug,
+        description,
+        type,
+        startTime: new Date(startTime),
+        endTime: endTime ? new Date(endTime) : null,
+        streamUrl,
+        imageUrl,
+        hostId: session.user.id,
+        status: 'scheduled',
+      },
     })
 
     return NextResponse.json(event, { status: 201 })

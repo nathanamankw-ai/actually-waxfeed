@@ -14,32 +14,9 @@ export async function GET(
     const event = await prisma.liveEvent.findUnique({
       where: { slug: eventSlug },
       include: {
-        createdBy: {
-          select: {
-            id: true,
-            username: true,
-            image: true,
-          },
-        },
-        channel: {
-          select: {
-            id: true,
-            slug: true,
-            memberCount: true,
-          },
-        },
         attendees: {
           take: 20,
-          orderBy: { createdAt: 'desc' },
-          include: {
-            user: {
-              select: {
-                id: true,
-                username: true,
-                image: true,
-              },
-            },
-          },
+          orderBy: { joinedAt: 'desc' },
         },
         setlist: {
           orderBy: { position: 'asc' },
@@ -48,7 +25,7 @@ export async function GET(
           select: {
             attendees: true,
             setlist: true,
-            ratings: true,
+            messages: true,
           },
         },
       },
@@ -58,10 +35,24 @@ export async function GET(
       return NextResponse.json({ error: 'Event not found' }, { status: 404 })
     }
 
+    // Get host info if hostId exists
+    let host = null
+    if (event.hostId) {
+      host = await prisma.user.findUnique({
+        where: { id: event.hostId },
+        select: {
+          id: true,
+          username: true,
+          image: true,
+          isVerified: true,
+        },
+      })
+    }
+
     // Check if user is attending
     let userAttendance = null
     if (session?.user?.id) {
-      userAttendance = await prisma.eventAttendee.findUnique({
+      userAttendance = await prisma.liveEventAttendee.findUnique({
         where: {
           eventId_userId: {
             eventId: event.id,
@@ -73,6 +64,7 @@ export async function GET(
 
     return NextResponse.json({
       ...event,
+      host,
       isAttending: !!userAttendance,
       userAttendance,
     })
@@ -99,14 +91,14 @@ export async function PATCH(
     // Get event and check ownership
     const event = await prisma.liveEvent.findUnique({
       where: { slug: eventSlug },
-      select: { id: true, createdById: true },
+      select: { id: true, hostId: true },
     })
 
     if (!event) {
       return NextResponse.json({ error: 'Event not found' }, { status: 404 })
     }
 
-    if (event.createdById !== session.user.id) {
+    if (event.hostId !== session.user.id) {
       return NextResponse.json({ error: 'Not authorized to update this event' }, { status: 403 })
     }
 
