@@ -186,7 +186,7 @@ export async function POST(
     }
 
     // Check if user is muted
-    if (membership?.mutedUntil && new Date(membership.mutedUntil) > new Date()) {
+    if (membership?.isMuted) {
       return NextResponse.json({ error: 'You are muted in this channel' }, { status: 403 })
     }
 
