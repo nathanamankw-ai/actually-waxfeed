@@ -14,8 +14,6 @@ export async function POST(
     }
 
     const { eventSlug } = await params
-    const body = await request.json()
-    const { status } = body // interested, going, checked_in
 
     // Get event
     const event = await prisma.liveEvent.findUnique({
@@ -38,16 +36,8 @@ export async function POST(
     })
 
     if (existingAttendance) {
-      // Update attendance status
-      const updated = await prisma.liveEventAttendee.update({
-        where: { id: existingAttendance.id },
-        data: {
-          status,
-          checkedInAt: status === 'checked_in' ? new Date() : existingAttendance.checkedInAt,
-        },
-      })
-
-      return NextResponse.json({ attendance: updated, isNew: false })
+      // Already attending, return existing
+      return NextResponse.json({ attendance: existingAttendance, isNew: false })
     }
 
     // Create new attendance
@@ -56,8 +46,6 @@ export async function POST(
         data: {
           eventId: event.id,
           userId: session.user.id,
-          status,
-          checkedInAt: status === 'checked_in' ? new Date() : null,
         },
       }),
       prisma.liveEvent.update({
