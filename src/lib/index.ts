@@ -46,5 +46,4 @@ export {
 // Album description fetching
 export {
   fetchAlbumDescription,
-  type AlbumDescriptionResult,
 } from './album-description'

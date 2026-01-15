@@ -8,7 +8,7 @@ interface SetlistTrack {
   trackName: string | null
   artistName: string | null
   position: number
-  playedAt: Date
+  playedAt: Date | null
 }
 
 interface SetlistManagerProps {
@@ -125,7 +125,7 @@ export function SetlistManager({
                 )}
               </div>
               <span className="text-xs text-gray-400">
-                {format(new Date(track.playedAt), "h:mm a")}
+                {track.playedAt ? format(new Date(track.playedAt), "h:mm a") : "-"}
               </span>
             </div>
           ))}

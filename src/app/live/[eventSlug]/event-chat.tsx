@@ -18,12 +18,12 @@ interface Message {
 }
 
 interface EventChatProps {
-  channelSlug: string
+  eventSlug: string
   currentUserId: string | undefined
   isLive: boolean
 }
 
-export function EventChat({ channelSlug, currentUserId, isLive }: EventChatProps) {
+export function EventChat({ eventSlug, currentUserId, isLive }: EventChatProps) {
   const [messages, setMessages] = useState<Message[]>([])
   const [newMessage, setNewMessage] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -43,7 +43,7 @@ export function EventChat({ channelSlug, currentUserId, isLive }: EventChatProps
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 8000) // 8 second timeout
         
-        const res = await fetch(`/api/channels/${channelSlug}/messages?limit=100`, {
+        const res = await fetch(`/api/live/${eventSlug}/messages?limit=100`, {
           signal: controller.signal
         })
         clearTimeout(timeoutId)
@@ -64,7 +64,7 @@ export function EventChat({ channelSlug, currentUserId, isLive }: EventChatProps
     // Poll more frequently for live events
     const interval = setInterval(fetchMessages, isLive ? 2000 : 5000)
     return () => clearInterval(interval)
-  }, [channelSlug, isLive])
+  }, [eventSlug, isLive])
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -74,7 +74,7 @@ export function EventChat({ channelSlug, currentUserId, isLive }: EventChatProps
     setError(null)
 
     try {
-      const res = await fetch(`/api/channels/${channelSlug}/messages`, {
+      const res = await fetch(`/api/live/${eventSlug}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content: newMessage.trim() }),

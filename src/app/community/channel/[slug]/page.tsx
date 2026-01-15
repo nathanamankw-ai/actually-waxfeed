@@ -180,7 +180,10 @@ export default async function ChannelPage({
             <ChannelChat
               channelId={channel.id}
               channelSlug={channel.slug}
-              initialMessages={channel.messages}
+              initialMessages={channel.messages.map((msg) => ({
+                ...msg,
+                metadata: msg.metadata as { albumId?: string; albumName?: string; artistName?: string; albumCover?: string } | null | undefined,
+              }))}
               currentUserId={session?.user?.id}
               isMember={channel.isMember}
             />

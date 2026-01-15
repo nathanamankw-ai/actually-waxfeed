@@ -14,7 +14,7 @@ interface Message {
     albumName?: string
     artistName?: string
     albumCover?: string
-  }
+  } | null
   isEdited?: boolean
   createdAt: Date
   user: {

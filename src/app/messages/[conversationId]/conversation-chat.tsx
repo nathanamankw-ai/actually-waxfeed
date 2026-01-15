@@ -24,7 +24,7 @@ interface Message {
     image: string | null
     isVerified: boolean
   }
-  replyToId?: string
+  replyToId?: string | null
   replyTo?: {
     id: string
     content: string

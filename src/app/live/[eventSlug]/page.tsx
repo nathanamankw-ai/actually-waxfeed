@@ -209,7 +209,7 @@ export default async function EventPage({
                   <AttendButton
                     eventSlug={event.slug}
                     isAttending={event.isAttending}
-                    currentStatus={event.userAttendance?.status || null}
+                    currentStatus={null}
                     isLive={isLive}
                   />
                 </div>
@@ -249,7 +249,7 @@ export default async function EventPage({
                       <p className="text-sm text-gray-500 truncate">{track.artistName || "Unknown Artist"}</p>
                     </div>
                     <span className="text-xs text-gray-400">
-                      {format(new Date(track.playedAt), "h:mm a")}
+                      {track.playedAt ? format(new Date(track.playedAt), "h:mm a") : "-"}
                     </span>
                   </div>
                 ))}
@@ -313,11 +313,6 @@ export default async function EventPage({
                       <DefaultAvatar size="sm" />
                     )}
                     <span className="text-sm font-medium truncate">{attendee.user.username}</span>
-                    {attendee.status === "checked_in" && (
-                      <span className="ml-auto text-xs bg-green-500/20 text-green-500 px-2 py-0.5 rounded">
-                        Here
-                      </span>
-                    )}
                   </Link>
                 ))}
               </div>

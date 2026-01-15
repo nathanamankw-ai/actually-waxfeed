@@ -75,8 +75,9 @@ model User {
   // Moderation relations
   blocksInitiated  Block[]        @relation("blocker")
   blocksReceived   Block[]        @relation("blocked")
-  reportsSubmitted Report[]       @relation("reporter")
-  notifications    Notification[]
+  reportsSubmitted   Report[]           @relation("reporter")
+  notifications      Notification[]
+  liveEventMessages  LiveEventMessage[]
 
   // Notification settings
   notificationSettings NotificationSettings?
@@ -860,6 +861,7 @@ model LiveEventMessage {
   createdAt DateTime @default(now())
 
   event     LiveEvent                  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user      User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
   reactions LiveEventMessageReaction[]
 
   @@index([eventId])
