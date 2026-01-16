@@ -85,6 +85,9 @@ export function Header() {
           <Link href="/lists" className="no-underline hover:underline">
             Lists
           </Link>
+          <Link href="/hot-takes" className="no-underline hover:underline">
+            Hot Takes
+          </Link>
 
           {/* Theme toggle */}
           <button
@@ -277,6 +280,17 @@ export function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               <span>Lists</span>
+              <svg className="w-5 h-5" style={{ opacity: 0.5 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+            <Link
+              href="/hot-takes"
+              className="flex items-center justify-between px-4 py-4 text-lg font-medium no-underline hover:opacity-70"
+              style={{ borderBottom: '1px solid var(--header-border)' }}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span>Hot Takes</span>
               <svg className="w-5 h-5" style={{ opacity: 0.5 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
