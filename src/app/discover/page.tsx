@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { AlbumCard } from "@/components/album-card"
+import { SpinWheel } from "@/components/spin-wheel"
 import Link from "next/link"
 
 export const dynamic = "force-dynamic"
@@ -218,6 +219,11 @@ export default async function DiscoverPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 lg:py-8">
       <h1 className="text-2xl lg:text-3xl font-bold mb-8">Discover</h1>
+
+      {/* Spin the Wheel - Featured section */}
+      <section className="mb-16 py-12 lg:py-16 border-y border-[#222]">
+        <SpinWheel userId={session?.user?.id} />
+      </section>
 
       {/* For You - Personalized recommendations */}
       {recommendations.forYou.length > 0 && (
