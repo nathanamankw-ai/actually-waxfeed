@@ -216,13 +216,21 @@ export default async function DiscoverPage() {
   const session = await auth()
   const recommendations = await getRecommendations(session?.user?.id)
 
+  // Get user's total review count for SpinWheel unlock status
+  let userReviewCount = 0
+  if (session?.user?.id) {
+    userReviewCount = await prisma.review.count({
+      where: { userId: session.user.id },
+    })
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 lg:py-8">
       <h1 className="text-2xl lg:text-3xl font-bold mb-8">Discover</h1>
 
       {/* Spin the Wheel - Featured section */}
       <section className="mb-16 py-12 lg:py-16 border-y border-[#222]">
-        <SpinWheel userId={session?.user?.id} />
+        <SpinWheel userId={session?.user?.id} userReviewCount={userReviewCount} />
       </section>
 
       {/* For You - Personalized recommendations */}

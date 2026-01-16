@@ -76,6 +76,11 @@ model User {
   pinnedReviewId        String?
   pinnedListId          String?
 
+  // Hot takes relations
+  hotTakes              HotTake[]
+  hotTakeVotes          HotTakeVote[]
+  hotTakeArguments      HotTakeArgument[]
+
   @@index([username])
   @@index([email])
   @@index([createdAt])
@@ -164,6 +169,7 @@ model Album {
   listItems       ListItem[]
   tracks          Track[]
   userTags        AlbumTag[]
+  hotTakes        HotTake[]
 
   @@index([spotifyId])
   @@index([artistName])
@@ -619,4 +625,68 @@ model Lyrics {
 
   @@index([trackId])
   @@index([geniusId])
+}
+
+// ============================================
+// HOT TAKES (Community Debates)
+// ============================================
+
+model HotTake {
+  id        String   @id @default(cuid())
+  albumId   String
+  authorId  String
+  stance    String   // OVERRATED, UNDERRATED, MASTERPIECE, TRASH, AHEAD_OF_TIME, DATED
+  content   String   @db.VarChar(280)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Cached counts for performance
+  voteCount Int @default(0)
+
+  album     Album        @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  author    User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  votes     HotTakeVote[]
+  arguments HotTakeArgument[]
+
+  @@unique([albumId, authorId]) // One hot take per album per user
+  @@index([albumId])
+  @@index([authorId])
+  @@index([createdAt])
+  @@index([voteCount])
+  @@index([stance])
+}
+
+model HotTakeVote {
+  id        String   @id @default(cuid())
+  hotTakeId String
+  userId    String
+  vote      String   // agree, disagree
+  createdAt DateTime @default(now())
+
+  hotTake   HotTake  @relation(fields: [hotTakeId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([hotTakeId, userId])
+  @@index([hotTakeId])
+  @@index([userId])
+  @@index([vote])
+}
+
+model HotTakeArgument {
+  id        String   @id @default(cuid())
+  hotTakeId String
+  authorId  String
+  side      String   // agree, disagree
+  content   String   @db.VarChar(500)
+  likes     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  hotTake   HotTake  @relation(fields: [hotTakeId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([hotTakeId])
+  @@index([authorId])
+  @@index([side])
+  @@index([likes])
 }

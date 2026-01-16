@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import Link from "next/link"
 
 interface Album {
@@ -16,31 +16,49 @@ interface Album {
 
 interface SpinWheelProps {
   userId?: string
+  userReviewCount?: number
 }
 
-export function SpinWheel({ userId }: SpinWheelProps) {
+const MIN_REVIEWS_REQUIRED = 10
+
+export function SpinWheel({ userId, userReviewCount = 0 }: SpinWheelProps) {
   const [isSpinning, setIsSpinning] = useState(false)
   const [album, setAlbum] = useState<Album | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [spinCount, setSpinCount] = useState(0)
+  const [topGenres, setTopGenres] = useState<string[]>([])
+  const [isLocked, setIsLocked] = useState(!userId || userReviewCount < MIN_REVIEWS_REQUIRED)
+
+  useEffect(() => {
+    setIsLocked(!userId || userReviewCount < MIN_REVIEWS_REQUIRED)
+  }, [userId, userReviewCount])
 
   const spin = useCallback(async () => {
+    if (!userId) {
+      setError("Sign in to use Spin the Wheel")
+      return
+    }
+
     setIsSpinning(true)
     setError(null)
     setSpinCount(c => c + 1)
 
     try {
-      const res = await fetch("/api/albums/random" + (userId ? `?userId=${userId}` : ""))
+      const res = await fetch(`/api/albums/random?userId=${userId}`)
+      const data = await res.json()
+
       if (!res.ok) {
-        const data = await res.json()
+        if (res.status === 403) {
+          setIsLocked(true)
+        }
         throw new Error(data.error || "Failed to get random album")
       }
-      const data = await res.json()
 
       // Wait for spin animation
       await new Promise(resolve => setTimeout(resolve, 1800))
 
       setAlbum(data.data.album)
+      setTopGenres(data.data.topGenres || [])
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong")
     } finally {
@@ -52,6 +70,104 @@ export function SpinWheel({ userId }: SpinWheelProps) {
     setAlbum(null)
     setError(null)
   }, [])
+
+  // Locked state - not signed in or not enough reviews
+  if (!userId) {
+    return (
+      <div className="text-center py-16">
+        <p className="text-[10px] tracking-[0.3em] uppercase text-[#666] mb-4">
+          Locked Feature
+        </p>
+        <h2 className="text-3xl lg:text-5xl font-bold tracking-tight mb-6">
+          Spin the Wheel
+        </h2>
+        <p className="text-sm text-[#888] max-w-md mx-auto mb-8">
+          Discover albums tailored to your taste. Sign in and review {MIN_REVIEWS_REQUIRED} albums to unlock this feature.
+        </p>
+        <Link
+          href="/login"
+          className="inline-block bg-white text-black px-8 py-4 font-bold text-sm tracking-wide hover:bg-[#f0f0f0] transition-colors no-underline"
+        >
+          SIGN IN
+        </Link>
+      </div>
+    )
+  }
+
+  if (isLocked) {
+    const reviewsNeeded = MIN_REVIEWS_REQUIRED - userReviewCount
+    const progress = (userReviewCount / MIN_REVIEWS_REQUIRED) * 100
+
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+        {/* Left: Progress info */}
+        <div className="order-2 lg:order-1">
+          <p className="text-[10px] tracking-[0.3em] uppercase text-[#666] mb-4">
+            Locked Feature
+          </p>
+          <h2 className="text-4xl lg:text-6xl font-bold tracking-tight leading-none mb-6">
+            Spin the<br />
+            Wheel
+          </h2>
+          <p className="text-sm text-[#888] max-w-sm leading-relaxed mb-6">
+            Review {reviewsNeeded} more album{reviewsNeeded !== 1 ? "s" : ""} to unlock genre-weighted discovery.
+            We need to learn your taste first.
+          </p>
+
+          {/* Progress bar */}
+          <div className="mb-6">
+            <div className="flex justify-between text-[10px] tracking-[0.15em] uppercase text-[#666] mb-2">
+              <span>Progress</span>
+              <span>{userReviewCount} / {MIN_REVIEWS_REQUIRED}</span>
+            </div>
+            <div className="h-1 bg-[#222] relative">
+              <div
+                className="h-full bg-white transition-all duration-500"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+
+          <Link
+            href="/search"
+            className="inline-block bg-white text-black px-8 py-4 font-bold text-sm tracking-wide hover:bg-[#f0f0f0] transition-colors no-underline"
+          >
+            FIND ALBUMS TO REVIEW
+          </Link>
+        </div>
+
+        {/* Right: Locked vinyl */}
+        <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
+          <div className="relative w-64 h-64 lg:w-80 lg:h-80 opacity-40">
+            <svg viewBox="0 0 200 200" className="w-full h-full">
+              <defs>
+                <linearGradient id="lockedHolo" x1="20%" y1="80%" x2="80%" y2="20%">
+                  <stop offset="0%" stopColor="#444"/>
+                  <stop offset="50%" stopColor="#333"/>
+                  <stop offset="100%" stopColor="#444"/>
+                </linearGradient>
+              </defs>
+              <circle cx="100" cy="100" r="98" fill="#0a0a0a" stroke="#222" strokeWidth="1"/>
+              <circle cx="100" cy="100" r="92" fill="url(#lockedHolo)"/>
+              <g fill="none" stroke="#000" strokeOpacity="0.2">
+                <circle cx="100" cy="100" r="86" strokeWidth="10"/>
+                <circle cx="100" cy="100" r="72" strokeWidth="8"/>
+                <circle cx="100" cy="100" r="60" strokeWidth="6"/>
+              </g>
+              <circle cx="100" cy="100" r="28" fill="#0a0a0a"/>
+              <circle cx="100" cy="100" r="24" fill="#151515"/>
+              <circle cx="100" cy="100" r="4" fill="#000"/>
+              {/* Lock icon */}
+              <g transform="translate(88, 90)">
+                <rect x="2" y="10" width="20" height="14" fill="#333" stroke="#555" strokeWidth="1"/>
+                <path d="M6 10 V6 a6 6 0 1 1 12 0 V10" fill="none" stroke="#555" strokeWidth="2"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="w-full">
@@ -67,10 +183,24 @@ export function SpinWheel({ userId }: SpinWheelProps) {
               Spin the<br />
               Wheel
             </h2>
-            <p className="text-sm text-[#888] max-w-sm leading-relaxed mb-8">
-              Let fate decide your next listen. One spin, one album,
-              infinite possibilities. No algorithms, just serendipity.
+            <p className="text-sm text-[#888] max-w-sm leading-relaxed mb-4">
+              Albums tailored to your taste. 70% matched to your favorite genres,
+              30% wild cards for discovery.
             </p>
+
+            {/* User's top genres */}
+            {topGenres.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-6">
+                {topGenres.map((genre, i) => (
+                  <span
+                    key={i}
+                    className="text-[9px] tracking-[0.15em] uppercase px-2 py-1 border border-[#333] text-[#666]"
+                  >
+                    {genre}
+                  </span>
+                ))}
+              </div>
+            )}
 
             <button
               onClick={spin}
