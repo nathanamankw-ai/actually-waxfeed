@@ -1,11 +1,28 @@
 @import "tailwindcss";
 
-:root {
+/* Light mode (default) - dark body, white header */
+:root,
+html.light {
   --background: #0a0a0a;
   --foreground: #ededed;
   --muted: #888888;
   --border: #222222;
   --accent: #ffffff;
+  --header-bg: #ffffff;
+  --header-text: #000000;
+  --header-border: #000000;
+}
+
+/* Dark mode - white body, dark header */
+html.dark {
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --muted: #666666;
+  --border: #dddddd;
+  --accent: #000000;
+  --header-bg: #0a0a0a;
+  --header-text: #ededed;
+  --header-border: #222222;
 }
 
 @theme inline {
@@ -21,6 +38,7 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 /* Brutalist style resets */
@@ -269,7 +287,7 @@ img[src=""] {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Slow spin animation for logo */
+/* Slow spin animation for logo disc */
 @keyframes spin-slow {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -277,4 +295,6 @@ img[src=""] {
 
 .animate-spin-slow {
   animation: spin-slow 8s linear infinite;
+  transform-origin: center center;
+  transform-box: fill-box;
 }

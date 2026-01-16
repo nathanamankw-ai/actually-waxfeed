@@ -78,12 +78,21 @@
 ## Changelog
 
 ### [Unreleased]
-- [x] Fix header color (make dark to match body)
-- [ ] Implement dark/light mode toggle
-- [x] Remove excessive quotation marks from discover and list-content
 - [ ] Investigate and remove homebru/djfeed if found (not in codebase - check database)
 - [ ] Remove "for those who know" tagline if found (not in codebase - check database)
 - [ ] Clean up demo content
+
+### [1.0.2] - 2026-01-16
+- Implemented dark/light mode toggle with color inversion
+  - Light mode (default): White header + dark body
+  - Dark mode: Dark header + white body
+- Created ThemeProvider component with localStorage persistence
+- Added theme toggle button to desktop nav and mobile menu
+- Updated all header/mobile menu elements to use CSS variables
+- Changed WaxfeedLogo to inline SVG with only disc spinning (not whole logo)
+- Added CSS variables for theming:
+  - `--header-bg`, `--header-text`, `--header-border`
+  - `--background`, `--foreground`, `--muted`, `--border`, `--accent`
 
 ### [1.0.1] - 2026-01-16
 - Fixed header to use dark theme (`bg-[#0a0a0a]`) matching body

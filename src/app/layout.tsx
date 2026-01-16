@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { SessionProvider } from "@/components/session-provider";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
 import { CustomCursor } from "@/components/custom-cursor";
 import { Analytics } from "@vercel/analytics/next";
@@ -30,15 +31,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className="antialiased min-h-screen bg-[#0a0a0a] text-[#ededed]">
+    <html lang="en" className="light" suppressHydrationWarning>
+      <body className="antialiased min-h-screen transition-colors duration-200">
         <SessionProvider>
-          <CustomCursor />
-          <Header />
-          <main className="pt-16">
-            {children}
-          </main>
-          <Analytics />
+          <ThemeProvider>
+            <CustomCursor />
+            <Header />
+            <main className="pt-16">
+              {children}
+            </main>
+            <Analytics />
+          </ThemeProvider>
         </SessionProvider>
       </body>
     </html>
