@@ -4,6 +4,7 @@ import Link from "next/link"
 import { formatDistanceToNow } from "date-fns"
 import { useState, memo, useMemo, useCallback } from "react"
 import { useSession } from "next-auth/react"
+import { DefaultAvatar } from "@/components/default-avatar"
 import {
   HeartIcon,
   HeartFilledIcon,
@@ -179,31 +180,45 @@ export const ReviewCard = memo(function ReviewCard({
         <div className="flex-1 min-w-0">
           {/* Header */}
           <div className="flex items-start justify-between gap-2 sm:gap-4 mb-2">
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                <Link
-                  href={`/u/${user.username || user.id}`}
-                  className="font-bold hover:underline no-underline text-sm sm:text-base"
-                >
-                  {user.username || "Anonymous"}
-                </Link>
-                {user.isVerified && (
-                  <VerifiedIcon size={14} className="text-blue-400" />
+            <div className="flex items-start gap-2 min-w-0">
+              {/* User Avatar */}
+              <Link href={`/u/${user.username || user.id}`} className="flex-shrink-0">
+                {user.image ? (
+                  <img
+                    src={user.image}
+                    alt=""
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <DefaultAvatar size="sm" className="w-8 h-8" />
                 )}
-                <span className="text-xs" style={{ color: 'var(--muted)' }}>
-                  {formatDistanceToNow(date, { addSuffix: true })}
-                  {isEdited && " (edited)"}
-                </span>
+              </Link>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                  <Link
+                    href={`/u/${user.username || user.id}`}
+                    className="font-bold hover:underline no-underline text-sm sm:text-base"
+                  >
+                    {user.username || "Anonymous"}
+                  </Link>
+                  {user.isVerified && (
+                    <VerifiedIcon size={14} className="text-blue-400" />
+                  )}
+                  <span className="text-xs" style={{ color: 'var(--muted)' }}>
+                    {formatDistanceToNow(date, { addSuffix: true })}
+                    {isEdited && " (edited)"}
+                  </span>
+                </div>
+                {showAlbum && (
+                  <Link
+                    href={`/album/${album.spotifyId}`}
+                    className="text-xs sm:text-sm hover:underline no-underline line-clamp-1"
+                    style={{ color: 'var(--muted)' }}
+                  >
+                    {album.title} — {album.artistName}
+                  </Link>
+                )}
               </div>
-              {showAlbum && (
-                <Link
-                  href={`/album/${album.spotifyId}`}
-                  className="text-xs sm:text-sm hover:underline no-underline line-clamp-1"
-                  style={{ color: 'var(--muted)' }}
-                >
-                  {album.title} — {album.artistName}
-                </Link>
-              )}
             </div>
 
             {/* Rating */}
