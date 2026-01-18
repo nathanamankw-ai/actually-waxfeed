@@ -84,24 +84,24 @@ export default async function Home() {
     <div className="min-h-screen bg-[#0a0a0a]">
       {/* Header section */}
       <section className="border-b border-[#1a1a1a]">
-        <div className="max-w-7xl mx-auto px-6 py-16 lg:py-20">
-          <p className="text-[11px] tracking-[0.2em] uppercase text-[#555] mb-4">
+        <div className="max-w-7xl mx-auto px-6 py-12 lg:py-16">
+          <p className="text-[10px] tracking-[0.25em] uppercase text-[#555] mb-3">
             Track what you listen to
           </p>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-light leading-[1.05] tracking-[-0.02em]">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-light leading-[1.1] tracking-[-0.02em]">
             Your music diary.
           </h1>
-          <p className="text-4xl md:text-5xl lg:text-6xl font-light leading-[1.05] tracking-[-0.02em] text-[#444]">
+          <p className="text-3xl md:text-4xl lg:text-5xl font-light leading-[1.1] tracking-[-0.02em] text-[#444]">
             Rate, review, discover.
           </p>
 
           {!session && (
             <Link
               href="/login"
-              className="inline-flex items-center gap-2 mt-10 px-6 py-3.5 bg-white text-black text-[13px] uppercase tracking-[0.1em] font-medium hover:bg-[#e5e5e5] transition-colors"
+              className="inline-flex items-center gap-2 mt-8 px-5 py-3 bg-white text-black text-[12px] uppercase tracking-[0.1em] font-medium hover:bg-[#e5e5e5] transition-colors"
             >
               Get Started
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </Link>
@@ -111,18 +111,18 @@ export default async function Home() {
 
       {/* Stats bar */}
       <section className="border-b border-[#1a1a1a]">
-        <div className="max-w-7xl mx-auto px-6 py-6 flex gap-10 lg:gap-16">
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl lg:text-3xl font-light tabular-nums">{stats.albumCount.toLocaleString()}</span>
-            <span className="text-[11px] tracking-[0.2em] uppercase text-[#555]">Albums</span>
+        <div className="max-w-7xl mx-auto px-6 py-5 flex gap-8 lg:gap-12">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-xl lg:text-2xl font-light tabular-nums">{stats.albumCount.toLocaleString()}</span>
+            <span className="text-[10px] tracking-[0.2em] uppercase text-[#555]">Albums</span>
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl lg:text-3xl font-light tabular-nums">{stats.reviewCount.toLocaleString()}</span>
-            <span className="text-[11px] tracking-[0.2em] uppercase text-[#555]">Reviews</span>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-xl lg:text-2xl font-light tabular-nums">{stats.reviewCount.toLocaleString()}</span>
+            <span className="text-[10px] tracking-[0.2em] uppercase text-[#555]">Reviews</span>
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl lg:text-3xl font-light tabular-nums">{stats.userCount.toLocaleString()}</span>
-            <span className="text-[11px] tracking-[0.2em] uppercase text-[#555]">Critics</span>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-xl lg:text-2xl font-light tabular-nums">{stats.userCount.toLocaleString()}</span>
+            <span className="text-[10px] tracking-[0.2em] uppercase text-[#555]">Users</span>
           </div>
         </div>
       </section>
