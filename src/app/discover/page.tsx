@@ -166,13 +166,13 @@ export default async function DiscoverPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
       {/* Editorial masthead */}
-      <header className="border-b border-[#1a1a1a]">
+      <header style={{ borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-12 lg:py-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
             <div className="lg:col-span-8">
-              <p className="text-[10px] tracking-[0.4em] uppercase text-[#444] mb-4">
+              <p className="text-[10px] tracking-[0.4em] uppercase mb-4" style={{ color: 'var(--muted)' }}>
                 Vol. {new Date().getFullYear()} · Issue {new Date().getMonth() + 1}
               </p>
               <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-[-0.04em] leading-[0.85]">
@@ -180,7 +180,7 @@ export default async function DiscoverPage() {
               </h1>
             </div>
             <div className="lg:col-span-4 lg:text-right">
-              <p className="text-[11px] tracking-[0.15em] uppercase text-[#555] leading-relaxed">
+              <p className="text-[11px] tracking-[0.15em] uppercase leading-relaxed" style={{ color: 'var(--muted)' }}>
                 Curated selections<br />
                 Algorithmic taste<br />
                 Cultural discourse
@@ -191,14 +191,14 @@ export default async function DiscoverPage() {
       </header>
 
       {/* Spin the Wheel - Editorial feature */}
-      <section className="border-b border-[#1a1a1a]">
+      <section className="border-b border-[--border]">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-12 border-l border-r border-[#1a1a1a]">
-            <div className="col-span-12 lg:col-span-1 border-r border-[#1a1a1a] py-8 lg:py-16 flex lg:flex-col items-center lg:items-start justify-between lg:justify-start gap-4">
-              <span className="text-[10px] tracking-[0.3em] uppercase text-[#444] lg:writing-mode-vertical lg:rotate-180" style={{ writingMode: 'vertical-rl' as const }}>
+          <div className="grid grid-cols-12 border-l border-r border-[--border]">
+            <div className="col-span-12 lg:col-span-1 border-r border-[--border] py-8 lg:py-16 flex lg:flex-col items-center lg:items-start justify-between lg:justify-start gap-4">
+              <span className="text-[10px] tracking-[0.3em] uppercase text-[--muted] lg:writing-mode-vertical lg:rotate-180" style={{ writingMode: 'vertical-rl' as const }}>
                 Feature
               </span>
-              <span className="text-4xl lg:text-6xl font-bold text-[#222]">01</span>
+              <span className="text-4xl lg:text-6xl font-bold text-[--border]">01</span>
             </div>
             <div className="col-span-12 lg:col-span-11 py-12 lg:py-20 px-6 lg:px-12">
               <SpinWheel userId={session?.user?.id} userReviewCount={userReviewCount} />
@@ -209,20 +209,20 @@ export default async function DiscoverPage() {
 
       {/* For You - Personalized */}
       {recommendations.forYou.length > 0 && (
-        <section className="border-b border-[#1a1a1a]">
+        <section className="border-b border-[--border]">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="grid grid-cols-12 border-l border-r border-[#1a1a1a]">
-              <div className="col-span-12 lg:col-span-1 border-r border-[#1a1a1a] py-8 flex lg:flex-col items-center lg:items-start justify-between lg:justify-start gap-4">
-                <span className="text-[10px] tracking-[0.3em] uppercase text-[#444] lg:writing-mode-vertical lg:rotate-180" style={{ writingMode: 'vertical-rl' as const }}>
+            <div className="grid grid-cols-12 border-l border-r border-[--border]">
+              <div className="col-span-12 lg:col-span-1 border-r border-[--border] py-8 flex lg:flex-col items-center lg:items-start justify-between lg:justify-start gap-4">
+                <span className="text-[10px] tracking-[0.3em] uppercase text-[--muted] lg:writing-mode-vertical lg:rotate-180" style={{ writingMode: 'vertical-rl' as const }}>
                   Curated
                 </span>
-                <span className="text-4xl lg:text-6xl font-bold text-[#222]">{getSectionNum()}</span>
+                <span className="text-4xl lg:text-6xl font-bold text-[--border]">{getSectionNum()}</span>
               </div>
               <div className="col-span-12 lg:col-span-11 py-10 lg:py-14 px-6 lg:px-12">
                 <div className="flex items-baseline justify-between mb-8">
                   <div>
                     <h2 className="text-2xl lg:text-3xl font-bold tracking-tight mb-2">For You</h2>
-                    <p className="text-[11px] tracking-[0.15em] uppercase text-[#555]">
+                    <p className="text-[11px] tracking-[0.15em] uppercase text-[--muted]">
                       Based on similar critics taste profiles
                     </p>
                   </div>
@@ -236,7 +236,7 @@ export default async function DiscoverPage() {
                       className="group"
                       style={{ animationDelay: `${i * 0.05}s` }}
                     >
-                      <div className="aspect-square bg-[#111] overflow-hidden mb-3">
+                      <div className="aspect-square bg-[--border] overflow-hidden mb-3">
                         {album.coverArtUrl ? (
                           <img
                             src={album.coverArtUrl}
@@ -244,19 +244,19 @@ export default async function DiscoverPage() {
                             className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-[#333]">
+                          <div className="w-full h-full flex items-center justify-center text-[--border]">
                             <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
                               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/>
                             </svg>
                           </div>
                         )}
                       </div>
-                      <p className="text-[13px] font-semibold truncate group-hover:text-[#777] transition-colors">
+                      <p className="text-[13px] font-semibold truncate group-hover:text-[--muted] transition-colors">
                         {album.title}
                       </p>
-                      <p className="text-[11px] text-[#555] truncate">{album.artistName}</p>
+                      <p className="text-[11px] text-[--muted] truncate">{album.artistName}</p>
                       {album.averageRating && (
-                        <p className="text-[11px] text-[#444] mt-1 tabular-nums">{album.averageRating.toFixed(1)}</p>
+                        <p className="text-[11px] text-[--muted] mt-1 tabular-nums">{album.averageRating.toFixed(1)}</p>
                       )}
                     </Link>
                   ))}
@@ -269,24 +269,24 @@ export default async function DiscoverPage() {
 
       {/* Popular in Genre - Full bleed asymmetric */}
       {recommendations.popularInGenre && (
-        <section className="border-b border-[#1a1a1a]">
+        <section className="border-b border-[--border]">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="grid grid-cols-12 border-l border-r border-[#1a1a1a]">
-              <div className="col-span-12 lg:col-span-1 border-r border-[#1a1a1a] py-8 flex lg:flex-col items-center lg:items-start justify-between lg:justify-start gap-4">
-                <span className="text-[10px] tracking-[0.3em] uppercase text-[#444] lg:writing-mode-vertical lg:rotate-180" style={{ writingMode: 'vertical-rl' as const }}>
+            <div className="grid grid-cols-12 border-l border-r border-[--border]">
+              <div className="col-span-12 lg:col-span-1 border-r border-[--border] py-8 flex lg:flex-col items-center lg:items-start justify-between lg:justify-start gap-4">
+                <span className="text-[10px] tracking-[0.3em] uppercase text-[--muted] lg:writing-mode-vertical lg:rotate-180" style={{ writingMode: 'vertical-rl' as const }}>
                   Genre
                 </span>
-                <span className="text-4xl lg:text-6xl font-bold text-[#222]">{getSectionNum()}</span>
+                <span className="text-4xl lg:text-6xl font-bold text-[--border]">{getSectionNum()}</span>
               </div>
 
               {/* Featured album - large */}
-              <div className="col-span-12 lg:col-span-5 border-r border-[#1a1a1a]">
+              <div className="col-span-12 lg:col-span-5 border-r border-[--border]">
                 {recommendations.popularInGenre.albums[0] && (
                   <Link
                     href={`/album/${recommendations.popularInGenre.albums[0].spotifyId}`}
                     className="block group h-full"
                   >
-                    <div className="aspect-square lg:aspect-auto lg:h-full bg-[#111] overflow-hidden relative">
+                    <div className="aspect-square lg:aspect-auto lg:h-full bg-[--border] overflow-hidden relative">
                       {recommendations.popularInGenre.albums[0].coverArtUrl ? (
                         <img
                           src={recommendations.popularInGenre.albums[0].coverArtUrl}
@@ -311,31 +311,31 @@ export default async function DiscoverPage() {
 
               {/* Other genre albums - list */}
               <div className="col-span-12 lg:col-span-6 py-10 lg:py-0">
-                <div className="px-6 lg:px-8 py-6 border-b border-[#1a1a1a]">
+                <div className="px-6 lg:px-8 py-6 border-b border-[--border]">
                   <h2 className="text-xl font-bold tracking-tight">
                     Popular in <span className="capitalize">{recommendations.popularInGenre.genre}</span>
                   </h2>
                 </div>
-                <div className="divide-y divide-[#1a1a1a]">
+                <div className="divide-y divide-[--border]">
                   {recommendations.popularInGenre.albums.slice(1).map((album, i) => (
                     <Link
                       key={album.id}
                       href={`/album/${album.spotifyId}`}
-                      className="flex items-center gap-4 px-6 lg:px-8 py-4 hover:bg-[#0f0f0f] transition-colors group"
+                      className="flex items-center gap-4 px-6 lg:px-8 py-4 hover:opacity-80 transition-colors group"
                     >
-                      <span className="text-[11px] text-[#333] font-semibold tabular-nums w-5">
+                      <span className="text-[11px] text-[--border] font-semibold tabular-nums w-5">
                         {String(i + 2).padStart(2, '0')}
                       </span>
-                      <div className="w-12 h-12 bg-[#111] flex-shrink-0 overflow-hidden">
+                      <div className="w-12 h-12 bg-[--border] flex-shrink-0 overflow-hidden">
                         {album.coverArtUrl && (
                           <img src={album.coverArtUrl} alt="" className="w-full h-full object-cover" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-semibold truncate group-hover:text-[#777] transition-colors">
+                        <p className="text-[13px] font-semibold truncate group-hover:text-[--muted] transition-colors">
                           {album.title}
                         </p>
-                        <p className="text-[11px] text-[#555] truncate">{album.artistName}</p>
+                        <p className="text-[11px] text-[--muted] truncate">{album.artistName}</p>
                       </div>
                       {album.averageRating && (
                         <span className="text-[12px] font-semibold tabular-nums">{album.averageRating.toFixed(1)}</span>
@@ -350,18 +350,18 @@ export default async function DiscoverPage() {
       )}
 
       {/* New Releases + Trending - Split section */}
-      <section className="border-b border-[#1a1a1a]">
+      <section className="border-b border-[--border]">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-12 border-l border-r border-[#1a1a1a]">
-            <div className="col-span-12 lg:col-span-1 border-r border-[#1a1a1a] py-8 flex lg:flex-col items-center lg:items-start justify-between lg:justify-start gap-4">
-              <span className="text-[10px] tracking-[0.3em] uppercase text-[#444] lg:writing-mode-vertical lg:rotate-180" style={{ writingMode: 'vertical-rl' as const }}>
+          <div className="grid grid-cols-12 border-l border-r border-[--border]">
+            <div className="col-span-12 lg:col-span-1 border-r border-[--border] py-8 flex lg:flex-col items-center lg:items-start justify-between lg:justify-start gap-4">
+              <span className="text-[10px] tracking-[0.3em] uppercase text-[--muted] lg:writing-mode-vertical lg:rotate-180" style={{ writingMode: 'vertical-rl' as const }}>
                 Index
               </span>
-              <span className="text-4xl lg:text-6xl font-bold text-[#222]">{getSectionNum()}</span>
+              <span className="text-4xl lg:text-6xl font-bold text-[--border]">{getSectionNum()}</span>
             </div>
 
             {/* New Releases */}
-            <div className="col-span-12 lg:col-span-5 border-r border-[#1a1a1a] py-10 lg:py-14 px-6 lg:px-8">
+            <div className="col-span-12 lg:col-span-5 border-r border-[--border] py-10 lg:py-14 px-6 lg:px-8">
               <h2 className="text-xl font-bold tracking-tight mb-6">New Releases</h2>
               {recommendations.newReleases.length > 0 ? (
                 <div className="grid grid-cols-2 gap-4">
@@ -371,7 +371,7 @@ export default async function DiscoverPage() {
                       href={`/album/${album.spotifyId}`}
                       className="group"
                     >
-                      <div className="aspect-square bg-[#111] overflow-hidden mb-2">
+                      <div className="aspect-square bg-[--border] overflow-hidden mb-2">
                         {album.coverArtUrl && (
                           <img
                             src={album.coverArtUrl}
@@ -380,15 +380,15 @@ export default async function DiscoverPage() {
                           />
                         )}
                       </div>
-                      <p className="text-[12px] font-semibold truncate group-hover:text-[#777] transition-colors">
+                      <p className="text-[12px] font-semibold truncate group-hover:text-[--muted] transition-colors">
                         {album.title}
                       </p>
-                      <p className="text-[10px] text-[#555] truncate">{album.artistName}</p>
+                      <p className="text-[10px] text-[--muted] truncate">{album.artistName}</p>
                     </Link>
                   ))}
                 </div>
               ) : (
-                <p className="text-[#555] text-sm">No new releases this month</p>
+                <p className="text-[--muted] text-sm">No new releases this month</p>
               )}
             </div>
 
@@ -396,7 +396,7 @@ export default async function DiscoverPage() {
             <div className="col-span-12 lg:col-span-6 py-10 lg:py-14 px-6 lg:px-8">
               <div className="flex items-baseline justify-between mb-6">
                 <h2 className="text-xl font-bold tracking-tight">Billboard 200</h2>
-                <Link href="/trending" className="text-[10px] tracking-[0.15em] uppercase text-[#555] hover:text-white transition-colors">
+                <Link href="/trending" className="text-[10px] tracking-[0.15em] uppercase text-[--muted] hover:text-white transition-colors">
                   View All →
                 </Link>
               </div>
@@ -406,21 +406,21 @@ export default async function DiscoverPage() {
                     <Link
                       key={album.id}
                       href={`/album/${album.spotifyId}`}
-                      className="flex items-center gap-4 py-2.5 hover:bg-[#0f0f0f] -mx-3 px-3 transition-colors group"
+                      className="flex items-center gap-4 py-2.5 hover:opacity-80 -mx-3 px-3 transition-colors group"
                     >
-                      <span className="text-lg font-bold w-6 text-[#333] tabular-nums group-hover:text-white transition-colors">
+                      <span className="text-lg font-bold w-6 text-[--border] tabular-nums group-hover:text-white transition-colors">
                         {album.billboardRank}
                       </span>
-                      <div className="w-10 h-10 bg-[#111] flex-shrink-0 overflow-hidden">
+                      <div className="w-10 h-10 bg-[--border] flex-shrink-0 overflow-hidden">
                         {album.coverArtUrl && (
                           <img src={album.coverArtUrl} alt="" className="w-full h-full object-cover" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[12px] font-semibold truncate group-hover:text-[#777] transition-colors">
+                        <p className="text-[12px] font-semibold truncate group-hover:text-[--muted] transition-colors">
                           {album.title}
                         </p>
-                        <p className="text-[10px] text-[#555] truncate">{album.artistName}</p>
+                        <p className="text-[10px] text-[--muted] truncate">{album.artistName}</p>
                       </div>
                       {album.averageRating && (
                         <span className="text-[11px] font-semibold tabular-nums">{album.averageRating.toFixed(1)}</span>
@@ -429,7 +429,7 @@ export default async function DiscoverPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-[#555] text-sm">No trending albums yet</p>
+                <p className="text-[--muted] text-sm">No trending albums yet</p>
               )}
             </div>
           </div>
@@ -440,13 +440,13 @@ export default async function DiscoverPage() {
       {(!session || recommendations.forYou.length === 0) && (
         <section className="py-20 lg:py-28">
           <div className="max-w-7xl mx-auto px-6 text-center">
-            <p className="text-[10px] tracking-[0.4em] uppercase text-[#444] mb-6">
+            <p className="text-[10px] tracking-[0.4em] uppercase text-[--muted] mb-6">
               {session ? 'Start Your Journey' : 'Join the Discourse'}
             </p>
             <h2 className="text-3xl lg:text-5xl font-bold tracking-tight mb-4">
               {session ? 'Review albums to unlock personalized discovery' : 'Become a critic'}
             </h2>
-            <p className="text-[#555] mb-8 max-w-md mx-auto">
+            <p className="text-[--muted] mb-8 max-w-md mx-auto">
               {session
                 ? 'Your taste shapes your feed. The more you review, the better we understand what you want to hear next.'
                 : 'Join critics worldwide in rating, reviewing, and discovering music together.'
@@ -466,9 +466,9 @@ export default async function DiscoverPage() {
       )}
 
       {/* Footer colophon */}
-      <footer className="border-t border-[#1a1a1a]">
+      <footer className="border-t border-[--border]">
         <div className="max-w-7xl mx-auto px-6 py-8">
-          <p className="text-[10px] tracking-[0.2em] uppercase text-[#333]">
+          <p className="text-[10px] tracking-[0.2em] uppercase text-[--border]">
             WAXFEED · Discover · {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
           </p>
         </div>

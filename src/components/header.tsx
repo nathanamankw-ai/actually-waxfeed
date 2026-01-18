@@ -72,21 +72,21 @@ export function Header() {
         </form>
 
         {/* Desktop Navigation - only show on large screens */}
-        <nav className="hidden lg:flex items-center gap-6 text-sm">
-          <Link href="/" className="no-underline hover:underline">
-            Home
+        <nav className="hidden lg:flex items-center gap-6 text-[11px] tracking-[0.1em]">
+          <Link href="/" className="no-underline hover:opacity-60 transition-opacity">
+            HOME
           </Link>
-          <Link href="/discover" className="no-underline hover:underline">
-            Discover
+          <Link href="/discover" className="no-underline hover:opacity-60 transition-opacity">
+            DISCOVER
           </Link>
-          <Link href="/trending" className="no-underline hover:underline">
-            Trending
+          <Link href="/trending" className="no-underline hover:opacity-60 transition-opacity">
+            TRENDING
           </Link>
-          <Link href="/lists" className="no-underline hover:underline">
-            Lists
+          <Link href="/lists" className="no-underline hover:opacity-60 transition-opacity">
+            LISTS
           </Link>
-          <Link href="/hot-takes" className="no-underline hover:underline">
-            Hot Takes
+          <Link href="/hot-takes" className="no-underline hover:opacity-60 transition-opacity">
+            HOT TAKES
           </Link>
 
           {/* Theme toggle */}
@@ -167,10 +167,10 @@ export function Header() {
           ) : (
             <Link
               href="/login"
-              className="px-4 py-2 text-sm font-bold no-underline transition-colors inline-block"
+              className="px-4 py-2 text-[11px] tracking-[0.1em] font-medium no-underline transition-colors inline-block"
               style={{ backgroundColor: 'var(--header-text)', color: 'var(--header-bg)' }}
             >
-              Sign In
+              SIGN IN
             </Link>
           )}
         </nav>
@@ -242,55 +242,55 @@ export function Header() {
           <nav>
             <Link
               href="/"
-              className="flex items-center justify-between px-4 py-4 text-lg font-medium no-underline hover:opacity-70"
+              className="flex items-center justify-between px-4 py-4 text-[13px] tracking-[0.15em] font-medium no-underline hover:opacity-70"
               style={{ borderBottom: '1px solid var(--header-border)' }}
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span>Home</span>
+              <span>HOME</span>
               <svg className="w-5 h-5" style={{ opacity: 0.5 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </Link>
             <Link
               href="/discover"
-              className="flex items-center justify-between px-4 py-4 text-lg font-medium no-underline hover:opacity-70"
+              className="flex items-center justify-between px-4 py-4 text-[13px] tracking-[0.15em] font-medium no-underline hover:opacity-70"
               style={{ borderBottom: '1px solid var(--header-border)' }}
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span>Discover</span>
+              <span>DISCOVER</span>
               <svg className="w-5 h-5" style={{ opacity: 0.5 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </Link>
             <Link
               href="/trending"
-              className="flex items-center justify-between px-4 py-4 text-lg font-medium no-underline hover:opacity-70"
+              className="flex items-center justify-between px-4 py-4 text-[13px] tracking-[0.15em] font-medium no-underline hover:opacity-70"
               style={{ borderBottom: '1px solid var(--header-border)' }}
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span>Trending</span>
+              <span>TRENDING</span>
               <svg className="w-5 h-5" style={{ opacity: 0.5 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </Link>
             <Link
               href="/lists"
-              className="flex items-center justify-between px-4 py-4 text-lg font-medium no-underline hover:opacity-70"
+              className="flex items-center justify-between px-4 py-4 text-[13px] tracking-[0.15em] font-medium no-underline hover:opacity-70"
               style={{ borderBottom: '1px solid var(--header-border)' }}
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span>Lists</span>
+              <span>LISTS</span>
               <svg className="w-5 h-5" style={{ opacity: 0.5 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </Link>
             <Link
               href="/hot-takes"
-              className="flex items-center justify-between px-4 py-4 text-lg font-medium no-underline hover:opacity-70"
+              className="flex items-center justify-between px-4 py-4 text-[13px] tracking-[0.15em] font-medium no-underline hover:opacity-70"
               style={{ borderBottom: '1px solid var(--header-border)' }}
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span>Hot Takes</span>
+              <span>HOT TAKES</span>
               <svg className="w-5 h-5" style={{ opacity: 0.5 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
@@ -299,10 +299,10 @@ export function Header() {
             {/* Theme toggle in mobile menu */}
             <button
               onClick={toggleTheme}
-              className="flex items-center justify-between w-full px-4 py-4 text-lg font-medium hover:opacity-70"
+              className="flex items-center justify-between w-full px-4 py-4 text-[13px] tracking-[0.15em] font-medium hover:opacity-70"
               style={{ borderBottom: '1px solid var(--header-border)' }}
             >
-              <span>{theme === "light" ? "Dark Mode" : "Light Mode"}</span>
+              <span>{theme === "light" ? "DARK MODE" : "LIGHT MODE"}</span>
               {theme === "light" ? (
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
@@ -383,19 +383,19 @@ export function Header() {
                 <div className="p-4 mt-4 space-y-3" style={{ borderTop: '1px solid var(--header-border)' }}>
                   <Link
                     href="/login"
-                    className="block w-full px-4 py-4 text-base font-bold text-center no-underline transition-colors"
+                    className="block w-full px-4 py-4 text-[12px] tracking-[0.15em] font-medium text-center no-underline transition-colors"
                     style={{ backgroundColor: 'var(--header-text)', color: 'var(--header-bg)' }}
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Sign In
+                    SIGN IN
                   </Link>
                   <Link
                     href="/signup"
-                    className="block w-full px-4 py-4 text-base font-bold text-center no-underline transition-colors"
+                    className="block w-full px-4 py-4 text-[12px] tracking-[0.15em] font-medium text-center no-underline transition-colors"
                     style={{ border: '2px solid var(--header-text)' }}
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Create Account
+                    CREATE ACCOUNT
                   </Link>
                 </div>
               )

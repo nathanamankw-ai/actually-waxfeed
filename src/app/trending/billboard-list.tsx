@@ -30,12 +30,12 @@ export function BillboardList({ albums }: BillboardListProps) {
           <Link
             key={album.id}
             href={`/album/${album.spotifyId}`}
-            className="flex items-center gap-3 md:gap-4 p-2 md:p-3 hover:bg-[#111] transition-colors no-underline group"
+            className="flex items-center gap-3 md:gap-4 p-2 md:p-3 hover:opacity-80 transition-colors no-underline group"
           >
-            <span className="text-lg md:text-xl font-bold text-[#444] w-6 md:w-8 flex-shrink-0">
+            <span className="text-lg md:text-xl font-bold text-[--muted] w-6 md:w-8 flex-shrink-0">
               {album.billboardRank}
             </span>
-            <div className="w-12 h-12 md:w-14 md:h-14 flex-shrink-0 bg-[#222]">
+            <div className="w-12 h-12 md:w-14 md:h-14 flex-shrink-0 bg-[--border]">
               {album.coverArtUrl && (
                 <img
                   src={album.coverArtUrl}
@@ -48,7 +48,7 @@ export function BillboardList({ albums }: BillboardListProps) {
               <p className="font-bold truncate group-hover:underline text-sm md:text-base">
                 {album.title}
               </p>
-              <p className="text-[#888] text-xs md:text-sm truncate">
+              <p className="text-[--muted] text-xs md:text-sm truncate">
                 {album.artistName}
               </p>
             </div>
@@ -56,7 +56,7 @@ export function BillboardList({ albums }: BillboardListProps) {
               {album.averageRating !== null && (
                 <p className="font-bold text-sm md:text-base">{album.averageRating.toFixed(1)}</p>
               )}
-              <p className="text-[#666] text-xs">
+              <p className="text-[--muted] text-xs">
                 {album.totalReviews} {album.totalReviews === 1 ? "review" : "reviews"}
               </p>
             </div>
@@ -67,7 +67,7 @@ export function BillboardList({ albums }: BillboardListProps) {
       {hasMore && (
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full mt-4 py-3 flex items-center justify-center gap-2 text-sm text-[#888] hover:text-white hover:bg-[#111] transition-colors border border-[#222] hover:border-[#444]"
+          className="w-full mt-4 py-3 flex items-center justify-center gap-2 text-sm text-[--muted] hover:text-white hover:opacity-80 transition-colors border border-[--border] hover:border-[--muted]"
         >
           <span>{isExpanded ? "Show Less" : `Show All ${albums.length}`}</span>
           <svg

@@ -81,17 +81,17 @@ export default async function Home() {
   ])
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
       {/* Header section */}
-      <section className="border-b border-[#1a1a1a]">
+      <section style={{ borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-12 lg:py-16">
-          <p className="text-[10px] tracking-[0.25em] uppercase text-[#555] mb-3">
+          <p className="text-[10px] tracking-[0.25em] uppercase mb-3" style={{ color: 'var(--muted)' }}>
             Track what you listen to
           </p>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-light leading-[1.1] tracking-[-0.02em]">
             Your music diary.
           </h1>
-          <p className="text-3xl md:text-4xl lg:text-5xl font-light leading-[1.1] tracking-[-0.02em] text-[#444]">
+          <p className="text-3xl md:text-4xl lg:text-5xl font-light leading-[1.1] tracking-[-0.02em]" style={{ color: 'var(--muted)' }}>
             Rate, review, discover.
           </p>
 
@@ -110,101 +110,114 @@ export default async function Home() {
       </section>
 
       {/* Stats bar */}
-      <section className="border-b border-[#1a1a1a]">
+      <section className="border-b border-[--border]">
         <div className="max-w-7xl mx-auto px-6 py-5 flex gap-8 lg:gap-12">
           <div className="flex items-baseline gap-1.5">
             <span className="text-xl lg:text-2xl font-light tabular-nums">{stats.albumCount.toLocaleString()}</span>
-            <span className="text-[10px] tracking-[0.2em] uppercase text-[#555]">Albums</span>
+            <span className="text-[10px] tracking-[0.2em] uppercase text-[--muted]">Albums</span>
           </div>
           <div className="flex items-baseline gap-1.5">
             <span className="text-xl lg:text-2xl font-light tabular-nums">{stats.reviewCount.toLocaleString()}</span>
-            <span className="text-[10px] tracking-[0.2em] uppercase text-[#555]">Reviews</span>
+            <span className="text-[10px] tracking-[0.2em] uppercase text-[--muted]">Reviews</span>
           </div>
           <div className="flex items-baseline gap-1.5">
             <span className="text-xl lg:text-2xl font-light tabular-nums">{stats.userCount.toLocaleString()}</span>
-            <span className="text-[10px] tracking-[0.2em] uppercase text-[#555]">Users</span>
+            <span className="text-[10px] tracking-[0.2em] uppercase text-[--muted]">Users</span>
           </div>
         </div>
       </section>
 
       {/* Main grid: Trending + Reviews */}
       <section className="max-w-7xl mx-auto px-6 py-12 lg:py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-0">
 
-          {/* Left: Trending Albums */}
-          <div>
-            <h2 className="text-[11px] tracking-[0.2em] uppercase text-[#555] mb-8">
-              Trending This Month
-            </h2>
+          {/* Left: Trending Albums - list format to match reviews height */}
+          <div className="lg:col-span-5 lg:border-r lg:border-[--border] lg:pr-8">
+            <div className="flex items-baseline justify-between mb-6">
+              <h2 className="text-[11px] tracking-[0.2em] uppercase text-[--muted]">
+                Trending This Month
+              </h2>
+              <Link
+                href="/trending"
+                className="text-[10px] tracking-[0.15em] uppercase text-[--muted] hover:text-white transition-colors"
+              >
+                See All →
+              </Link>
+            </div>
 
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
-              {trendingAlbums.map((album, i) => (
+            <div className="space-y-0">
+              {trendingAlbums.slice(0, 10).map((album, i) => (
                 <Link
                   key={album.id}
                   href={`/album/${album.spotifyId}`}
-                  className="group"
+                  className="group flex items-center gap-4 py-3 border-b border-[--border] last:border-b-0 hover:opacity-80 -mx-3 px-3 transition-colors"
                 >
-                  <div className="relative aspect-square bg-[#111] overflow-hidden">
+                  {/* Rank */}
+                  <span className="w-6 text-[13px] font-medium tabular-nums text-[--border] flex-shrink-0">
+                    {i + 1}
+                  </span>
+
+                  {/* Album art */}
+                  <div className="w-12 h-12 flex-shrink-0 bg-[--border] overflow-hidden">
                     {album.coverArtUrl ? (
                       <img
                         src={album.coverArtUrl}
                         alt={album.title}
-                        className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
+                        className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[#333]">
-                        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                      <div className="w-full h-full flex items-center justify-center text-[--border]">
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/>
                         </svg>
                       </div>
                     )}
-                    {/* Rank for top 3 */}
-                    {i < 3 && (
-                      <div className="absolute top-0 left-0 bg-white text-black text-[10px] font-semibold px-1.5 py-0.5">
-                        {i + 1}
-                      </div>
-                    )}
                   </div>
-                  <div className="mt-2.5">
-                    <p className="text-[12px] font-medium truncate group-hover:text-[#777] transition-colors">
+
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] font-medium truncate group-hover:text-[--muted] transition-colors">
                       {album.title}
                     </p>
-                    <p className="text-[11px] text-[#555] truncate">
+                    <p className="text-[11px] text-[--muted] truncate">
                       {album.artistName}
                     </p>
-                    {album.averageRating && (
-                      <p className="text-[11px] text-[#444] mt-0.5 tabular-nums">
-                        {album.averageRating.toFixed(1)}
-                      </p>
-                    )}
                   </div>
+
+                  {/* Rating */}
+                  {album.averageRating && (
+                    <span className="text-[12px] font-semibold tabular-nums text-[--muted] flex-shrink-0">
+                      {album.averageRating.toFixed(1)}
+                    </span>
+                  )}
                 </Link>
               ))}
             </div>
-
-            <Link
-              href="/trending"
-              className="inline-block mt-8 text-[11px] tracking-[0.2em] uppercase text-[#555] hover:text-white transition-colors"
-            >
-              View All Trending →
-            </Link>
           </div>
 
           {/* Right: Recent Reviews */}
-          <div>
-            <h2 className="text-[11px] tracking-[0.2em] uppercase text-[#555] mb-8">
-              Recent Reviews
-            </h2>
+          <div className="lg:col-span-7 lg:pl-8">
+            <div className="flex items-baseline justify-between mb-6">
+              <h2 className="text-[11px] tracking-[0.2em] uppercase text-[--muted]">
+                Recent Reviews
+              </h2>
+              <Link
+                href="/reviews"
+                className="text-[10px] tracking-[0.15em] uppercase text-[--muted] hover:text-white transition-colors"
+              >
+                See All →
+              </Link>
+            </div>
 
-            <div className="divide-y divide-[#1a1a1a]">
+            <div className="space-y-0">
               {recentReviews.map((review) => (
                 <Link
                   key={review.id}
                   href={`/album/${review.album.spotifyId}`}
-                  className="group flex gap-4 py-4 first:pt-0 hover:bg-[#0f0f0f] -mx-3 px-3 transition-colors"
+                  className="group flex gap-4 py-3 border-b border-[--border] last:border-b-0 hover:opacity-80 -mx-3 px-3 transition-colors"
                 >
                   {/* Album art */}
-                  <div className="w-14 h-14 flex-shrink-0 bg-[#111] overflow-hidden">
+                  <div className="w-12 h-12 flex-shrink-0 bg-[--border] overflow-hidden">
                     {review.album.coverArtUrl ? (
                       <img
                         src={review.album.coverArtUrl}
@@ -212,8 +225,8 @@ export default async function Home() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[#333]">
-                        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                      <div className="w-full h-full flex items-center justify-center text-[--border]">
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/>
                         </svg>
                       </div>
@@ -223,32 +236,32 @@ export default async function Home() {
                   {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-baseline gap-2 mb-0.5">
-                      <span className="text-[13px] font-medium truncate group-hover:text-[#777] transition-colors">
+                      <span className="text-[13px] font-medium truncate group-hover:text-[--muted] transition-colors">
                         {review.album.title}
                       </span>
-                      <span className="text-[12px] font-semibold text-[#555] tabular-nums flex-shrink-0">
+                      <span className="text-[12px] font-semibold text-[--muted] tabular-nums flex-shrink-0">
                         {review.rating.toFixed(1)}
                       </span>
                     </div>
-                    <p className="text-[11px] text-[#555] truncate">
+                    <p className="text-[11px] text-[--muted] truncate">
                       {review.album.artistName}
                     </p>
-                    <div className="flex items-center gap-2 mt-1.5">
+                    <div className="flex items-center gap-2 mt-1">
                       {review.user.image ? (
                         <img src={review.user.image} alt="" className="w-4 h-4" />
                       ) : (
                         <DefaultAvatar size="xs" />
                       )}
-                      <span className="text-[10px] text-[#444]">
+                      <span className="text-[10px] text-[--muted]">
                         {review.user.username}
                       </span>
-                      <span className="text-[10px] text-[#333]">·</span>
-                      <span className="text-[10px] text-[#333]">
+                      <span className="text-[10px] text-[--border]">·</span>
+                      <span className="text-[10px] text-[--border]">
                         {formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}
                       </span>
                     </div>
                     {review.text && (
-                      <p className="text-[11px] text-[#444] mt-2 line-clamp-2 leading-relaxed">
+                      <p className="text-[11px] text-[--muted] mt-1.5 line-clamp-1 leading-relaxed">
                         {review.text}
                       </p>
                     )}
@@ -256,33 +269,26 @@ export default async function Home() {
                 </Link>
               ))}
             </div>
-
-            <Link
-              href="/reviews"
-              className="inline-block mt-8 text-[11px] tracking-[0.2em] uppercase text-[#555] hover:text-white transition-colors"
-            >
-              View All Reviews →
-            </Link>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-[#1a1a1a] mt-8">
+      <footer className="border-t border-[--border] mt-8">
         <div className="max-w-7xl mx-auto px-6 py-10">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-            <p className="text-[11px] tracking-[0.15em] uppercase text-[#333]">
+            <p className="text-[11px] tracking-[0.15em] uppercase text-[--border]">
               WAXFEED · Polarity Lab LLC · 2025
             </p>
             <nav className="flex gap-8">
-              <Link href="/discover" className="text-[11px] tracking-[0.15em] uppercase text-[#444] hover:text-white transition-colors">
-                Discover
+              <Link href="/discover" className="text-[11px] tracking-[0.15em] text-[--muted] hover:text-white transition-colors">
+                DISCOVER
               </Link>
-              <Link href="/hot-takes" className="text-[11px] tracking-[0.15em] uppercase text-[#444] hover:text-white transition-colors">
-                Hot Takes
+              <Link href="/hot-takes" className="text-[11px] tracking-[0.15em] text-[--muted] hover:text-white transition-colors">
+                HOT TAKES
               </Link>
-              <Link href="/reviews" className="text-[11px] tracking-[0.15em] uppercase text-[#444] hover:text-white transition-colors">
-                Reviews
+              <Link href="/reviews" className="text-[11px] tracking-[0.15em] text-[--muted] hover:text-white transition-colors">
+                REVIEWS
               </Link>
             </nav>
           </div>
