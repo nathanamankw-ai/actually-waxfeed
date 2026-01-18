@@ -23,17 +23,6 @@ export default function AdminPage() {
 
   const isAdmin = session?.user?.role === "ADMIN"
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login")
-    } else if (status === "authenticated" && !isAdmin) {
-      router.push("/")
-    }
-    if (isAdmin) {
-      fetchStats()
-    }
-  }, [status, router, isAdmin])
-
   const fetchStats = async () => {
     try {
       const res = await fetch("/api/albums/import")
@@ -45,6 +34,17 @@ export default function AdminPage() {
       console.error("Failed to fetch stats:", error)
     }
   }
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login")
+    } else if (status === "authenticated" && !isAdmin) {
+      router.push("/")
+    }
+    if (isAdmin) {
+      fetchStats()
+    }
+  }, [status, router, isAdmin])
 
   const handleImport = async () => {
     setLoading(true)

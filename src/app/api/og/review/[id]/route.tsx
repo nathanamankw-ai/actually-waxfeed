@@ -138,7 +138,7 @@ export async function GET(
                 overflow: 'hidden',
               }}
             >
-              "{reviewText}"
+              {`"${reviewText}"`}
             </div>
           )}
 

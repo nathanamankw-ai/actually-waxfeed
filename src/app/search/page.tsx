@@ -206,7 +206,7 @@ function SearchContent() {
           {/* Empty State */}
           {query && !loading && filteredLocal.length === 0 && filteredSpotify.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-[#888]">No results found for "{query}"</p>
+              <p className="text-[#888]">No results found for &ldquo;{query}&rdquo;</p>
             </div>
           )}
 
