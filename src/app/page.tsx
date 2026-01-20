@@ -16,7 +16,7 @@ async function getBillboardAlbums() {
     orderBy: {
       billboardRank: 'asc'
     },
-    take: 12,
+    take: 24,
     select: {
       id: true,
       spotifyId: true,
@@ -34,7 +34,7 @@ async function getBillboardAlbums() {
 // Get recent reviews
 async function getRecentReviews() {
   return prisma.review.findMany({
-    take: 12,
+    take: 24,
     orderBy: { createdAt: "desc" },
     include: {
       user: {
@@ -123,7 +123,7 @@ export default async function Home() {
           <section className="lg:w-1/2 px-6 py-12 lg:py-16 lg:border-r border-[--border]">
             <div className="flex items-baseline justify-between mb-8">
               <h2 className="text-[11px] tracking-[0.2em] uppercase text-[--muted]">
-                Billboard 200
+                Trending
               </h2>
               <Link
                 href="/trending"
@@ -133,16 +133,16 @@ export default async function Home() {
               </Link>
             </div>
 
-            {/* Magazine-style grid with bigger covers */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-5">
+            {/* Magazine-style grid - 4 per row */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
               {billboardAlbums.map((album) => (
                 <Link
                   key={album.id}
                   href={`/album/${album.spotifyId}`}
                   className="group"
                 >
-                  {/* Album art - bigger covers */}
-                  <div className="aspect-square w-full bg-[--border] overflow-hidden mb-3 relative">
+                  {/* Album art */}
+                  <div className="aspect-square w-full bg-[--border] overflow-hidden mb-2 relative">
                     {album.coverArtUrlLarge || album.coverArtUrl ? (
                       <img
                         src={album.coverArtUrlLarge || album.coverArtUrl || ''}
@@ -165,17 +165,12 @@ export default async function Home() {
                   </div>
 
                   {/* Info */}
-                  <p className="text-[13px] sm:text-[14px] font-medium truncate group-hover:text-[--muted] transition-colors">
+                  <p className="text-[11px] sm:text-[12px] font-medium truncate group-hover:text-[--muted] transition-colors">
                     {album.title}
                   </p>
-                  <p className="text-[11px] sm:text-[12px] text-[--muted] truncate">
+                  <p className="text-[10px] sm:text-[11px] text-[--muted] truncate">
                     {album.artistName}
                   </p>
-                  {album.averageRating && (
-                    <p className="text-[10px] sm:text-[11px] text-[--muted] tabular-nums mt-0.5">
-                      {album.averageRating.toFixed(1)} · {album.totalReviews} {album.totalReviews === 1 ? 'review' : 'reviews'}
-                    </p>
-                  )}
                 </Link>
               ))}
             </div>
