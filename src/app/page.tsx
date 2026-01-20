@@ -16,7 +16,7 @@ async function getBillboardAlbums() {
     orderBy: {
       billboardRank: 'asc'
     },
-    take: 24,
+    take: 50,
     select: {
       id: true,
       spotifyId: true,
@@ -34,7 +34,7 @@ async function getBillboardAlbums() {
 // Get recent reviews
 async function getRecentReviews() {
   return prisma.review.findMany({
-    take: 24,
+    take: 50,
     orderBy: { createdAt: "desc" },
     include: {
       user: {
@@ -119,22 +119,16 @@ export default async function Home() {
       {/* Main Split Layout */}
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col lg:flex-row">
-          {/* LEFT: Billboard 200 Trending */}
-          <section className="lg:w-1/2 px-6 py-12 lg:py-16 lg:border-r border-[--border]">
+          {/* LEFT: Trending */}
+          <section className="lg:w-1/2 px-6 py-12 lg:py-16 lg:border-r border-[--border] flex flex-col">
             <div className="flex items-baseline justify-between mb-8">
               <h2 className="text-[11px] tracking-[0.2em] uppercase text-[--muted]">
                 Trending
               </h2>
-              <Link
-                href="/trending"
-                className="text-[10px] tracking-[0.15em] uppercase text-[--muted] hover:text-white transition-colors"
-              >
-                See All →
-              </Link>
             </div>
 
-            {/* Magazine-style grid - 4 per row */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+            {/* Album grid - grows to fill space */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 flex-1">
               {billboardAlbums.map((album) => (
                 <Link
                   key={album.id}
@@ -174,23 +168,31 @@ export default async function Home() {
                 </Link>
               ))}
             </div>
+
+            {/* See All button at bottom */}
+            <div className="mt-8 pt-6 border-t border-[--border]">
+              <Link
+                href="/trending"
+                className="inline-flex items-center gap-2 text-[11px] tracking-[0.15em] uppercase text-[--muted] hover:text-white transition-colors"
+              >
+                See All Trending
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
+            </div>
           </section>
 
           {/* RIGHT: Recent Reviews */}
-          <section className="lg:w-1/2 px-6 py-12 lg:py-16 border-t lg:border-t-0 border-[--border]">
+          <section className="lg:w-1/2 px-6 py-12 lg:py-16 border-t lg:border-t-0 border-[--border] flex flex-col">
             <div className="flex items-baseline justify-between mb-8">
               <h2 className="text-[11px] tracking-[0.2em] uppercase text-[--muted]">
                 Recent Reviews
               </h2>
-              <Link
-                href="/reviews"
-                className="text-[10px] tracking-[0.15em] uppercase text-[--muted] hover:text-white transition-colors"
-              >
-                See All →
-              </Link>
             </div>
 
-            <div className="space-y-0">
+            {/* Reviews list - grows to fill space */}
+            <div className="space-y-0 flex-1">
               {recentReviews.map((review) => (
                 <Link
                   key={review.id}
@@ -249,6 +251,19 @@ export default async function Home() {
                   </div>
                 </Link>
               ))}
+            </div>
+
+            {/* See All button at bottom */}
+            <div className="mt-8 pt-6 border-t border-[--border]">
+              <Link
+                href="/reviews"
+                className="inline-flex items-center gap-2 text-[11px] tracking-[0.15em] uppercase text-[--muted] hover:text-white transition-colors"
+              >
+                See All Reviews
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
             </div>
           </section>
         </div>
