@@ -86,10 +86,10 @@ export default async function Home() {
               A social music review platform. Rate albums, build lists, discover new music through friends.
             </p>
             <div className="flex-shrink-0 lg:text-right">
-              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-1">
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-1 font-medium">
                 Week Of
               </p>
-              <p className="text-2xl lg:text-3xl font-light tracking-tight">
+              <p className="text-2xl lg:text-3xl font-medium tracking-wide">
                 {weekOf}
               </p>
             </div>
