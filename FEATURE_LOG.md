@@ -274,6 +274,13 @@ npm run db:seed      # Seed database
 
 ## Changelog
 
+### January 20, 2026
+- **Homepage Redesign**: Split layout with Billboard 200 (left) + Recent Reviews (right)
+  - Left: Magazine-style grid with bigger album covers from Billboard 200
+  - Right: Recent reviews feed
+  - 50/50 split down the middle
+  - Trending pulls from `billboardRank` field in Album model
+
 ### November 26, 2025
 - Initial project setup
 - Complete backend API implementation
