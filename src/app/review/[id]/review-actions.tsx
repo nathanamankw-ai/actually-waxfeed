@@ -144,43 +144,68 @@ export function ReviewActions({
   }
 
   return (
-    <div className="flex items-center gap-5 pt-4 border-t border-[#222]">
+    <div className="flex items-center gap-1 pt-4 border-t" style={{ borderColor: 'var(--border)' }}>
+      {/* Like button */}
       <button
         onClick={handleLike}
         disabled={isLoading}
-        className={`flex items-center gap-2 transition-colors ${
-          hasLiked ? "text-red-500" : "text-[#888] hover:text-white"
-        } disabled:opacity-50`}
+        className={`
+          group flex items-center gap-2 px-3 py-2
+          transition-all duration-200 ease-out
+          disabled:opacity-40
+          ${hasLiked
+            ? "text-red-500"
+            : "text-[--muted] hover:text-red-400 hover:bg-red-500/5"
+          }
+        `}
       >
-        {hasLiked ? <HeartFilledIcon size={20} /> : <HeartIcon size={20} />}
-        <span className="text-sm">{likeCount}</span>
+        <span className={`transition-transform duration-200 ${hasLiked ? 'scale-110' : 'group-hover:scale-110 group-active:scale-95'}`}>
+          {hasLiked ? <HeartFilledIcon size={18} /> : <HeartIcon size={18} />}
+        </span>
+        <span className="text-[12px] tabular-nums font-medium">{likeCount}</span>
       </button>
 
+      {/* Wax button */}
       <button
         onClick={handleWax}
         disabled={isLoading || isOwner || hasGivenWax}
-        className={`flex items-center gap-2 transition-colors ${
-          hasGivenWax
+        className={`
+          group flex items-center gap-2 px-3 py-2
+          transition-all duration-200 ease-out
+          ${hasGivenWax
             ? "text-yellow-500"
             : isOwner
-            ? "text-[#444] cursor-not-allowed"
-            : "text-[#888] hover:text-yellow-500"
-        } disabled:opacity-50`}
+            ? "text-[--border] cursor-not-allowed"
+            : "text-[--muted] hover:text-yellow-400 hover:bg-yellow-500/5 disabled:opacity-40"
+          }
+        `}
         title={isOwner ? "Can't wax your own review" : hasGivenWax ? "Already waxed" : "Give wax"}
       >
-        {hasGivenWax ? <VinylFilledIcon size={20} /> : <VinylIcon size={20} />}
-        <span className="text-sm">{waxCount}</span>
+        <span className={`transition-transform duration-200 ${hasGivenWax ? 'scale-110' : 'group-hover:scale-110 group-active:scale-95'}`}>
+          {hasGivenWax ? <VinylFilledIcon size={18} /> : <VinylIcon size={18} />}
+        </span>
+        <span className="text-[12px] tabular-nums font-medium">{waxCount}</span>
       </button>
 
-      {/* Share button - more prominent */}
-      <div className="relative ml-auto">
+      {/* Spacer */}
+      <div className="flex-1" />
+
+      {/* Share button */}
+      <div className="relative">
         <button
           onClick={handleShare}
-          className="flex items-center gap-2 px-3 py-1.5 bg-[#222] hover:bg-[#333] text-white transition-colors rounded"
+          className="
+            group flex items-center gap-2 px-4 py-2
+            text-[11px] tracking-[0.05em] uppercase font-medium
+            border transition-all duration-200 ease-out
+            text-[--muted] hover:text-[--foreground] hover:border-[--foreground]
+            active:scale-[0.98]
+          "
+          style={{ borderColor: 'var(--border)' }}
           title="Share this review"
         >
-          <ShareIcon size={18} />
-          <span className="text-sm">Share</span>
+          <ShareIcon size={14} className="transition-transform duration-200 group-hover:scale-110" />
+          <span>Share</span>
         </button>
 
         {/* Share dropdown menu */}
@@ -191,28 +216,48 @@ export function ReviewActions({
               className="fixed inset-0 z-10"
               onClick={() => setShowShareMenu(false)}
             />
-            <div className="absolute right-0 bottom-full mb-2 bg-[#111] border border-[#333] rounded-lg shadow-xl z-20 min-w-[180px] overflow-hidden">
+            <div
+              className="
+                absolute right-0 bottom-full mb-2 z-20 min-w-[180px] overflow-hidden
+                border shadow-2xl
+                animate-in fade-in slide-in-from-bottom-2 duration-200
+              "
+              style={{
+                backgroundColor: 'var(--background)',
+                borderColor: 'var(--border)'
+              }}
+            >
               <button
                 onClick={handleCopyLink}
-                className="w-full px-4 py-3 text-left text-sm hover:bg-[#222] transition-colors flex items-center gap-3"
+                className="
+                  w-full px-4 py-3 text-left text-[12px]
+                  flex items-center gap-3
+                  transition-colors duration-150
+                  hover:bg-[--border]
+                "
               >
                 {copied ? (
                   <>
-                    <CheckIcon size={16} className="text-green-500" />
-                    <span className="text-green-500">Copied!</span>
+                    <CheckIcon size={14} className="text-green-500" />
+                    <span className="text-green-500 font-medium">Copied!</span>
                   </>
                 ) : (
                   <>
-                    <CopyIcon size={16} />
+                    <CopyIcon size={14} className="text-[--muted]" />
                     <span>Copy link</span>
                   </>
                 )}
               </button>
               <button
                 onClick={handleShareTwitter}
-                className="w-full px-4 py-3 text-left text-sm hover:bg-[#222] transition-colors flex items-center gap-3"
+                className="
+                  w-full px-4 py-3 text-left text-[12px]
+                  flex items-center gap-3
+                  transition-colors duration-150
+                  hover:bg-[--border]
+                "
               >
-                <XIcon size={16} />
+                <XIcon size={14} className="text-[--muted]" />
                 <span>Share on X</span>
               </button>
             </div>

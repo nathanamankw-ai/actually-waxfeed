@@ -19,6 +19,7 @@ interface Recommendation {
   score: number
   breakdown: {
     genre: number
+    artist: number
     quality: number
     collaborative: number
     freshness: number
@@ -30,6 +31,7 @@ interface UserStats {
   reviewCount: number
   topGenres: string[]
   averageRating: number
+  spinLimit: number // -1 = unlimited
 }
 
 interface SpinWheelProps {
@@ -37,34 +39,52 @@ interface SpinWheelProps {
   userReviewCount?: number
 }
 
-type Mode = "smart" | "discovery" | "quality"
+type Mode = "tailored" | "smart" | "discovery" | "quality"
 
-const MIN_REVIEWS_REQUIRED = 10
+// Unlock from first review
+const MIN_REVIEWS_REQUIRED = 1
 
 const MODE_INFO: Record<Mode, { label: string; description: string }> = {
+  tailored: {
+    label: "For You",
+    description: "Maximally personalized to your taste",
+  },
   smart: {
     label: "Smart",
-    description: "Balanced mix of your taste and discovery",
+    description: "Balanced mix of taste and discovery",
   },
   discovery: {
-    label: "Discovery",
-    description: "Albums outside your usual genres",
+    label: "Explore",
+    description: "Albums outside your comfort zone",
   },
   quality: {
-    label: "Quality",
-    description: "Focus on highly-rated albums",
+    label: "Best",
+    description: "Focus on highest-rated albums",
   },
 }
 
 export function SpinWheel({ userId, userReviewCount = 0 }: SpinWheelProps) {
-  const [mode, setMode] = useState<Mode>("smart")
+  const [mode, setMode] = useState<Mode>("tailored") // Default to tailored mode
   const [isSpinning, setIsSpinning] = useState(false)
   const [album, setAlbum] = useState<Album | null>(null)
   const [recommendation, setRecommendation] = useState<Recommendation | null>(null)
   const [userStats, setUserStats] = useState<UserStats | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [spinCount, setSpinCount] = useState(0)
+  const [dailySpinCount, setDailySpinCount] = useState(0)
   const [isLocked, setIsLocked] = useState(!userId || userReviewCount < MIN_REVIEWS_REQUIRED)
+
+  // Load daily spin count from localStorage
+  useEffect(() => {
+    if (userId) {
+      const today = new Date().toISOString().split('T')[0]
+      const key = `waxfeed_spins_${userId}_${today}`
+      const stored = localStorage.getItem(key)
+      if (stored) {
+        setDailySpinCount(parseInt(stored, 10))
+      }
+    }
+  }, [userId])
 
   useEffect(() => {
     setIsLocked(!userId || userReviewCount < MIN_REVIEWS_REQUIRED)
@@ -73,6 +93,13 @@ export function SpinWheel({ userId, userReviewCount = 0 }: SpinWheelProps) {
   const spin = useCallback(async () => {
     if (!userId) {
       setError("Sign in to use Spin the Wheel")
+      return
+    }
+
+    // Check daily spin limit (client-side)
+    const spinLimit = userStats?.spinLimit ?? getClientSpinLimit(userReviewCount)
+    if (spinLimit !== -1 && dailySpinCount >= spinLimit) {
+      setError(`Daily limit reached (${spinLimit} spins). Review more albums to unlock more spins!`)
       return
     }
 
@@ -91,6 +118,13 @@ export function SpinWheel({ userId, userReviewCount = 0 }: SpinWheelProps) {
         throw new Error(data.error || "Failed to get random album")
       }
 
+      // Track spin in localStorage
+      const today = new Date().toISOString().split('T')[0]
+      const key = `waxfeed_spins_${userId}_${today}`
+      const newCount = dailySpinCount + 1
+      localStorage.setItem(key, String(newCount))
+      setDailySpinCount(newCount)
+
       // Wait for spin animation
       await new Promise(resolve => setTimeout(resolve, 1800))
 
@@ -102,7 +136,17 @@ export function SpinWheel({ userId, userReviewCount = 0 }: SpinWheelProps) {
     } finally {
       setIsSpinning(false)
     }
-  }, [userId, mode])
+  }, [userId, mode, dailySpinCount, userStats, userReviewCount])
+
+  // Client-side spin limit calculation (matches server)
+  function getClientSpinLimit(reviewCount: number): number {
+    if (reviewCount >= 15) return -1 // unlimited
+    if (reviewCount >= 10) return 50
+    if (reviewCount >= 5) return 20
+    if (reviewCount >= 3) return 12
+    if (reviewCount >= 2) return 8
+    return 5
+  }
 
   const reset = useCallback(() => {
     setAlbum(null)
@@ -133,36 +177,35 @@ export function SpinWheel({ userId, userReviewCount = 0 }: SpinWheelProps) {
     )
   }
 
-  // Locked - not enough reviews
+  // Locked - no reviews yet
   if (isLocked) {
-    const reviewsNeeded = MIN_REVIEWS_REQUIRED - userReviewCount
-    const progress = (userReviewCount / MIN_REVIEWS_REQUIRED) * 100
-
     return (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-        {/* Left: Progress */}
+        {/* Left: Unlock prompt */}
         <div className="order-2 lg:order-1">
           <p className="text-[10px] tracking-[0.3em] uppercase text-[#555] mb-4">
-            Locked Feature
+            Unlock Now
           </p>
           <h2 className="text-4xl lg:text-5xl font-bold tracking-tight leading-[0.95] mb-6">
             Spin the Wheel
           </h2>
           <p className="text-sm text-[#666] max-w-sm leading-relaxed mb-6">
-            Review {reviewsNeeded} more album{reviewsNeeded !== 1 ? "s" : ""} to unlock personalized discovery.
+            Review your first album to unlock personalized discovery. The more you review, the better your recommendations.
           </p>
 
-          {/* Progress */}
-          <div className="mb-8">
-            <div className="flex justify-between text-[10px] tracking-[0.15em] uppercase text-[#555] mb-2">
-              <span>Progress</span>
-              <span className="tabular-nums">{userReviewCount} / {MIN_REVIEWS_REQUIRED}</span>
+          {/* Benefits */}
+          <div className="space-y-2 mb-8 text-[11px] text-[#555]">
+            <div className="flex items-center gap-2">
+              <span className="w-1 h-1 bg-white rounded-full" />
+              <span>1 review = 5 spins/day</span>
             </div>
-            <div className="h-1 bg-[#1a1a1a]">
-              <div
-                className="h-full bg-white transition-all duration-500"
-                style={{ width: `${progress}%` }}
-              />
+            <div className="flex items-center gap-2">
+              <span className="w-1 h-1 bg-[#444] rounded-full" />
+              <span>5 reviews = 20 spins/day</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-1 h-1 bg-[#333] rounded-full" />
+              <span>15+ reviews = unlimited</span>
             </div>
           </div>
 
@@ -170,7 +213,7 @@ export function SpinWheel({ userId, userReviewCount = 0 }: SpinWheelProps) {
             href="/search"
             className="inline-block bg-white text-black px-6 py-3 font-semibold text-sm tracking-wide hover:bg-[#e5e5e5] transition-colors"
           >
-            FIND ALBUMS TO REVIEW
+            WRITE YOUR FIRST REVIEW
           </Link>
         </div>
 
@@ -254,20 +297,46 @@ export function SpinWheel({ userId, userReviewCount = 0 }: SpinWheelProps) {
               </div>
             )}
 
-            <button
-              onClick={spin}
-              disabled={isSpinning}
-              className="inline-flex items-center gap-3 bg-white text-black px-6 py-3 font-semibold text-sm tracking-wide hover:bg-[#e5e5e5] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <span>{isSpinning ? "SPINNING..." : "SPIN"}</span>
-              {spinCount > 0 && (
-                <span className="text-[11px] text-[#888] tabular-nums">#{spinCount + 1}</span>
-              )}
-            </button>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={spin}
+                disabled={isSpinning}
+                className="inline-flex items-center gap-3 bg-white text-black px-6 py-3 font-semibold text-sm tracking-wide hover:bg-[#e5e5e5] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-[0.98]"
+              >
+                <span>{isSpinning ? "SPINNING..." : "SPIN"}</span>
+                {spinCount > 0 && (
+                  <span className="text-[11px] text-[#888] tabular-nums">#{spinCount + 1}</span>
+                )}
+              </button>
+
+              {/* Spin limit indicator */}
+              {(() => {
+                const limit = userStats?.spinLimit ?? getClientSpinLimit(userReviewCount)
+                if (limit === -1) return null
+                const remaining = Math.max(0, limit - dailySpinCount)
+                return (
+                  <div className="text-[10px] tracking-[0.1em] uppercase text-[#444]">
+                    <span className="tabular-nums">{remaining}</span> / {limit} today
+                  </div>
+                )
+              })()}
+            </div>
 
             {error && (
-              <p className="text-red-500 text-xs mt-4">{error}</p>
+              <p className="text-red-400 text-xs mt-4 animate-in fade-in duration-200">{error}</p>
             )}
+
+            {/* Upgrade prompt for limited users */}
+            {(() => {
+              const limit = userStats?.spinLimit ?? getClientSpinLimit(userReviewCount)
+              if (limit === -1 || userReviewCount >= 15) return null
+              const reviewsToUnlimited = 15 - userReviewCount
+              return (
+                <p className="text-[10px] text-[#444] mt-3">
+                  Review {reviewsToUnlimited} more album{reviewsToUnlimited !== 1 ? 's' : ''} for unlimited spins
+                </p>
+              )
+            })()}
           </div>
 
           {/* Right: Vinyl */}
@@ -396,16 +465,16 @@ export function SpinWheel({ userId, userReviewCount = 0 }: SpinWheelProps) {
                         <span className="tabular-nums">{Math.round(recommendation.breakdown.genre * 100)}%</span>
                       </div>
                       <div className="flex justify-between">
+                        <span className="text-[#555]">Artist Match</span>
+                        <span className="tabular-nums">{Math.round(recommendation.breakdown.artist * 100)}%</span>
+                      </div>
+                      <div className="flex justify-between">
                         <span className="text-[#555]">Quality</span>
                         <span className="tabular-nums">{Math.round(recommendation.breakdown.quality * 100)}%</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-[#555]">Similar Taste</span>
+                        <span className="text-[#555]">Similar Listeners</span>
                         <span className="tabular-nums">{Math.round(recommendation.breakdown.collaborative * 100)}%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-[#555]">Freshness</span>
-                        <span className="tabular-nums">{Math.round(recommendation.breakdown.freshness * 100)}%</span>
                       </div>
                     </div>
                   </div>
