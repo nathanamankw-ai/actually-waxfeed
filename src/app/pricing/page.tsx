@@ -5,56 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 
-const TIERS = {
-  FREE: {
-    name: "Free",
-    price: "0",
-    period: "",
-    waxGrant: 0,
-    features: [
-      "Earn up to 100 Wax/week",
-      "Award Standard Wax",
-      "50 items per list",
-      "Basic features",
-    ],
-    limitations: [
-      "Weekly earning cap",
-      "No Premium Wax",
-      "Ads shown",
-    ],
-  },
-  WAX_PLUS: {
-    name: "Wax+",
-    price: "4.99",
-    period: "/mo",
-    waxGrant: 300,
-    features: [
-      "300 Wax monthly",
-      "No weekly cap",
-      "1.5x earning multiplier",
-      "Award Premium Wax",
-      "100 items per list",
-      "Ad-free",
-    ],
-    limitations: [],
-  },
-  WAX_PRO: {
-    name: "Pro",
-    price: "9.99",
-    period: "/mo",
-    waxGrant: 750,
-    features: [
-      "750 Wax monthly",
-      "2x earning multiplier",
-      "Award GOLD Wax",
-      "Unlimited lists",
-      "Full analytics",
-      "Verified eligible",
-    ],
-    limitations: [],
-  },
-}
-
 export default function PricingPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -144,68 +94,152 @@ export default function PricingPage() {
       {/* Header */}
       <section style={{ borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-12 lg:py-16">
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
+          <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-3">
+            Membership
+          </p>
+          <h1 className="text-4xl lg:text-5xl font-bold tracking-[-0.02em] mb-4">
+            Prove Your Taste
+          </h1>
+          <p className="text-base text-[--muted] max-w-xl">
+            Everyone earns First Spin badges. Subscribers get more Wax to tip, 
+            trending predictions, and priority visibility.
+          </p>
+        </div>
+      </section>
+
+      {message && (
+        <div className="max-w-7xl mx-auto px-6 pt-6">
+          <div className="p-4 border border-[--border]">
+            <p className="text-sm">{message}</p>
+          </div>
+        </div>
+      )}
+
+      {/* First Spin Explanation */}
+      <section className="border-b border-[--border]">
+        <div className="max-w-7xl mx-auto px-6 py-12">
+          <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-8">
+            How First Spin Works
+          </p>
+          <div className="grid lg:grid-cols-3 gap-8">
             <div>
-              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-3">
-                Membership
-              </p>
-              <h1 className="text-4xl lg:text-5xl font-bold tracking-[-0.02em] mb-4">
-                Wax Tiers
-              </h1>
-              <p className="text-base text-[--muted] max-w-xl">
-                Earn more, award Premium & GOLD Wax, unlock exclusive features.
+              <div className="w-12 h-12 border border-[--border] flex items-center justify-center mb-4">
+                <span className="text-2xl font-bold">1</span>
+              </div>
+              <p className="text-lg font-medium mb-2">Review Early</p>
+              <p className="text-sm text-[--muted]">
+                When you review an album, your position is recorded. #1, #7, #42—you're on record.
               </p>
             </div>
-            <div className="flex-shrink-0 lg:text-right">
-              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-1">
-                Current Plan
+            <div>
+              <div className="w-12 h-12 border border-[--border] flex items-center justify-center mb-4">
+                <span className="text-2xl font-bold">2</span>
+              </div>
+              <p className="text-lg font-medium mb-2">Album Trends</p>
+              <p className="text-sm text-[--muted]">
+                When an album hits 100+ reviews, it's trending. The algorithm checks who was early.
               </p>
-              <p className="text-2xl font-medium">
-                {currentTier === "WAX_PRO" ? "Pro" : currentTier === "WAX_PLUS" ? "Wax+" : "Free"}
+            </div>
+            <div>
+              <div className="w-12 h-12 border border-[--border] flex items-center justify-center mb-4">
+                <span className="text-2xl font-bold">3</span>
+              </div>
+              <p className="text-lg font-medium mb-2">Earn Badges</p>
+              <p className="text-sm text-[--muted]">
+                Early reviewers get Gold, Silver, or Bronze Spin badges—plus Wax rewards.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {message && (
-        <div className="max-w-7xl mx-auto px-6 pt-6">
-          <div className="p-4 border border-[--border]" style={{ backgroundColor: 'var(--background)' }}>
-            <p className="text-sm">{message}</p>
+      {/* Badge Tiers */}
+      <section className="border-b border-[--border]">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-3">
+            <div className="px-6 py-10 lg:border-r border-b lg:border-b-0 border-[--border]">
+              <div className="w-12 h-12 border-2 border-[#ffd700] flex items-center justify-center mb-4">
+                <span className="text-xl font-bold text-[#ffd700]">G</span>
+              </div>
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-2">
+                Gold Spin
+              </p>
+              <p className="text-3xl font-bold text-[#ffd700] mb-2">+100 Wax</p>
+              <p className="text-sm text-[--muted]">
+                First 10 reviewers. Proves elite taste. Adds 10 to your Tastemaker Score.
+              </p>
+            </div>
+            <div className="px-6 py-10 lg:border-r border-b lg:border-b-0 border-[--border]">
+              <div className="w-12 h-12 border-2 border-gray-400 flex items-center justify-center mb-4">
+                <span className="text-xl font-bold text-gray-400">S</span>
+              </div>
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-2">
+                Silver Spin
+              </p>
+              <p className="text-3xl font-bold text-gray-400 mb-2">+50 Wax</p>
+              <p className="text-sm text-[--muted]">
+                First 50 reviewers. Still early, still counts. Adds 5 to your Tastemaker Score.
+              </p>
+            </div>
+            <div className="px-6 py-10">
+              <div className="w-12 h-12 border-2 border-amber-700 flex items-center justify-center mb-4">
+                <span className="text-xl font-bold text-amber-700">B</span>
+              </div>
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-2">
+                Bronze Spin
+              </p>
+              <p className="text-3xl font-bold text-amber-700 mb-2">+25 Wax</p>
+              <p className="text-sm text-[--muted]">
+                First 100 reviewers. You caught it early. Adds 2 to your Tastemaker Score.
+              </p>
+            </div>
           </div>
         </div>
-      )}
+      </section>
 
       {/* Pricing Grid */}
-      <section className="max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-3">
+      <section className="border-b border-[--border]">
+        <div className="max-w-7xl mx-auto px-6 py-12">
+          <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-8">
+            Membership Tiers
+          </p>
+        </div>
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-3">
           {/* Free Tier */}
-          <div className="px-6 py-10 border-b lg:border-b-0 lg:border-r border-[--border]">
+          <div className="px-6 py-10 border-t lg:border-r border-[--border]">
             <div className="mb-8">
               <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-3">
-                01 — Free
+                Free
               </p>
               <div className="flex items-baseline gap-1 mb-4">
                 <span className="text-5xl font-bold tracking-tight">$0</span>
               </div>
               <p className="text-sm text-[--muted]">
-                For casual listeners
+                For everyone
               </p>
             </div>
 
             <div className="space-y-3 mb-8">
-              {TIERS.FREE.features.map((feature, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <span className="text-[--muted] mt-0.5">+</span>
-                  <span className="text-sm">{feature}</span>
-                </div>
-              ))}
-              {TIERS.FREE.limitations.map((limitation, i) => (
-                <div key={i} className="flex items-start gap-3 text-[--muted]">
-                  <span className="mt-0.5">−</span>
-                  <span className="text-sm">{limitation}</span>
-                </div>
-              ))}
+              <div className="flex items-start gap-3">
+                <span className="text-[--muted] mt-0.5">+</span>
+                <span className="text-sm">Earn First Spin badges</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-[--muted] mt-0.5">+</span>
+                <span className="text-sm">+5 Wax per review</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-[--muted] mt-0.5">+</span>
+                <span className="text-sm">Tastemaker Score</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-[--muted] mt-0.5">+</span>
+                <span className="text-sm">Tip reviews (Standard)</span>
+              </div>
+              <div className="flex items-start gap-3 text-[--muted]">
+                <span className="mt-0.5">−</span>
+                <span className="text-sm">50 Wax tip limit/week</span>
+              </div>
             </div>
 
             <button
@@ -217,12 +251,12 @@ export default function PricingPage() {
           </div>
 
           {/* Wax+ Tier */}
-          <div className="px-6 py-10 border-b lg:border-b-0 lg:border-r border-[--border] relative">
+          <div className="px-6 py-10 border-t lg:border-r border-[--border] relative">
             <div className="absolute top-0 left-0 right-0 h-1 bg-white" />
             
             <div className="mb-8">
               <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-3">
-                02 — Wax+
+                Wax+
               </p>
               <div className="flex items-baseline gap-1 mb-4">
                 <span className="text-5xl font-bold tracking-tight">$4.99</span>
@@ -231,18 +265,29 @@ export default function PricingPage() {
               <p className="text-sm text-[--muted]">
                 For active reviewers
               </p>
-              <p className="text-xs text-white/70 mt-2">
-                +300 Wax monthly
-              </p>
             </div>
 
             <div className="space-y-3 mb-8">
-              {TIERS.WAX_PLUS.features.map((feature, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <span className="text-white mt-0.5">+</span>
-                  <span className="text-sm">{feature}</span>
-                </div>
-              ))}
+              <div className="flex items-start gap-3">
+                <span className="text-white mt-0.5">+</span>
+                <span className="text-sm">Everything in Free</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-white mt-0.5">+</span>
+                <span className="text-sm font-medium">Unlimited Wax tipping</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-white mt-0.5">+</span>
+                <span className="text-sm">Trending predictions</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-white mt-0.5">+</span>
+                <span className="text-sm">Priority badge visibility</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-white mt-0.5">+</span>
+                <span className="text-sm">Tip Premium Wax (20)</span>
+              </div>
             </div>
 
             {currentTier === "WAX_PLUS" ? (
@@ -259,38 +304,49 @@ export default function PricingPage() {
                 disabled={loading === "WAX_PLUS" || currentTier === "WAX_PRO"}
                 className="w-full py-3 px-4 bg-white text-black text-[11px] tracking-[0.15em] uppercase font-medium hover:bg-[#e5e5e5] transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading === "WAX_PLUS" ? "Loading..." : currentTier === "WAX_PRO" ? "Current: Pro" : "Upgrade to Wax+"}
+                {loading === "WAX_PLUS" ? "Loading..." : currentTier === "WAX_PRO" ? "Current: Pro" : "Upgrade"}
               </button>
             )}
           </div>
 
           {/* Pro Tier */}
-          <div className="px-6 py-10 relative">
+          <div className="px-6 py-10 border-t border-[--border] relative">
             <div className="absolute top-0 left-0 right-0 h-1 bg-[#ffd700]" />
             
             <div className="mb-8">
               <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-3">
-                03 — Pro
+                Pro
               </p>
               <div className="flex items-baseline gap-1 mb-4">
                 <span className="text-5xl font-bold tracking-tight">$9.99</span>
                 <span className="text-sm text-[--muted]">/mo</span>
               </div>
               <p className="text-sm text-[--muted]">
-                For power users
-              </p>
-              <p className="text-xs text-[#ffd700] mt-2">
-                +750 Wax monthly
+                For tastemakers
               </p>
             </div>
 
             <div className="space-y-3 mb-8">
-              {TIERS.WAX_PRO.features.map((feature, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <span className="text-[#ffd700] mt-0.5">+</span>
-                  <span className="text-sm">{feature}</span>
-                </div>
-              ))}
+              <div className="flex items-start gap-3">
+                <span className="text-[#ffd700] mt-0.5">+</span>
+                <span className="text-sm">Everything in Wax+</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-[#ffd700] mt-0.5">+</span>
+                <span className="text-sm font-medium">Tip GOLD Wax (100)</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-[#ffd700] mt-0.5">+</span>
+                <span className="text-sm">Advanced analytics</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-[#ffd700] mt-0.5">+</span>
+                <span className="text-sm">Verified badge eligible</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-[#ffd700] mt-0.5">+</span>
+                <span className="text-sm">Early access features</span>
+              </div>
             </div>
 
             {currentTier === "WAX_PRO" ? (
@@ -314,111 +370,38 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* Why Upgrade - Value Breakdown */}
-      <section className="border-t border-[--border]">
+      {/* FAQ */}
+      <section className="border-b border-[--border]">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-8">
-            Why Upgrade?
+            FAQ
           </p>
-          <div className="grid lg:grid-cols-4 gap-8">
+          <div className="grid lg:grid-cols-2 gap-8">
             <div>
-              <p className="text-3xl font-bold mb-2">300+</p>
+              <p className="text-sm font-medium mb-2">Do I need to pay for First Spin badges?</p>
               <p className="text-sm text-[--muted]">
-                Free Wax every month with Wax+. 750 with Pro. That's worth $3-$7.50 in the shop.
-              </p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold mb-2">2x</p>
-              <p className="text-sm text-[--muted]">
-                Earn Wax twice as fast with Pro. Every review, every daily, every bonus — doubled.
+                No. Everyone earns badges for free. Just review albums early and wait for them to trend.
               </p>
             </div>
             <div>
-              <p className="text-3xl font-bold mb-2 text-[#ffd700]">GOLD</p>
+              <p className="text-sm font-medium mb-2">What do subscribers get?</p>
               <p className="text-sm text-[--muted]">
-                Award GOLD Wax to reviews that blow your mind. Pro exclusive. Reviews get noticed.
+                Unlimited tipping, trending predictions, higher-tier Wax awards (Premium/GOLD), 
+                and priority visibility for your reviews.
               </p>
             </div>
             <div>
-              <p className="text-3xl font-bold mb-2">∞</p>
+              <p className="text-sm font-medium mb-2">What is Wax used for?</p>
               <p className="text-sm text-[--muted]">
-                No weekly earning cap. Free users max out at 100/week. Subscribers keep earning.
+                Tip reviewers you appreciate. Higher tips give them more Wax and visibility.
+                It's social currency that shows community respect.
               </p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Wax Types */}
-      <section className="border-t border-[--border]">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2">
-            <div className="px-6 py-12 lg:border-r border-[--border]">
-              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-6">
-                What is Wax?
+            <div>
+              <p className="text-sm font-medium mb-2">Can I cancel anytime?</p>
+              <p className="text-sm text-[--muted]">
+                Yes. Manage or cancel via the billing portal. Your badges and Tastemaker Score stay forever.
               </p>
-              <p className="text-sm text-[--muted] leading-relaxed mb-6">
-                Wax is how you show appreciation on Waxfeed. Award it to reviews you love,
-                and the author earns Wax too. Great reviewers build up Wax from the community.
-              </p>
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 border border-[--border] flex items-center justify-center">
-                    <span className="text-[10px] font-bold">S</span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">Standard — 5 Wax</p>
-                    <p className="text-xs text-[--muted]">Everyone can award</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 border border-purple-500/50 flex items-center justify-center">
-                    <span className="text-[10px] font-bold text-purple-400">P</span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">Premium — 20 Wax</p>
-                    <p className="text-xs text-[--muted]">Wax+ and Pro members</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 border border-[#ffd700]/50 flex items-center justify-center">
-                    <span className="text-[10px] font-bold text-[#ffd700]">G</span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">GOLD — 100 Wax</p>
-                    <p className="text-xs text-[--muted]">Pro exclusive, highest honor</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="px-6 py-12 border-t lg:border-t-0 border-[--border]">
-              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-6">
-                FAQ
-              </p>
-              <div className="space-y-6">
-                <div>
-                  <p className="text-sm font-medium mb-2">Can I cancel anytime?</p>
-                  <p className="text-sm text-[--muted]">
-                    Yes. Cancel via the billing portal. Benefits last until your billing period ends.
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium mb-2">What happens to my Wax if I downgrade?</p>
-                  <p className="text-sm text-[--muted]">
-                    Your balance stays. You just won't earn as quickly or award Premium/GOLD Wax.
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium mb-2">Need more Wax instantly?</p>
-                  <p className="text-sm text-[--muted]">
-                    <Link href="/shop" className="underline hover:no-underline">
-                      Visit the shop
-                    </Link>
-                    {" "}to purchase Wax Pax.
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -434,13 +417,13 @@ export default function PricingPage() {
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18" />
             </svg>
-            Wallet
+            Your Spins
           </Link>
           <Link
-            href="/shop"
+            href="/leaderboard"
             className="text-[11px] tracking-[0.15em] uppercase text-[--muted] hover:text-white transition-colors flex items-center gap-2"
           >
-            Shop
+            Leaderboard
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
