@@ -256,8 +256,8 @@ export default async function Home() {
             </div>
 
             {/* Album grid - grows to fill space */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 flex-1">
-              {billboardAlbums.map((album) => (
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-4 flex-1">
+              {billboardAlbums.slice(0, 20).map((album) => (
                 <Link
                   key={album.id}
                   href={`/album/${album.spotifyId}`}
