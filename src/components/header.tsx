@@ -141,6 +141,13 @@ export function Header() {
                     Profile
                   </Link>
                   <Link
+                    href="/friends"
+                    className="block px-4 py-2 no-underline hover:opacity-70"
+                    onClick={() => setShowDropdown(false)}
+                  >
+                    Friends
+                  </Link>
+                  <Link
                     href="/notifications"
                     className="block px-4 py-2 no-underline hover:opacity-70"
                     onClick={() => setShowDropdown(false)}
@@ -343,6 +350,17 @@ export function Header() {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <span>Your Profile</span>
+                    <svg className="w-5 h-5" style={{ opacity: 0.5 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                  <Link
+                    href="/friends"
+                    className="flex items-center justify-between px-4 py-4 text-base no-underline hover:opacity-70"
+                    style={{ borderBottom: '1px solid var(--header-border)' }}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <span>Friends</span>
                     <svg className="w-5 h-5" style={{ opacity: 0.5 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>

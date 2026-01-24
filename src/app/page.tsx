@@ -67,12 +67,42 @@ async function getStats() {
   return { albumCount, reviewCount, userCount }
 }
 
+// Get active users to connect with (for logged out users or new users)
+async function getActiveUsers(excludeUserId?: string) {
+  return prisma.user.findMany({
+    where: {
+      id: excludeUserId ? { not: excludeUserId } : undefined,
+      username: { not: null },
+      reviews: { some: {} }, // Users who have at least one review
+    },
+    orderBy: [
+      { reviews: { _count: 'desc' } },
+    ],
+    take: 8,
+    select: {
+      id: true,
+      username: true,
+      name: true,
+      image: true,
+      tasteId: {
+        select: {
+          primaryArchetype: true,
+        }
+      },
+      _count: {
+        select: { reviews: true }
+      }
+    }
+  })
+}
+
 export default async function Home() {
   const session = await auth()
-  const [billboardAlbums, recentReviews, stats] = await Promise.all([
+  const [billboardAlbums, recentReviews, stats, activeUsers] = await Promise.all([
     getBillboardAlbums(),
     getRecentReviews(),
     getStats(),
+    getActiveUsers(session?.user?.id),
   ])
   const weekOf = format(new Date(), "MMM d, yyyy")
 
@@ -126,6 +156,57 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* People to Connect With */}
+      {activeUsers.length > 0 && (
+        <section className="border-b border-[--border]">
+          <div className="max-w-7xl mx-auto px-6 py-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-[11px] tracking-[0.2em] uppercase text-[--muted]">
+                People to Connect With
+              </h2>
+              <Link
+                href="/discover/similar-tasters"
+                className="text-[10px] tracking-[0.15em] uppercase text-[--muted] hover:text-white transition-colors"
+              >
+                See All
+              </Link>
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-hide">
+              {activeUsers.map((user) => (
+                <Link
+                  key={user.id}
+                  href={`/u/${user.username}`}
+                  className="flex-shrink-0 group"
+                >
+                  <div className="w-16 h-16 mb-2 border border-[--border] overflow-hidden group-hover:border-white transition-colors">
+                    {user.image ? (
+                      <img
+                        src={user.image}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <DefaultAvatar size="lg" className="w-full h-full" />
+                    )}
+                  </div>
+                  <p className="text-[11px] font-medium truncate w-16 text-center group-hover:text-[--muted] transition-colors">
+                    @{user.username}
+                  </p>
+                  {user.tasteId?.primaryArchetype && (
+                    <p className="text-[9px] text-[--muted] truncate w-16 text-center">
+                      {user.tasteId.primaryArchetype.replace(/_/g, ' ')}
+                    </p>
+                  )}
+                  <p className="text-[9px] text-[--border] text-center">
+                    {user._count.reviews} reviews
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Main Split Layout */}
       <div className="max-w-7xl mx-auto">
@@ -291,11 +372,11 @@ export default async function Home() {
               <Link href="/discover" className="text-[11px] tracking-[0.15em] text-[--muted] hover:text-white transition-colors">
                 DISCOVER
               </Link>
+              <Link href="/friends" className="text-[11px] tracking-[0.15em] text-[--muted] hover:text-white transition-colors">
+                FRIENDS
+              </Link>
               <Link href="/hot-takes" className="text-[11px] tracking-[0.15em] text-[--muted] hover:text-white transition-colors">
                 HOT TAKES
-              </Link>
-              <Link href="/reviews" className="text-[11px] tracking-[0.15em] text-[--muted] hover:text-white transition-colors">
-                REVIEWS
               </Link>
             </nav>
           </div>

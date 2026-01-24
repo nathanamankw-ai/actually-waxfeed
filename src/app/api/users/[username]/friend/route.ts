@@ -2,7 +2,84 @@ import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { successResponse, errorResponse, requireAuth, createNotification, isBlocked } from '@/lib/api-utils'
 
-// POST /api/users/[username]/friend - Send or respond to friend request
+// Helper to get sorted user IDs for friendship lookup
+function getSortedIds(id1: string, id2: string): [string, string] {
+  return id1 < id2 ? [id1, id2] : [id2, id1]
+}
+
+// GET /api/users/[username]/friend - Get relationship status
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ username: string }> }
+) {
+  try {
+    const { username } = await params
+    const currentUser = await requireAuth()
+
+    const targetUser = await prisma.user.findUnique({
+      where: { username },
+      select: { id: true }
+    })
+
+    if (!targetUser) {
+      return errorResponse('User not found', 404)
+    }
+
+    if (targetUser.id === currentUser.id) {
+      return successResponse({ isSelf: true })
+    }
+
+    const [id1, id2] = getSortedIds(currentUser.id, targetUser.id)
+
+    // Check friendship
+    const friendship = await prisma.friendship.findUnique({
+      where: { user1Id_user2Id: { user1Id: id1, user2Id: id2 } }
+    })
+
+    if (friendship) {
+      return successResponse({
+        status: 'friends',
+        isFriend: true,
+        hasPendingRequest: false,
+        pendingRequestSentByMe: false
+      })
+    }
+
+    // Check pending requests (both directions)
+    const pendingRequest = await prisma.friendRequest.findFirst({
+      where: {
+        OR: [
+          { senderId: currentUser.id, receiverId: targetUser.id, status: 'pending' },
+          { senderId: targetUser.id, receiverId: currentUser.id, status: 'pending' }
+        ]
+      }
+    })
+
+    if (pendingRequest) {
+      return successResponse({
+        status: 'pending',
+        isFriend: false,
+        hasPendingRequest: true,
+        pendingRequestSentByMe: pendingRequest.senderId === currentUser.id
+      })
+    }
+
+    return successResponse({
+      status: 'none',
+      isFriend: false,
+      hasPendingRequest: false,
+      pendingRequestSentByMe: false
+    })
+  } catch (error) {
+    if (error instanceof Error && error.message === 'UNAUTHORIZED') {
+      return errorResponse('Authentication required', 401)
+    }
+    console.error('Error getting friend status:', error)
+    return errorResponse('Failed to get friend status', 500)
+  }
+}
+
+// POST /api/users/[username]/friend - Send request, accept, or reject
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ username: string }> }
@@ -26,13 +103,19 @@ export async function POST(
       return errorResponse('Cannot friend yourself', 400)
     }
 
-    // Check if blocked
-    if (await isBlocked(targetUser.id, currentUser.id)) {
+    // Check if blocked (either direction)
+    const [blockedByTarget, blockedTarget] = await Promise.all([
+      isBlocked(targetUser.id, currentUser.id),
+      isBlocked(currentUser.id, targetUser.id)
+    ])
+
+    if (blockedByTarget || blockedTarget) {
       return errorResponse('Cannot send friend request', 403)
     }
 
+    const [id1, id2] = getSortedIds(currentUser.id, targetUser.id)
+
     // Check if already friends
-    const [id1, id2] = [currentUser.id, targetUser.id].sort()
     const existingFriendship = await prisma.friendship.findUnique({
       where: { user1Id_user2Id: { user1Id: id1, user2Id: id2 } }
     })
@@ -41,9 +124,9 @@ export async function POST(
       return errorResponse('Already friends', 409)
     }
 
-    if (action === 'accept' || action === 'reject') {
-      // Handle incoming request from targetUser
-      const request = await prisma.friendRequest.findUnique({
+    // Handle accept action
+    if (action === 'accept') {
+      const incomingRequest = await prisma.friendRequest.findUnique({
         where: {
           senderId_receiverId: {
             senderId: targetUser.id,
@@ -52,42 +135,61 @@ export async function POST(
         }
       })
 
-      if (!request || request.status !== 'pending') {
-        return errorResponse('No pending friend request', 404)
+      if (!incomingRequest || incomingRequest.status !== 'pending') {
+        return errorResponse('No pending friend request to accept', 404)
       }
 
-      if (action === 'accept') {
-        // Create friendship
-        await prisma.friendship.create({
+      // Create friendship and update request in transaction
+      await prisma.$transaction([
+        prisma.friendship.create({
           data: { user1Id: id1, user2Id: id2 }
-        })
-
-        // Update request status
-        await prisma.friendRequest.update({
-          where: { id: request.id },
+        }),
+        prisma.friendRequest.update({
+          where: { id: incomingRequest.id },
           data: { status: 'accepted', respondedAt: new Date() }
         })
+      ])
 
-        // Notify the sender
-        await createNotification(targetUser.id, 'friend_accept', {
-          actorId: currentUser.id,
-          actorName: currentUser.username || currentUser.name,
-        })
+      // Notify the original sender that their request was accepted
+      await createNotification(targetUser.id, 'friend_accept', {
+        actorId: currentUser.id,
+        actorName: currentUser.username || currentUser.name,
+      })
 
-        return successResponse({ status: 'accepted' })
-      } else {
-        // Reject request
-        await prisma.friendRequest.update({
-          where: { id: request.id },
-          data: { status: 'rejected', respondedAt: new Date() }
-        })
-
-        return successResponse({ status: 'rejected' })
-      }
+      return successResponse({
+        status: 'friends',
+        message: 'Friend request accepted'
+      })
     }
 
-    // Default: send friend request
-    // Check for existing request
+    // Handle reject action
+    if (action === 'reject') {
+      const incomingRequest = await prisma.friendRequest.findUnique({
+        where: {
+          senderId_receiverId: {
+            senderId: targetUser.id,
+            receiverId: currentUser.id
+          }
+        }
+      })
+
+      if (!incomingRequest || incomingRequest.status !== 'pending') {
+        return errorResponse('No pending friend request to reject', 404)
+      }
+
+      await prisma.friendRequest.update({
+        where: { id: incomingRequest.id },
+        data: { status: 'rejected', respondedAt: new Date() }
+      })
+
+      return successResponse({
+        status: 'rejected',
+        message: 'Friend request rejected'
+      })
+    }
+
+    // Default action: send friend request
+    // Check for existing requests
     const existingRequest = await prisma.friendRequest.findFirst({
       where: {
         OR: [
@@ -98,34 +200,45 @@ export async function POST(
     })
 
     if (existingRequest) {
-      if (existingRequest.status === 'pending') {
-        // If they sent us a request, accept it
-        if (existingRequest.senderId === targetUser.id) {
-          await prisma.friendship.create({
+      // If they already sent us a pending request, auto-accept (mutual add)
+      if (existingRequest.senderId === targetUser.id && existingRequest.status === 'pending') {
+        await prisma.$transaction([
+          prisma.friendship.create({
             data: { user1Id: id1, user2Id: id2 }
-          })
-
-          await prisma.friendRequest.update({
+          }),
+          prisma.friendRequest.update({
             where: { id: existingRequest.id },
             data: { status: 'accepted', respondedAt: new Date() }
           })
+        ])
 
-          await createNotification(targetUser.id, 'friend_accept', {
-            actorId: currentUser.id,
-            actorName: currentUser.username || currentUser.name,
-          })
+        await createNotification(targetUser.id, 'friend_accept', {
+          actorId: currentUser.id,
+          actorName: currentUser.username || currentUser.name,
+        })
 
-          return successResponse({ status: 'accepted' })
-        }
-
-        return errorResponse('Friend request already pending', 409)
+        return successResponse({
+          status: 'friends',
+          message: 'Friend request accepted (mutual add)'
+        })
       }
 
-      // Allow re-sending if previously rejected
-      if (existingRequest.status === 'rejected' && existingRequest.senderId === currentUser.id) {
+      // If we sent a pending request already
+      if (existingRequest.senderId === currentUser.id && existingRequest.status === 'pending') {
+        return errorResponse('Friend request already sent', 409)
+      }
+
+      // If previously rejected, allow re-sending by updating the existing request
+      if (existingRequest.status === 'rejected') {
         await prisma.friendRequest.update({
           where: { id: existingRequest.id },
-          data: { status: 'pending', respondedAt: null }
+          data: {
+            senderId: currentUser.id,
+            receiverId: targetUser.id,
+            status: 'pending',
+            respondedAt: null,
+            createdAt: new Date()
+          }
         })
 
         await createNotification(targetUser.id, 'friend_request', {
@@ -133,7 +246,10 @@ export async function POST(
           actorName: currentUser.username || currentUser.name,
         })
 
-        return successResponse({ status: 'pending' })
+        return successResponse({
+          status: 'pending',
+          message: 'Friend request sent'
+        })
       }
     }
 
@@ -150,7 +266,10 @@ export async function POST(
       actorName: currentUser.username || currentUser.name,
     })
 
-    return successResponse({ status: 'pending' })
+    return successResponse({
+      status: 'pending',
+      message: 'Friend request sent'
+    })
   } catch (error) {
     if (error instanceof Error && error.message === 'UNAUTHORIZED') {
       return errorResponse('Authentication required', 401)
@@ -178,8 +297,9 @@ export async function DELETE(
       return errorResponse('User not found', 404)
     }
 
-    // Try to remove friendship
-    const [id1, id2] = [currentUser.id, targetUser.id].sort()
+    const [id1, id2] = getSortedIds(currentUser.id, targetUser.id)
+
+    // Try to remove friendship first
     const friendship = await prisma.friendship.findUnique({
       where: { user1Id_user2Id: { user1Id: id1, user2Id: id2 } }
     })
@@ -188,23 +308,32 @@ export async function DELETE(
       await prisma.friendship.delete({
         where: { id: friendship.id }
       })
-      return successResponse({ unfriended: true })
+      return successResponse({
+        status: 'none',
+        message: 'Unfriended successfully'
+      })
     }
 
-    // Try to cancel pending request
-    const request = await prisma.friendRequest.findFirst({
+    // Try to cancel/decline pending request (either direction)
+    const pendingRequest = await prisma.friendRequest.findFirst({
       where: {
-        senderId: currentUser.id,
-        receiverId: targetUser.id,
-        status: 'pending'
+        OR: [
+          { senderId: currentUser.id, receiverId: targetUser.id, status: 'pending' },
+          { senderId: targetUser.id, receiverId: currentUser.id, status: 'pending' }
+        ]
       }
     })
 
-    if (request) {
+    if (pendingRequest) {
       await prisma.friendRequest.delete({
-        where: { id: request.id }
+        where: { id: pendingRequest.id }
       })
-      return successResponse({ cancelled: true })
+
+      const wasSentByMe = pendingRequest.senderId === currentUser.id
+      return successResponse({
+        status: 'none',
+        message: wasSentByMe ? 'Friend request cancelled' : 'Friend request declined'
+      })
     }
 
     return errorResponse('No friendship or pending request found', 404)
@@ -213,6 +342,6 @@ export async function DELETE(
       return errorResponse('Authentication required', 401)
     }
     console.error('Error removing friend:', error)
-    return errorResponse('Failed to unfriend', 500)
+    return errorResponse('Failed to process request', 500)
   }
 }
