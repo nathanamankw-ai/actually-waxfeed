@@ -15,6 +15,8 @@ import {
   ArrowRightIcon,
   HeartIcon,
 } from "@/components/icons"
+import { TasteIDCard } from "@/components/tasteid"
+import { getArchetypeInfo } from "@/lib/tasteid"
 
 interface Props {
   params: Promise<{ username: string }>
@@ -38,6 +40,21 @@ async function getUser(identifier: string) {
       createdAt: true,
       currentStreak: true,
       longestStreak: true,
+      tasteId: {
+        select: {
+          primaryArchetype: true,
+          secondaryArchetype: true,
+          archetypeConfidence: true,
+          topGenres: true,
+          topArtists: true,
+          genreVector: true,
+          adventurenessScore: true,
+          polarityScore: true,
+          ratingSkew: true,
+          reviewCount: true,
+          averageRating: true,
+        }
+      },
       _count: {
         select: {
           reviews: true,
@@ -67,6 +84,21 @@ async function getUser(identifier: string) {
         createdAt: true,
         currentStreak: true,
         longestStreak: true,
+        tasteId: {
+          select: {
+            primaryArchetype: true,
+            secondaryArchetype: true,
+            archetypeConfidence: true,
+            topGenres: true,
+            topArtists: true,
+            genreVector: true,
+            adventurenessScore: true,
+            polarityScore: true,
+            ratingSkew: true,
+            reviewCount: true,
+            averageRating: true,
+          }
+        },
         _count: {
           select: {
             reviews: true,
@@ -257,10 +289,10 @@ export default async function ProfilePage({ params }: Props) {
               <span className="font-bold">{user._count.lists}</span>
               <span className="ml-1" style={{ color: 'var(--muted)' }}>lists</span>
             </div>
-            <div>
+            <Link href="/friends" className="no-underline hover:opacity-70 transition-opacity">
               <span className="font-bold">{friendCount}</span>
               <span className="ml-1" style={{ color: 'var(--muted)' }}>friends</span>
-            </div>
+            </Link>
           </div>
 
           {/* Streak & Wax Score */}
@@ -444,6 +476,47 @@ export default async function ProfilePage({ params }: Props) {
 
         {/* Sidebar */}
         <div className="space-y-8 order-1 lg:order-2">
+          {/* TasteID Card */}
+          {user.tasteId && (
+            <section>
+              <TasteIDCard
+                username={user.username!}
+                archetype={getArchetypeInfo(user.tasteId.primaryArchetype)}
+                secondaryArchetype={
+                  user.tasteId.secondaryArchetype
+                    ? getArchetypeInfo(user.tasteId.secondaryArchetype)
+                    : null
+                }
+                topGenres={user.tasteId.topGenres}
+                topArtists={user.tasteId.topArtists}
+                genreVector={user.tasteId.genreVector as Record<string, number>}
+                adventurenessScore={user.tasteId.adventurenessScore}
+                polarityScore={user.tasteId.polarityScore}
+                ratingSkew={user.tasteId.ratingSkew}
+                reviewCount={user.tasteId.reviewCount}
+                averageRating={user.tasteId.averageRating}
+                showRadar
+                compact
+              />
+            </section>
+          )}
+
+          {/* Generate TasteID prompt for own profile */}
+          {isOwnProfile && !user.tasteId && user._count.reviews >= 3 && (
+            <section>
+              <Link
+                href={`/u/${user.username}/tasteid`}
+                className="block border-2 p-4 text-center transition-opacity hover:opacity-80 no-underline"
+                style={{ borderColor: 'var(--border)' }}
+              >
+                <p className="font-bold mb-2">Generate Your TasteID</p>
+                <p className="text-sm" style={{ color: 'var(--muted)' }}>
+                  Create your unique music taste fingerprint
+                </p>
+              </Link>
+            </section>
+          )}
+
           {/* Lists */}
           <section>
             <div className="flex items-center justify-between mb-4">

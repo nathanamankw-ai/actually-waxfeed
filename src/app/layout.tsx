@@ -7,8 +7,8 @@ import { CustomCursor } from "@/components/custom-cursor";
 import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
-  title: "WAXFEED",
-  description: "A social music review platform - Letterboxd for music",
+  title: "WAXFEED - Discover Music & Friends Tailored to You",
+  description: "Review albums, discover your unique TasteID, and connect with people who share your musical DNA.",
   icons: {
     icon: [
       { url: "/favicon.ico?v=4", sizes: "any" },
@@ -18,8 +18,8 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png?v=4",
   },
   openGraph: {
-    title: "WAXFEED",
-    description: "A social music review platform - Letterboxd for music",
+    title: "WAXFEED - Discover Music & Friends Tailored to You",
+    description: "Review albums, discover your unique TasteID, and connect with people who share your musical DNA.",
     type: "website",
     images: ["/logo/waxfeed-disc-512.png"],
   },

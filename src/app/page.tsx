@@ -83,7 +83,7 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-6 py-12 lg:py-16">
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
             <p className="text-base md:text-lg lg:text-xl font-medium leading-relaxed max-w-2xl">
-              A social music review platform. Rate albums, build lists, discover new music through friends.
+              Discover music & friends tailored to you. Rate albums, reveal your TasteID, connect with your musical twins.
             </p>
             <div className="flex-shrink-0 lg:text-right">
               <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-1 font-medium">

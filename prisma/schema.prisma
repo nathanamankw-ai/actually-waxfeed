@@ -92,6 +92,9 @@ model User {
   hotTakeVotes          HotTakeVote[]
   hotTakeArguments      HotTakeArgument[]
 
+  // TasteID relation
+  tasteId               TasteID?
+
   @@index([username])
   @@index([email])
   @@index([createdAt])
@@ -700,4 +703,112 @@ model HotTakeArgument {
   @@index([authorId])
   @@index([side])
   @@index([likes])
+}
+
+// ============================================
+// TASTEID - Music Taste Fingerprint System
+// ============================================
+
+model TasteID {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+
+  // Core taste vectors
+  genreVector         Json     // { "hip-hop": 0.85, "jazz": 0.72, ... } - 0-1 affinities
+  artistDNA           Json     // Top 20 defining artists with weights
+  decadePreferences   Json     // { "1990s": 0.6, "2000s": 0.4, ... }
+
+  // Archetype classification
+  primaryArchetype    String   // "Hip-Hop Head", "Jazz Explorer", etc.
+  secondaryArchetype  String?  // Optional secondary classification
+  archetypeConfidence Float    @default(0) // 0-1 confidence in classification
+
+  // Behavioral metrics
+  adventurenessScore  Float    @default(0.5) // 0-1, how diverse their taste is
+  ratingSkew          String   @default("balanced") // "harsh" | "lenient" | "balanced"
+  averageRating       Float    @default(5)
+  ratingStdDev        Float    @default(0) // Standard deviation of ratings
+
+  // Engagement signals
+  reviewDepth         String   @default("rater") // "rater" | "writer" | "essayist"
+  reviewCount         Int      @default(0)
+  avgReviewLength     Int      @default(0) // Average word count
+
+  // Computed display data
+  topGenres           String[] // Top 5 genres for display
+  topArtists          String[] // Top 10 artists for display
+  signatureAlbums     String[] // Album IDs that define their taste
+
+  // Polarity Points - Bayesian edge strength from CCX
+  polarityScore       Float    @default(0) // Overall taste distinctiveness
+
+  // Timestamps
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  lastComputedAt      DateTime @default(now())
+
+  // Relations
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  snapshots           TasteIDSnapshot[]
+  matchesAsUser1      TasteMatch[] @relation("tasteUser1")
+  matchesAsUser2      TasteMatch[] @relation("tasteUser2")
+
+  @@index([primaryArchetype])
+  @@index([adventurenessScore])
+  @@index([polarityScore])
+}
+
+model TasteIDSnapshot {
+  id              String   @id @default(cuid())
+  tasteIdId       String
+
+  // Snapshot of taste state
+  genreVector     Json
+  artistDNA       Json
+  primaryArchetype String
+  adventurenessScore Float
+  reviewCount     Int
+
+  // When this snapshot was taken
+  month           Int      // 1-12
+  year            Int
+  createdAt       DateTime @default(now())
+
+  tasteId         TasteID  @relation(fields: [tasteIdId], references: [id], onDelete: Cascade)
+
+  @@unique([tasteIdId, year, month])
+  @@index([tasteIdId])
+  @@index([year, month])
+}
+
+model TasteMatch {
+  id              String   @id @default(cuid())
+  user1Id         String
+  user2Id         String
+
+  // Compatibility scores
+  overallScore    Float    // 0-100 compatibility percentage
+  genreOverlap    Float    // How much genres overlap
+  artistOverlap   Float    // Shared artist preferences
+  ratingAlignment Float    // How similarly they rate albums
+
+  // Shared elements for display
+  sharedGenres    String[]
+  sharedArtists   String[]
+  sharedAlbums    String[] // Album IDs both rated highly
+
+  // Relationship descriptor
+  matchType       String   // "taste_twin" | "complementary" | "explorer_guide" | "genre_buddy"
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  tasteId1        TasteID  @relation("tasteUser1", fields: [user1Id], references: [userId], onDelete: Cascade)
+  tasteId2        TasteID  @relation("tasteUser2", fields: [user2Id], references: [userId], onDelete: Cascade)
+
+  @@unique([user1Id, user2Id])
+  @@index([user1Id])
+  @@index([user2Id])
+  @@index([overallScore])
+  @@index([matchType])
 }
