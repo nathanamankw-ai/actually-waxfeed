@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 
 interface Album {
@@ -9,6 +9,7 @@ interface Album {
   title: string
   artistName: string
   coverArtUrl: string | null
+  coverArtUrlLarge?: string | null
   averageRating: number | null
   totalReviews: number
   billboardRank: number | null
@@ -20,22 +21,108 @@ interface BillboardListProps {
 
 export function BillboardList({ albums }: BillboardListProps) {
   const [isExpanded, setIsExpanded] = useState(false)
-  const displayedAlbums = isExpanded ? albums : albums.slice(0, 15)
-  const hasMore = albums.length > 15
+  const [isMobile, setIsMobile] = useState(false)
 
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  // Mobile: 12 albums (4 rows × 3 cols), Desktop: 15 in list
+  const initialCount = isMobile ? 12 : 15
+  const displayedAlbums = isExpanded ? albums : albums.slice(0, initialCount)
+  const hasMore = albums.length > initialCount
+
+  // Mobile: Grid layout for better density
+  if (isMobile) {
+    return (
+      <div>
+        <div className="grid grid-cols-3 gap-2">
+          {displayedAlbums.map((album) => (
+            <Link
+              key={album.id}
+              href={`/album/${album.spotifyId}`}
+              className="group relative block"
+            >
+              {/* Album cover with rank badge */}
+              <div className="relative aspect-square bg-neutral-900 overflow-hidden">
+                {album.coverArtUrl && (
+                  <img
+                    src={album.coverArtUrlLarge || album.coverArtUrl}
+                    alt=""
+                    className="w-full h-full object-cover group-active:scale-[0.98] transition-transform"
+                  />
+                )}
+
+                {/* Rank badge - high contrast, top-left */}
+                <div className="absolute top-0 left-0 bg-black/90 backdrop-blur-sm px-1.5 py-0.5 min-w-[24px]">
+                  <span className="text-white text-[11px] font-bold tabular-nums">
+                    {album.billboardRank}
+                  </span>
+                </div>
+
+                {/* Rating badge - bottom-right if exists */}
+                {album.averageRating !== null && (
+                  <div className="absolute bottom-0 right-0 bg-white text-black px-1.5 py-0.5">
+                    <span className="text-[10px] font-bold tabular-nums">
+                      {album.averageRating.toFixed(1)}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Album info below */}
+              <div className="mt-1.5 px-0.5">
+                <p className="text-[11px] font-semibold leading-tight truncate">
+                  {album.title}
+                </p>
+                <p className="text-[10px] text-neutral-500 truncate">
+                  {album.artistName}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        {hasMore && (
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="w-full mt-5 py-3.5 flex items-center justify-center gap-2 text-sm font-medium bg-neutral-900 text-white active:bg-neutral-800 transition-colors min-h-[48px]"
+          >
+            <span>{isExpanded ? "Show Less" : `View All ${albums.length}`}</span>
+            <svg
+              className={`w-4 h-4 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        )}
+      </div>
+    )
+  }
+
+  // Desktop: List layout (existing design, improved contrast)
   return (
     <div>
-      <div className="space-y-2">
+      <div className="space-y-1">
         {displayedAlbums.map((album) => (
           <Link
             key={album.id}
             href={`/album/${album.spotifyId}`}
-            className="flex items-center gap-3 md:gap-4 p-2 md:p-3 hover:opacity-80 transition-colors no-underline group"
+            className="flex items-center gap-4 p-3 hover:bg-neutral-900/50 transition-colors rounded-sm no-underline group"
           >
-            <span className="text-lg md:text-xl font-bold text-[--muted] w-6 md:w-8 flex-shrink-0">
+            {/* Rank - high contrast */}
+            <span className="text-xl font-bold text-white w-8 flex-shrink-0 tabular-nums">
               {album.billboardRank}
             </span>
-            <div className="w-12 h-12 md:w-14 md:h-14 flex-shrink-0 bg-[--border]">
+
+            {/* Cover */}
+            <div className="w-14 h-14 flex-shrink-0 bg-neutral-800 overflow-hidden">
               {album.coverArtUrl && (
                 <img
                   src={album.coverArtUrl}
@@ -44,19 +131,23 @@ export function BillboardList({ albums }: BillboardListProps) {
                 />
               )}
             </div>
+
+            {/* Album info */}
             <div className="flex-1 min-w-0">
-              <p className="font-bold truncate group-hover:underline text-sm md:text-base">
+              <p className="font-bold truncate group-hover:underline">
                 {album.title}
               </p>
-              <p className="text-[--muted] text-xs md:text-sm truncate">
+              <p className="text-neutral-400 text-sm truncate">
                 {album.artistName}
               </p>
             </div>
+
+            {/* Rating & reviews */}
             <div className="text-right flex-shrink-0">
               {album.averageRating !== null && (
-                <p className="font-bold text-sm md:text-base">{album.averageRating.toFixed(1)}</p>
+                <p className="font-bold text-base">{album.averageRating.toFixed(1)}</p>
               )}
-              <p className="text-[--muted] text-xs">
+              <p className="text-neutral-500 text-xs">
                 {album.totalReviews} {album.totalReviews === 1 ? "review" : "reviews"}
               </p>
             </div>
@@ -67,7 +158,7 @@ export function BillboardList({ albums }: BillboardListProps) {
       {hasMore && (
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full mt-4 py-3 flex items-center justify-center gap-2 text-sm text-[--muted] hover:text-white hover:opacity-80 transition-colors border border-[--border] hover:border-[--muted]"
+          className="w-full mt-4 py-3 flex items-center justify-center gap-2 text-sm text-neutral-400 hover:text-white transition-colors border border-neutral-800 hover:border-neutral-600"
         >
           <span>{isExpanded ? "Show Less" : `Show All ${albums.length}`}</span>
           <svg
