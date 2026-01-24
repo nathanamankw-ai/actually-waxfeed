@@ -96,6 +96,14 @@ model User {
   lastReviewDate DateTime?
 
   // ============================================
+  // FIRST SPIN - Tastemaker Score
+  // ============================================
+  tastemakeScore  Int @default(0) // Gold×10 + Silver×5 + Bronze×2
+  goldSpinCount   Int @default(0)
+  silverSpinCount Int @default(0)
+  bronzeSpinCount Int @default(0)
+
+  // ============================================
   // WAX WALLET & MONETIZATION
   // ============================================
   waxBalance        Int @default(0) // Spendable Wax currency
@@ -245,6 +253,13 @@ model Album {
   billboardRank Int? // Current Billboard 200 position (null if not on chart)
   billboardDate DateTime? // Date of the chart position
 
+  // ============================================
+  // FIRST SPIN - Trending detection
+  // ============================================
+  isTrending     Boolean   @default(false) // Has this album hit trending threshold?
+  trendedAt      DateTime? // When it first trended
+  trendThreshold Int       @default(100) // Reviews needed to trend (can vary)
+
   // Cached stats
   averageRating      Float?
   totalReviews       Int    @default(0)
@@ -332,6 +347,11 @@ model Review {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  // ============================================
+  // FIRST SPIN - Review position tracking
+  // ============================================
+  reviewPosition Int? // 1 = first reviewer, 2 = second, etc.
+
   // Stats
   likeCount       Int @default(0)
   waxCount        Int @default(0)
@@ -363,6 +383,7 @@ model Review {
   @@index([createdAt])
   @@index([likeCount])
   @@index([rating])
+  @@index([reviewPosition])
 }
 
 model ReviewDraft {
@@ -1033,4 +1054,77 @@ model FlashSale {
   @@index([isActive])
   @@index([startsAt])
   @@index([endsAt])
+}
+
+// ============================================
+// FIRST SPIN BADGE SYSTEM
+// ============================================
+
+enum SpinBadgeType {
+  GOLD   // First 10 reviewers
+  SILVER // First 50 reviewers
+  BRONZE // First 100 reviewers
+}
+
+model FirstSpinBadge {
+  id        String        @id @default(cuid())
+  userId    String
+  albumId   String
+  badgeType SpinBadgeType
+  position  Int // What position they were (1-100)
+  waxAwarded Int // How much wax they received
+  createdAt DateTime @default(now())
+
+  @@unique([userId, albumId]) // One badge per user per album
+  @@index([userId])
+  @@index([albumId])
+  @@index([badgeType])
+  @@index([createdAt])
+}
+
+// ============================================
+// COLLEGE RADIO STATIONS
+// ============================================
+
+model Station {
+  id           String   @id @default(cuid())
+  name         String   @unique // e.g. "WRVU Nashville"
+  slug         String   @unique // e.g. "wrvu"
+  university   String? // e.g. "Vanderbilt University"
+  conference   String? // e.g. "SEC", "Big Ten"
+  logoUrl      String?
+  websiteUrl   String?
+  
+  // Aggregate stats
+  totalReviews    Int @default(0)
+  tastemakeScore  Int @default(0) // Sum of all member tastemaker scores
+  goldSpinCount   Int @default(0)
+  silverSpinCount Int @default(0)
+  bronzeSpinCount Int @default(0)
+  
+  // Subscription
+  isPremium     Boolean   @default(false)
+  premiumUntil  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members StationMember[]
+
+  @@index([conference])
+  @@index([tastemakeScore])
+}
+
+model StationMember {
+  id        String   @id @default(cuid())
+  stationId String
+  userId    String
+  role      String   @default("dj") // dj, manager, admin
+  joinedAt  DateTime @default(now())
+
+  station Station @relation(fields: [stationId], references: [id], onDelete: Cascade)
+
+  @@unique([stationId, userId])
+  @@index([stationId])
+  @@index([userId])
 }

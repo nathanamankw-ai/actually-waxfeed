@@ -34,6 +34,7 @@ interface ReviewCardProps {
   waxCount?: number
   premiumWaxCount?: number
   goldWaxCount?: number
+  reviewPosition?: number | null // First Spin position
   user: {
     id: string
     username?: string | null
@@ -46,6 +47,7 @@ interface ReviewCardProps {
     title: string
     artistName: string
     coverArtUrl?: string | null
+    totalReviews?: number
   }
   showAlbum?: boolean
   compact?: boolean
@@ -73,6 +75,7 @@ export const ReviewCard = memo(function ReviewCard({
   waxCount: initialWaxCount = 0,
   premiumWaxCount: initialPremiumWaxCount = 0,
   goldWaxCount: initialGoldWaxCount = 0,
+  reviewPosition,
   user,
   album,
   showAlbum = true,
@@ -260,9 +263,26 @@ export const ReviewCard = memo(function ReviewCard({
               </div>
             </div>
 
-            {/* Rating */}
-            <div className="flex-shrink-0 bg-white text-black px-2 sm:px-3 py-0.5 sm:py-1 font-bold text-base sm:text-lg">
-              {rating.toFixed(1)}
+            {/* Rating + First Spin Badge */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {/* First Spin Position Badge */}
+              {reviewPosition && reviewPosition <= 100 && (
+                <div
+                  className={`px-1.5 py-0.5 text-[10px] font-bold ${
+                    reviewPosition <= 10
+                      ? "border border-[#ffd700] text-[#ffd700]"
+                      : reviewPosition <= 50
+                        ? "border border-gray-400 text-gray-400"
+                        : "border border-amber-700 text-amber-700"
+                  }`}
+                  title={`Reviewer #${reviewPosition}`}
+                >
+                  #{reviewPosition}
+                </div>
+              )}
+              <div className="bg-white text-black px-2 sm:px-3 py-0.5 sm:py-1 font-bold text-base sm:text-lg">
+                {rating.toFixed(1)}
+              </div>
             </div>
           </div>
 

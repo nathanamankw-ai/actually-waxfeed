@@ -442,6 +442,11 @@ export async function getWalletStats(userId: string) {
       subscriptionTier: true,
       currentStreak: true,
       dailyClaimedAt: true,
+      // First Spin stats
+      tastemakeScore: true,
+      goldSpinCount: true,
+      silverSpinCount: true,
+      bronzeSpinCount: true,
     }
   })
 
@@ -482,6 +487,11 @@ export async function getWalletStats(userId: string) {
     canClaimDaily,
     tier: user.subscriptionTier,
     earnMultiplier: tierConfig.earnMultiplier,
+    // First Spin stats
+    tastemakeScore: user.tastemakeScore ?? 0,
+    goldSpinCount: user.goldSpinCount ?? 0,
+    silverSpinCount: user.silverSpinCount ?? 0,
+    bronzeSpinCount: user.bronzeSpinCount ?? 0,
   }
 }
 

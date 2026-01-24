@@ -9,8 +9,10 @@ import { useTheme } from "./theme-provider"
 
 type WaxStats = {
   balance: number
-  canClaimDaily: boolean
-  currentStreak: number
+  tastemakeScore: number
+  goldSpinCount: number
+  silverSpinCount: number
+  bronzeSpinCount: number
 }
 
 export function Header() {
@@ -22,7 +24,7 @@ export function Header() {
   const [waxStats, setWaxStats] = useState<WaxStats | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // Fetch Wax balance
+  // Fetch Wax stats
   useEffect(() => {
     const fetchWax = async () => {
       if (!session?.user) return
@@ -31,9 +33,11 @@ export function Header() {
         const data = await res.json()
         if (data.success) {
           setWaxStats({
-            balance: data.data.balance,
-            canClaimDaily: data.data.canClaimDaily,
-            currentStreak: data.data.currentStreak,
+            balance: data.data.balance || 0,
+            tastemakeScore: data.data.tastemakeScore || 0,
+            goldSpinCount: data.data.goldSpinCount || 0,
+            silverSpinCount: data.data.silverSpinCount || 0,
+            bronzeSpinCount: data.data.bronzeSpinCount || 0,
           })
         }
       } catch (error) {
@@ -117,17 +121,23 @@ export function Header() {
             HOT TAKES
           </Link>
 
-          {/* Wax Balance - Always visible when logged in */}
+          {/* Tastemaker Score - Always visible when logged in */}
           {session && waxStats && (
             <Link
               href="/wallet"
-              className="flex items-center gap-2 px-3 py-1.5 no-underline hover:opacity-70 transition-opacity relative"
+              className="flex items-center gap-3 px-3 py-1.5 no-underline hover:opacity-70 transition-opacity"
               style={{ border: '1px solid var(--header-border)' }}
             >
-              <span className="text-[10px] tracking-[0.1em] uppercase opacity-60">Wax</span>
-              <span className="font-bold tabular-nums">{waxStats.balance.toLocaleString()}</span>
-              {waxStats.canClaimDaily && (
-                <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500" title="Daily reward ready!" />
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] tracking-[0.1em] uppercase opacity-60">Score</span>
+                <span className="font-bold tabular-nums">{waxStats.tastemakeScore}</span>
+              </div>
+              {(waxStats.goldSpinCount > 0 || waxStats.silverSpinCount > 0 || waxStats.bronzeSpinCount > 0) && (
+                <div className="flex items-center gap-1 text-[10px]">
+                  {waxStats.goldSpinCount > 0 && <span className="text-[#ffd700]">G:{waxStats.goldSpinCount}</span>}
+                  {waxStats.silverSpinCount > 0 && <span className="text-gray-400">S:{waxStats.silverSpinCount}</span>}
+                  {waxStats.bronzeSpinCount > 0 && <span className="text-amber-700">B:{waxStats.bronzeSpinCount}</span>}
+                </div>
               )}
             </Link>
           )}
@@ -177,7 +187,7 @@ export function Header() {
                     <p className="text-xs" style={{ opacity: 0.6 }}>{session.user?.email}</p>
                   </div>
                   
-                  {/* Wax Section */}
+                  {/* First Spin Stats */}
                   {waxStats && (
                     <div style={{ borderBottom: '1px solid var(--header-border)' }}>
                       <Link
@@ -185,24 +195,23 @@ export function Header() {
                         className="flex items-center justify-between px-4 py-2 no-underline hover:opacity-70"
                         onClick={() => setShowDropdown(false)}
                       >
-                        <span>Wallet</span>
-                        <span className="font-bold tabular-nums">{waxStats.balance.toLocaleString()}</span>
+                        <span>Tastemaker Score</span>
+                        <span className="font-bold tabular-nums">{waxStats.tastemakeScore}</span>
                       </Link>
-                      {waxStats.canClaimDaily && (
-                        <Link
-                          href="/wallet"
-                          className="block px-4 py-2 no-underline text-green-500 text-sm"
-                          onClick={() => setShowDropdown(false)}
-                        >
-                          Claim daily Wax →
-                        </Link>
-                      )}
                       <Link
-                        href="/shop"
+                        href="/wallet"
+                        className="flex items-center justify-between px-4 py-2 no-underline hover:opacity-70"
+                        onClick={() => setShowDropdown(false)}
+                      >
+                        <span>Wax Balance</span>
+                        <span className="tabular-nums">{waxStats.balance.toLocaleString()}</span>
+                      </Link>
+                      <Link
+                        href="/pricing"
                         className="block px-4 py-2 no-underline hover:opacity-70"
                         onClick={() => setShowDropdown(false)}
                       >
-                        Shop
+                        Upgrade
                       </Link>
                     </div>
                   )}
@@ -256,19 +265,17 @@ export function Header() {
           )}
         </nav>
 
-        {/* Mobile/Tablet: Wax + Search + Menu */}
+        {/* Mobile/Tablet: Score + Search + Menu */}
         <div className="flex lg:hidden items-center gap-2">
-          {/* Wax Balance - Mobile */}
+          {/* Tastemaker Score - Mobile */}
           {session && waxStats && (
             <Link
               href="/wallet"
-              className="flex items-center gap-1.5 px-2 py-1 no-underline relative"
+              className="flex items-center gap-1.5 px-2 py-1 no-underline"
               style={{ border: '1px solid var(--header-border)' }}
             >
-              <span className="font-bold tabular-nums text-sm">{waxStats.balance.toLocaleString()}</span>
-              {waxStats.canClaimDaily && (
-                <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500" />
-              )}
+              <span className="text-[9px] uppercase opacity-60">Score</span>
+              <span className="font-bold tabular-nums text-sm">{waxStats.tastemakeScore}</span>
             </Link>
           )}
 
@@ -413,7 +420,7 @@ export function Header() {
             {status !== "loading" && (
               session ? (
                 <div className="mt-4" style={{ borderTop: '1px solid var(--header-border)' }}>
-                  {/* Wax Section - Mobile */}
+                  {/* First Spin Stats - Mobile */}
                   {waxStats && (
                     <div style={{ borderBottom: '1px solid var(--header-border)' }}>
                       <Link
@@ -422,34 +429,44 @@ export function Header() {
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         <div>
-                          <span className="text-[10px] tracking-[0.15em] uppercase" style={{ opacity: 0.6 }}>Your Wax</span>
-                          <p className="text-2xl font-bold tabular-nums">{waxStats.balance.toLocaleString()}</p>
+                          <span className="text-[10px] tracking-[0.15em] uppercase" style={{ opacity: 0.6 }}>Tastemaker</span>
+                          <p className="text-2xl font-bold tabular-nums">{waxStats.tastemakeScore}</p>
                         </div>
-                        {waxStats.currentStreak > 0 && (
-                          <div className="text-right">
-                            <span className="text-[10px] tracking-[0.15em] uppercase" style={{ opacity: 0.6 }}>Streak</span>
-                            <p className="text-xl font-bold">{waxStats.currentStreak}</p>
-                          </div>
-                        )}
+                        <div className="flex items-center gap-2">
+                          {waxStats.goldSpinCount > 0 && (
+                            <div className="text-center">
+                              <span className="text-[10px] text-[#ffd700]">GOLD</span>
+                              <p className="text-lg font-bold text-[#ffd700]">{waxStats.goldSpinCount}</p>
+                            </div>
+                          )}
+                          {waxStats.silverSpinCount > 0 && (
+                            <div className="text-center">
+                              <span className="text-[10px] text-gray-400">SILVER</span>
+                              <p className="text-lg font-bold text-gray-400">{waxStats.silverSpinCount}</p>
+                            </div>
+                          )}
+                          {waxStats.bronzeSpinCount > 0 && (
+                            <div className="text-center">
+                              <span className="text-[10px] text-amber-700">BRONZE</span>
+                              <p className="text-lg font-bold text-amber-700">{waxStats.bronzeSpinCount}</p>
+                            </div>
+                          )}
+                        </div>
                       </Link>
-                      {waxStats.canClaimDaily && (
-                        <Link
-                          href="/wallet"
-                          className="flex items-center justify-between px-4 py-3 no-underline bg-green-500/10"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          <span className="text-green-500 font-medium">Claim Daily Wax</span>
-                          <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </Link>
-                      )}
                       <Link
-                        href="/shop"
+                        href="/wallet"
+                        className="flex items-center justify-between px-4 py-3 no-underline"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <span>Wax Balance</span>
+                        <span className="font-bold tabular-nums">{waxStats.balance.toLocaleString()}</span>
+                      </Link>
+                      <Link
+                        href="/pricing"
                         className="flex items-center justify-between px-4 py-4 text-base no-underline hover:opacity-70"
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        <span>Shop</span>
+                        <span>Upgrade</span>
                         <svg className="w-5 h-5" style={{ opacity: 0.5 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
