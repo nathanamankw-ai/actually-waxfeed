@@ -42,12 +42,13 @@ export function WaxBalance() {
     <div className="relative">
       <button
         onClick={() => setShowDropdown(!showDropdown)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#1a1a1a] hover:bg-[#222] border border-[#333] transition"
+        className="flex items-center gap-2 px-3 py-1.5 border border-[--header-border] hover:opacity-70 transition"
+        style={{ color: 'var(--header-text)' }}
       >
-        <span className="text-yellow-500">🕯️</span>
-        <span className="font-bold">{stats.balance.toLocaleString()}</span>
+        <span className="text-[10px] tracking-[0.1em] uppercase">Wax</span>
+        <span className="font-bold tabular-nums">{stats.balance.toLocaleString()}</span>
         {hasNotification && (
-          <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+          <span className="w-1.5 h-1.5 bg-[#ff3b3b]" />
         )}
       </button>
 
@@ -57,49 +58,48 @@ export function WaxBalance() {
             className="fixed inset-0 z-40"
             onClick={() => setShowDropdown(false)}
           />
-          <div className="absolute right-0 mt-2 w-64 bg-[#111] border border-[#333] rounded-xl shadow-xl z-50 overflow-hidden">
-            {/* Balance Header */}
-            <div className="p-4 bg-gradient-to-r from-yellow-900/20 to-orange-900/20 border-b border-[#333]">
-              <div className="text-xs text-[#888]">Your Wax Balance</div>
-              <div className="text-2xl font-bold text-yellow-500">
-                🕯️ {stats.balance.toLocaleString()}
-              </div>
+          <div 
+            className="absolute right-0 mt-2 w-56 border border-[--border] shadow-xl z-50"
+            style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
+          >
+            {/* Balance */}
+            <div className="p-4 border-b border-[--border]">
+              <p className="text-[10px] tracking-[0.2em] uppercase text-[--muted] mb-1">Balance</p>
+              <p className="text-2xl font-bold tabular-nums">{stats.balance.toLocaleString()}</p>
               {stats.currentStreak > 0 && (
-                <div className="text-xs text-orange-500 mt-1">
-                  🔥 {stats.currentStreak} day streak
-                </div>
+                <p className="text-xs text-[--muted] mt-1">
+                  {stats.currentStreak} day streak
+                </p>
               )}
             </div>
 
-            {/* Daily Reward Alert */}
+            {/* Daily Reward */}
             {stats.canClaimDaily && (
               <Link
                 href="/wallet"
                 onClick={() => setShowDropdown(false)}
-                className="block p-3 bg-green-900/20 border-b border-[#333] hover:bg-green-900/30 transition"
+                className="block p-3 border-b border-[--border] hover:bg-[--border]/20 transition"
               >
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">🎁</span>
-                  <div>
-                    <div className="font-medium text-green-500">Daily Wax Ready!</div>
-                    <div className="text-xs text-[#888]">Claim your free Wax</div>
-                  </div>
-                </div>
+                <p className="text-[10px] tracking-[0.15em] uppercase text-green-500">
+                  Daily Wax Ready
+                </p>
+                <p className="text-xs text-[--muted]">Tap to claim</p>
               </Link>
             )}
 
             {/* Weekly Cap Warning */}
             {stats.weeklyCap !== null && stats.weeklyRemaining !== null && stats.weeklyRemaining <= 20 && (
-              <div className="p-3 bg-yellow-900/20 border-b border-[#333]">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">⚠️</span>
-                  <div>
-                    <div className="font-medium text-yellow-500">
-                      {stats.weeklyRemaining === 0 ? "Cap reached!" : `${stats.weeklyRemaining} Wax left`}
-                    </div>
-                    <div className="text-xs text-[#888]">Weekly earning limit</div>
-                  </div>
-                </div>
+              <div className="p-3 border-b border-[--border]">
+                <p className="text-[10px] tracking-[0.15em] uppercase text-[#ff3b3b]">
+                  {stats.weeklyRemaining === 0 ? "Weekly cap reached" : `${stats.weeklyRemaining} Wax remaining`}
+                </p>
+                <Link 
+                  href="/pricing" 
+                  onClick={() => setShowDropdown(false)}
+                  className="text-xs text-[--muted] hover:underline"
+                >
+                  Upgrade for unlimited →
+                </Link>
               </div>
             )}
 
@@ -108,35 +108,26 @@ export function WaxBalance() {
               <Link
                 href="/wallet"
                 onClick={() => setShowDropdown(false)}
-                className="block px-3 py-2 rounded-lg hover:bg-[#222] transition"
+                className="block px-3 py-2 text-sm hover:bg-[--border]/20 transition"
               >
-                <div className="flex items-center gap-2">
-                  <span>💰</span>
-                  <span>View Wallet</span>
-                </div>
+                Wallet
               </Link>
               <Link
                 href="/shop"
                 onClick={() => setShowDropdown(false)}
-                className="block px-3 py-2 rounded-lg hover:bg-[#222] transition"
+                className="block px-3 py-2 text-sm hover:bg-[--border]/20 transition"
               >
-                <div className="flex items-center gap-2">
-                  <span>🛒</span>
-                  <span>Shop</span>
-                </div>
+                Shop
               </Link>
               <Link
                 href="/pricing"
                 onClick={() => setShowDropdown(false)}
-                className="block px-3 py-2 rounded-lg hover:bg-[#222] transition"
+                className="block px-3 py-2 text-sm hover:bg-[--border]/20 transition flex items-center justify-between"
               >
-                <div className="flex items-center gap-2">
-                  <span>⭐</span>
-                  <span>Upgrade</span>
-                  {stats.tier === "FREE" && (
-                    <span className="ml-auto text-xs text-yellow-500">Get 2x earning</span>
-                  )}
-                </div>
+                <span>Upgrade</span>
+                {stats.tier === "FREE" && (
+                  <span className="text-[10px] text-[--muted]">2x earning</span>
+                )}
               </Link>
             </div>
           </div>

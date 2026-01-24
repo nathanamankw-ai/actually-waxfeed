@@ -3,63 +3,55 @@
 import { useSession } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState, useEffect } from "react"
+import Link from "next/link"
 
 const TIERS = {
   FREE: {
     name: "Free",
-    price: "$0",
-    period: "forever",
+    price: "0",
+    period: "",
+    waxGrant: 0,
     features: [
-      "Basic features",
       "Earn up to 100 Wax/week",
-      "Award Standard Wax only",
+      "Award Standard Wax",
       "50 items per list",
+      "Basic features",
     ],
     limitations: [
       "Weekly earning cap",
       "No Premium Wax",
-      "No GOLD Wax",
       "Ads shown",
     ],
-    cta: "Current Plan",
-    disabled: true,
   },
   WAX_PLUS: {
     name: "Wax+",
-    price: "$4.99",
-    period: "/month",
+    price: "4.99",
+    period: "/mo",
+    waxGrant: 300,
     features: [
-      "300 Wax monthly grant",
-      "No weekly earning cap",
+      "300 Wax monthly",
+      "No weekly cap",
       "1.5x earning multiplier",
-      "Award Premium Wax (20 Wax)",
+      "Award Premium Wax",
       "100 items per list",
-      "Ad-free experience",
-      "Unlimited username changes",
-      "Basic profile analytics",
+      "Ad-free",
     ],
     limitations: [],
-    cta: "Upgrade to Wax+",
-    popular: true,
   },
   WAX_PRO: {
-    name: "Wax Pro",
-    price: "$9.99",
-    period: "/month",
+    name: "Pro",
+    price: "9.99",
+    period: "/mo",
+    waxGrant: 750,
     features: [
-      "750 Wax monthly grant",
-      "No weekly earning cap",
+      "750 Wax monthly",
       "2x earning multiplier",
-      "Award GOLD Wax (100 Wax)",
-      "Award Premium Wax (15 Wax)",
-      "Unlimited list items",
-      "Full profile analytics",
-      "Verified badge eligible",
-      "Exclusive badges access",
-      "Priority in Hot Takes",
+      "Award GOLD Wax",
+      "Unlimited lists",
+      "Full analytics",
+      "Verified eligible",
     ],
     limitations: [],
-    cta: "Go Pro",
   },
 }
 
@@ -75,7 +67,7 @@ export default function PricingPage() {
 
   useEffect(() => {
     if (canceled) {
-      setMessage("Checkout canceled. You can try again anytime.")
+      setMessage("Checkout canceled.")
     }
   }, [canceled])
 
@@ -148,191 +140,279 @@ export default function PricingPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <div className="text-center mb-12">
-        <h1 className="text-5xl font-bold tracking-tighter mb-4">
-          Unlock Your Full Wax Potential
-        </h1>
-        <p className="text-xl text-[#888] max-w-2xl mx-auto">
-          Earn more Wax, award Premium & GOLD Wax to reviews you love, 
-          and stand out with exclusive features.
-        </p>
-      </div>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
+      {/* Header */}
+      <section style={{ borderBottom: '1px solid var(--border)' }}>
+        <div className="max-w-7xl mx-auto px-6 py-12 lg:py-16">
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
+            <div>
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-3">
+                Membership
+              </p>
+              <h1 className="text-4xl lg:text-5xl font-bold tracking-[-0.02em] mb-4">
+                Wax Tiers
+              </h1>
+              <p className="text-base text-[--muted] max-w-xl">
+                Earn more, award Premium & GOLD Wax, unlock exclusive features.
+              </p>
+            </div>
+            <div className="flex-shrink-0 lg:text-right">
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-1">
+                Current Plan
+              </p>
+              <p className="text-2xl font-medium">
+                {currentTier === "WAX_PRO" ? "Pro" : currentTier === "WAX_PLUS" ? "Wax+" : "Free"}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {message && (
-        <div className="max-w-md mx-auto mb-8 p-4 bg-yellow-900/20 border border-yellow-600/30 rounded-lg text-center">
-          {message}
+        <div className="max-w-7xl mx-auto px-6 pt-6">
+          <div className="p-4 border border-[--border]" style={{ backgroundColor: 'var(--background)' }}>
+            <p className="text-sm">{message}</p>
+          </div>
         </div>
       )}
 
-      <div className="grid md:grid-cols-3 gap-6 mb-12">
-        {/* Free Tier */}
-        <div className="border border-[#333] rounded-2xl p-6 bg-[#111]">
-          <div className="mb-6">
-            <h3 className="text-2xl font-bold mb-2">{TIERS.FREE.name}</h3>
-            <div className="flex items-baseline gap-1">
-              <span className="text-4xl font-bold">{TIERS.FREE.price}</span>
-              <span className="text-[#888]">{TIERS.FREE.period}</span>
+      {/* Pricing Grid */}
+      <section className="max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-3">
+          {/* Free Tier */}
+          <div className="px-6 py-10 border-b lg:border-b-0 lg:border-r border-[--border]">
+            <div className="mb-8">
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-3">
+                01 — Free
+              </p>
+              <div className="flex items-baseline gap-1 mb-4">
+                <span className="text-5xl font-bold tracking-tight">$0</span>
+              </div>
+              <p className="text-sm text-[--muted]">
+                For casual listeners
+              </p>
             </div>
+
+            <div className="space-y-3 mb-8">
+              {TIERS.FREE.features.map((feature, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <span className="text-[--muted] mt-0.5">+</span>
+                  <span className="text-sm">{feature}</span>
+                </div>
+              ))}
+              {TIERS.FREE.limitations.map((limitation, i) => (
+                <div key={i} className="flex items-start gap-3 text-[--muted]">
+                  <span className="mt-0.5">−</span>
+                  <span className="text-sm">{limitation}</span>
+                </div>
+              ))}
+            </div>
+
+            <button
+              disabled
+              className="w-full py-3 px-4 border border-[--border] text-[--muted] text-[11px] tracking-[0.15em] uppercase cursor-not-allowed"
+            >
+              {currentTier === "FREE" ? "Current Plan" : "Downgrade via Portal"}
+            </button>
           </div>
 
-          <ul className="space-y-3 mb-8">
-            {TIERS.FREE.features.map((feature, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <span className="text-green-500 mt-0.5">✓</span>
-                <span className="text-[#ccc]">{feature}</span>
-              </li>
-            ))}
-            {TIERS.FREE.limitations.map((limitation, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <span className="text-red-500 mt-0.5">✗</span>
-                <span className="text-[#666]">{limitation}</span>
-              </li>
-            ))}
-          </ul>
+          {/* Wax+ Tier */}
+          <div className="px-6 py-10 border-b lg:border-b-0 lg:border-r border-[--border] relative">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-white" />
+            
+            <div className="mb-8">
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-3">
+                02 — Wax+
+              </p>
+              <div className="flex items-baseline gap-1 mb-4">
+                <span className="text-5xl font-bold tracking-tight">$4.99</span>
+                <span className="text-sm text-[--muted]">/mo</span>
+              </div>
+              <p className="text-sm text-[--muted]">
+                For active reviewers
+              </p>
+              <p className="text-xs text-white/70 mt-2">
+                +300 Wax monthly
+              </p>
+            </div>
 
-          <button
-            disabled
-            className="w-full py-3 px-4 rounded-lg bg-[#222] text-[#666] cursor-not-allowed"
+            <div className="space-y-3 mb-8">
+              {TIERS.WAX_PLUS.features.map((feature, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <span className="text-white mt-0.5">+</span>
+                  <span className="text-sm">{feature}</span>
+                </div>
+              ))}
+            </div>
+
+            {currentTier === "WAX_PLUS" ? (
+              <button
+                onClick={handleManageSubscription}
+                disabled={loading === "manage"}
+                className="w-full py-3 px-4 border border-[--border] text-[11px] tracking-[0.15em] uppercase hover:bg-[--border]/20 transition disabled:opacity-50"
+              >
+                {loading === "manage" ? "Loading..." : "Manage Subscription"}
+              </button>
+            ) : (
+              <button
+                onClick={() => handleSubscribe("WAX_PLUS")}
+                disabled={loading === "WAX_PLUS" || currentTier === "WAX_PRO"}
+                className="w-full py-3 px-4 bg-white text-black text-[11px] tracking-[0.15em] uppercase font-medium hover:bg-[#e5e5e5] transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading === "WAX_PLUS" ? "Loading..." : currentTier === "WAX_PRO" ? "Current: Pro" : "Upgrade to Wax+"}
+              </button>
+            )}
+          </div>
+
+          {/* Pro Tier */}
+          <div className="px-6 py-10 relative">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-[#ffd700]" />
+            
+            <div className="mb-8">
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-3">
+                03 — Pro
+              </p>
+              <div className="flex items-baseline gap-1 mb-4">
+                <span className="text-5xl font-bold tracking-tight">$9.99</span>
+                <span className="text-sm text-[--muted]">/mo</span>
+              </div>
+              <p className="text-sm text-[--muted]">
+                For power users
+              </p>
+              <p className="text-xs text-[#ffd700] mt-2">
+                +750 Wax monthly
+              </p>
+            </div>
+
+            <div className="space-y-3 mb-8">
+              {TIERS.WAX_PRO.features.map((feature, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <span className="text-[#ffd700] mt-0.5">+</span>
+                  <span className="text-sm">{feature}</span>
+                </div>
+              ))}
+            </div>
+
+            {currentTier === "WAX_PRO" ? (
+              <button
+                onClick={handleManageSubscription}
+                disabled={loading === "manage"}
+                className="w-full py-3 px-4 border border-[#ffd700]/50 text-[#ffd700] text-[11px] tracking-[0.15em] uppercase hover:bg-[#ffd700]/10 transition disabled:opacity-50"
+              >
+                {loading === "manage" ? "Loading..." : "Manage Subscription"}
+              </button>
+            ) : (
+              <button
+                onClick={() => handleSubscribe("WAX_PRO")}
+                disabled={loading === "WAX_PRO"}
+                className="w-full py-3 px-4 bg-[#ffd700] text-black text-[11px] tracking-[0.15em] uppercase font-medium hover:bg-[#ffed4a] transition disabled:opacity-50"
+              >
+                {loading === "WAX_PRO" ? "Loading..." : "Go Pro"}
+              </button>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Wax Explanation */}
+      <section className="border-t border-[--border]">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2">
+            <div className="px-6 py-12 lg:border-r border-[--border]">
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-6">
+                What is Wax?
+              </p>
+              <p className="text-sm text-[--muted] leading-relaxed mb-6">
+                Wax is the currency of Waxfeed. Earn it by being active — daily logins, 
+                writing reviews, receiving Wax from others. Spend it to award Wax to 
+                reviews you appreciate, boost your content, and unlock exclusive items.
+              </p>
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-8 h-8 border border-[--border] flex items-center justify-center">
+                    <span className="text-[10px] font-bold">S</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Standard Wax</p>
+                    <p className="text-xs text-[--muted]">Available to everyone</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-8 h-8 border border-purple-500/50 flex items-center justify-center">
+                    <span className="text-[10px] font-bold text-purple-400">P</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Premium Wax</p>
+                    <p className="text-xs text-[--muted]">Wax+ and Pro only</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-8 h-8 border border-[#ffd700]/50 flex items-center justify-center">
+                    <span className="text-[10px] font-bold text-[#ffd700]">G</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">GOLD Wax</p>
+                    <p className="text-xs text-[--muted]">Pro exclusive</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="px-6 py-12 border-t lg:border-t-0 border-[--border]">
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-6">
+                FAQ
+              </p>
+              <div className="space-y-6">
+                <div>
+                  <p className="text-sm font-medium mb-2">Can I cancel anytime?</p>
+                  <p className="text-sm text-[--muted]">
+                    Yes. Cancel via the billing portal. Benefits last until your billing period ends.
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium mb-2">What happens to my Wax if I downgrade?</p>
+                  <p className="text-sm text-[--muted]">
+                    Your balance stays. You just won't earn as quickly or award Premium/GOLD Wax.
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium mb-2">Need more Wax instantly?</p>
+                  <p className="text-sm text-[--muted]">
+                    <Link href="/shop" className="underline hover:no-underline">
+                      Visit the shop
+                    </Link>
+                    {" "}to purchase Wax Pax.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer nav */}
+      <footer className="border-t border-[--border]">
+        <div className="max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
+          <Link
+            href="/wallet"
+            className="text-[11px] tracking-[0.15em] uppercase text-[--muted] hover:text-white transition-colors flex items-center gap-2"
           >
-            {currentTier === "FREE" ? "Current Plan" : "Downgrade via Portal"}
-          </button>
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+            </svg>
+            Wallet
+          </Link>
+          <Link
+            href="/shop"
+            className="text-[11px] tracking-[0.15em] uppercase text-[--muted] hover:text-white transition-colors flex items-center gap-2"
+          >
+            Shop
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </Link>
         </div>
-
-        {/* Wax+ Tier */}
-        <div className="border-2 border-yellow-500 rounded-2xl p-6 bg-[#111] relative">
-          <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-500 text-black px-4 py-1 rounded-full text-sm font-bold">
-            MOST POPULAR
-          </div>
-
-          <div className="mb-6 mt-2">
-            <h3 className="text-2xl font-bold mb-2">{TIERS.WAX_PLUS.name}</h3>
-            <div className="flex items-baseline gap-1">
-              <span className="text-4xl font-bold">{TIERS.WAX_PLUS.price}</span>
-              <span className="text-[#888]">{TIERS.WAX_PLUS.period}</span>
-            </div>
-          </div>
-
-          <ul className="space-y-3 mb-8">
-            {TIERS.WAX_PLUS.features.map((feature, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <span className="text-yellow-500 mt-0.5">✓</span>
-                <span className="text-[#ccc]">{feature}</span>
-              </li>
-            ))}
-          </ul>
-
-          {currentTier === "WAX_PLUS" ? (
-            <button
-              onClick={handleManageSubscription}
-              disabled={loading === "manage"}
-              className="w-full py-3 px-4 rounded-lg bg-[#333] text-white hover:bg-[#444] transition disabled:opacity-50"
-            >
-              {loading === "manage" ? "Loading..." : "Manage Subscription"}
-            </button>
-          ) : (
-            <button
-              onClick={() => handleSubscribe("WAX_PLUS")}
-              disabled={loading === "WAX_PLUS" || currentTier === "WAX_PRO"}
-              className="w-full py-3 px-4 rounded-lg bg-yellow-500 text-black font-bold hover:bg-yellow-400 transition disabled:opacity-50"
-            >
-              {loading === "WAX_PLUS" ? "Loading..." : currentTier === "WAX_PRO" ? "Downgrade via Portal" : TIERS.WAX_PLUS.cta}
-            </button>
-          )}
-        </div>
-
-        {/* Wax Pro Tier */}
-        <div className="border border-purple-500 rounded-2xl p-6 bg-[#111] relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-bl-full" />
-
-          <div className="mb-6">
-            <h3 className="text-2xl font-bold mb-2 text-purple-400">{TIERS.WAX_PRO.name}</h3>
-            <div className="flex items-baseline gap-1">
-              <span className="text-4xl font-bold">{TIERS.WAX_PRO.price}</span>
-              <span className="text-[#888]">{TIERS.WAX_PRO.period}</span>
-            </div>
-          </div>
-
-          <ul className="space-y-3 mb-8">
-            {TIERS.WAX_PRO.features.map((feature, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <span className="text-purple-400 mt-0.5">✓</span>
-                <span className="text-[#ccc]">{feature}</span>
-              </li>
-            ))}
-          </ul>
-
-          {currentTier === "WAX_PRO" ? (
-            <button
-              onClick={handleManageSubscription}
-              disabled={loading === "manage"}
-              className="w-full py-3 px-4 rounded-lg bg-[#333] text-white hover:bg-[#444] transition disabled:opacity-50"
-            >
-              {loading === "manage" ? "Loading..." : "Manage Subscription"}
-            </button>
-          ) : (
-            <button
-              onClick={() => handleSubscribe("WAX_PRO")}
-              disabled={loading === "WAX_PRO"}
-              className="w-full py-3 px-4 rounded-lg bg-purple-600 text-white font-bold hover:bg-purple-500 transition disabled:opacity-50"
-            >
-              {loading === "WAX_PRO" ? "Loading..." : TIERS.WAX_PRO.cta}
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* FAQ Section */}
-      <div className="max-w-3xl mx-auto">
-        <h2 className="text-2xl font-bold mb-6 text-center">Frequently Asked Questions</h2>
-        
-        <div className="space-y-4">
-          <details className="border border-[#333] rounded-lg p-4 group">
-            <summary className="font-medium cursor-pointer list-none flex justify-between items-center">
-              What is Wax?
-              <span className="text-[#666] group-open:rotate-180 transition">▼</span>
-            </summary>
-            <p className="mt-3 text-[#888]">
-              Wax is the currency of Waxfeed. You earn it by being active (daily logins, reviews, receiving Wax on your reviews) 
-              and spend it to award Wax to reviews you appreciate, boost your content, and unlock exclusive items in the shop.
-            </p>
-          </details>
-
-          <details className="border border-[#333] rounded-lg p-4 group">
-            <summary className="font-medium cursor-pointer list-none flex justify-between items-center">
-              What&apos;s the difference between Standard, Premium, and GOLD Wax?
-              <span className="text-[#666] group-open:rotate-180 transition">▼</span>
-            </summary>
-            <p className="mt-3 text-[#888]">
-              Standard Wax is available to everyone. Premium Wax (purple) is exclusive to Wax+ and Pro subscribers and 
-              shows extra appreciation. GOLD Wax (gold) is the highest honor, exclusive to Pro subscribers, 
-              and makes reviews really stand out.
-            </p>
-          </details>
-
-          <details className="border border-[#333] rounded-lg p-4 group">
-            <summary className="font-medium cursor-pointer list-none flex justify-between items-center">
-              Can I cancel anytime?
-              <span className="text-[#666] group-open:rotate-180 transition">▼</span>
-            </summary>
-            <p className="mt-3 text-[#888]">
-              Yes! You can cancel your subscription at any time from the billing portal. 
-              You&apos;ll keep your benefits until the end of your billing period.
-            </p>
-          </details>
-
-          <details className="border border-[#333] rounded-lg p-4 group">
-            <summary className="font-medium cursor-pointer list-none flex justify-between items-center">
-              What happens to my Wax if I downgrade?
-              <span className="text-[#666] group-open:rotate-180 transition">▼</span>
-            </summary>
-            <p className="mt-3 text-[#888]">
-              Your Wax balance stays with you forever! You just won&apos;t earn as quickly and 
-              won&apos;t be able to award Premium/GOLD Wax until you subscribe again.
-            </p>
-          </details>
-        </div>
-      </div>
+      </footer>
     </div>
   )
 }

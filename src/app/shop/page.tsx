@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState, useEffect } from "react"
+import Link from "next/link"
 
 type ShopItem = {
   id: string
@@ -23,15 +24,15 @@ type ShopItem = {
 }
 
 const WAX_PAX = [
-  { id: "starter", name: "Starter Pax", wax: 100, price: "$0.99", bonus: "" },
-  { id: "popular", name: "Popular Pax", wax: 550, price: "$4.99", bonus: "+10%", popular: true },
-  { id: "value", name: "Value Pax", wax: 1200, price: "$9.99", bonus: "+20%" },
-  { id: "super", name: "Super Pax", wax: 2700, price: "$19.99", bonus: "+35%" },
-  { id: "mega", name: "Mega Pax", wax: 6000, price: "$39.99", bonus: "+50%", best: true },
+  { id: "starter", name: "Starter", wax: 100, price: "0.99", bonus: null },
+  { id: "popular", name: "Popular", wax: 550, price: "4.99", bonus: 10, featured: true },
+  { id: "value", name: "Value", wax: 1200, price: "9.99", bonus: 20 },
+  { id: "super", name: "Super", wax: 2700, price: "19.99", bonus: 35 },
+  { id: "mega", name: "Mega", wax: 6000, price: "39.99", bonus: 50 },
 ]
 
 export default function ShopPage() {
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
   const [items, setItems] = useState<ShopItem[]>([])
@@ -39,13 +40,13 @@ export default function ShopPage() {
   const [loading, setLoading] = useState(true)
   const [purchasing, setPurchasing] = useState<string | null>(null)
   const [message, setMessage] = useState("")
-  const [activeTab, setActiveTab] = useState<"wax" | "badges" | "frames">("wax")
+  const [activeTab, setActiveTab] = useState<"wax" | "items">("wax")
 
   const canceled = searchParams.get("canceled")
 
   useEffect(() => {
     if (canceled) {
-      setMessage("Purchase canceled. You can try again anytime.")
+      setMessage("Purchase canceled.")
     }
   }, [canceled])
 
@@ -92,7 +93,7 @@ export default function ShopPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           type: "wax_pax",
-          productId: packId,
+          productId: paxId,
         }),
       })
 
@@ -129,9 +130,8 @@ export default function ShopPage() {
       const data = await res.json()
 
       if (data.success) {
-        setMessage(data.data.message || "Purchase successful!")
+        setMessage(data.data.message || "Purchase successful")
         setBalance(data.data.newBalance)
-        // Update item as owned
         setItems(prev => prev.map(item => 
           item.id === itemId ? { ...item, owned: true } : item
         ))
@@ -147,291 +147,314 @@ export default function ShopPage() {
 
   const badges = items.filter(i => i.type === "BADGE")
   const frames = items.filter(i => i.type === "FRAME")
+  const allItems = [...badges, ...frames]
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-4xl font-bold tracking-tighter">Wax Shop</h1>
-          <p className="text-[#888] mt-1">Get Wax Pax and exclusive items</p>
-        </div>
-        {session && (
-          <div className="text-right">
-            <div className="text-sm text-[#888]">Your Balance</div>
-            <div className="text-2xl font-bold text-yellow-500">
-              🕯️ {balance.toLocaleString()} Wax
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
+      {/* Header */}
+      <section style={{ borderBottom: '1px solid var(--border)' }}>
+        <div className="max-w-7xl mx-auto px-6 py-12 lg:py-16">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
+            <div>
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-3">
+                Shop
+              </p>
+              <h1 className="text-4xl lg:text-5xl font-bold tracking-[-0.02em]">
+                Wax Shop
+              </h1>
             </div>
+            {session && (
+              <div className="flex items-baseline gap-3">
+                <span className="text-[10px] tracking-[0.2em] uppercase text-[--muted]">Balance</span>
+                <span className="text-3xl font-bold tabular-nums">{balance.toLocaleString()}</span>
+                <span className="text-[--muted]">Wax</span>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      </section>
 
       {message && (
-        <div className={`mb-6 p-4 rounded-lg ${
-          message.includes("successful") || message.includes("success")
-            ? "bg-green-900/20 border border-green-600/30"
-            : "bg-yellow-900/20 border border-yellow-600/30"
-        }`}>
-          {message}
+        <div className="border-b border-[--border]">
+          <div className="max-w-7xl mx-auto px-6 py-4">
+            <p className="text-sm">{message}</p>
+          </div>
         </div>
       )}
 
       {/* Tabs */}
-      <div className="flex gap-4 mb-8 border-b border-[#333]">
-        <button
-          onClick={() => setActiveTab("wax")}
-          className={`pb-3 px-1 font-medium transition ${
-            activeTab === "wax"
-              ? "text-yellow-500 border-b-2 border-yellow-500"
-              : "text-[#888] hover:text-white"
-          }`}
-        >
-          🕯️ Wax Pax
-        </button>
-        <button
-          onClick={() => setActiveTab("badges")}
-          className={`pb-3 px-1 font-medium transition ${
-            activeTab === "badges"
-              ? "text-yellow-500 border-b-2 border-yellow-500"
-              : "text-[#888] hover:text-white"
-          }`}
-        >
-          🏅 Badges {badges.length > 0 && `(${badges.length})`}
-        </button>
-        <button
-          onClick={() => setActiveTab("frames")}
-          className={`pb-3 px-1 font-medium transition ${
-            activeTab === "frames"
-              ? "text-yellow-500 border-b-2 border-yellow-500"
-              : "text-[#888] hover:text-white"
-          }`}
-        >
-          🖼️ Frames {frames.length > 0 && `(${frames.length})`}
-        </button>
-      </div>
+      <section className="border-b border-[--border]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex gap-8">
+            <button
+              onClick={() => setActiveTab("wax")}
+              className={`py-4 text-[11px] tracking-[0.15em] uppercase transition border-b-2 -mb-px ${
+                activeTab === "wax"
+                  ? "border-white text-white"
+                  : "border-transparent text-[--muted] hover:text-white"
+              }`}
+            >
+              Wax Pax
+            </button>
+            <button
+              onClick={() => setActiveTab("items")}
+              className={`py-4 text-[11px] tracking-[0.15em] uppercase transition border-b-2 -mb-px ${
+                activeTab === "items"
+                  ? "border-white text-white"
+                  : "border-transparent text-[--muted] hover:text-white"
+              }`}
+            >
+              Items {allItems.length > 0 && `(${allItems.length})`}
+            </button>
+          </div>
+        </div>
+      </section>
 
       {/* Wax Pax Tab */}
       {activeTab === "wax" && (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          {WAX_PAX.map((pax) => (
-            <div
-              key={pax.id}
-              className={`border rounded-xl p-4 bg-[#111] relative ${
-                pax.popular ? "border-yellow-500" : pax.best ? "border-purple-500" : "border-[#333]"
-              }`}
-            >
-              {pax.popular && (
-                <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-yellow-500 text-black px-2 py-0.5 rounded-full text-xs font-bold">
-                  POPULAR
-                </div>
-              )}
-              {pax.best && (
-                <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-purple-500 text-white px-2 py-0.5 rounded-full text-xs font-bold">
-                  BEST VALUE
-                </div>
-              )}
-
-              <div className="text-center mb-4 pt-2">
-                <div className="text-3xl mb-2">🕯️</div>
-                <div className="font-bold">{pax.name}</div>
-                <div className="text-2xl font-bold text-yellow-500">
-                  {pax.wax.toLocaleString()}
-                </div>
-                {pax.bonus && (
-                  <div className="text-sm text-green-500">{pax.bonus} bonus</div>
-                )}
-              </div>
-
-              <button
-                onClick={() => handleBuyWaxPax(pax.id)}
-                disabled={purchasing === pax.id}
-                className={`w-full py-2 px-4 rounded-lg font-medium transition ${
-                  pax.popular
-                    ? "bg-yellow-500 text-black hover:bg-yellow-400"
-                    : pax.best
-                    ? "bg-purple-600 text-white hover:bg-purple-500"
-                    : "bg-[#333] text-white hover:bg-[#444]"
-                } disabled:opacity-50`}
+        <section className="max-w-7xl mx-auto">
+          <div className="px-6 py-10">
+            <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-6">
+              Purchase Wax Instantly
+            </p>
+          </div>
+          
+          <div className="grid lg:grid-cols-5 border-t border-[--border]">
+            {WAX_PAX.map((pax, index) => (
+              <div
+                key={pax.id}
+                className={`px-6 py-8 border-b lg:border-b-0 border-[--border] ${
+                  index < WAX_PAX.length - 1 ? 'lg:border-r' : ''
+                } relative`}
               >
-                {purchasing === pax.id ? "..." : pax.price}
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Badges Tab */}
-      {activeTab === "badges" && (
-        <div>
-          {loading ? (
-            <p className="text-[#888]">Loading badges...</p>
-          ) : badges.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-4xl mb-4">🏅</div>
-              <p className="text-[#888]">No badges available yet.</p>
-              <p className="text-sm text-[#666]">Check back soon for exclusive badges!</p>
-            </div>
-          ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {badges.map((item) => (
-                <div
-                  key={item.id}
-                  className={`border rounded-xl p-4 bg-[#111] ${
-                    item.isLimited ? "border-red-500/50" : "border-[#333]"
-                  }`}
-                >
-                  {item.isLimited && item.remaining !== null && (
-                    <div className="text-xs text-red-400 mb-2">
-                      ⏰ Limited: {item.remaining} left
-                    </div>
-                  )}
-
-                  <div className="text-center mb-4">
-                    <div className="text-4xl mb-2">
-                      {item.imageUrl ? (
-                        <img src={item.imageUrl} alt={item.name} className="w-16 h-16 mx-auto" />
-                      ) : (
-                        "🏅"
-                      )}
-                    </div>
-                    <div className="font-bold">{item.name}</div>
-                    {item.description && (
-                      <p className="text-sm text-[#888] mt-1">{item.description}</p>
-                    )}
-                  </div>
-
-                  <div className="text-center mb-4">
-                    <span className="text-yellow-500 font-bold">
-                      🕯️ {item.waxPrice.toLocaleString()}
-                    </span>
-                  </div>
-
-                  {item.owned ? (
-                    <button
-                      disabled
-                      className="w-full py-2 px-4 rounded-lg bg-green-900/30 text-green-500 border border-green-600/30"
-                    >
-                      ✓ Owned
-                    </button>
-                  ) : !item.available ? (
-                    <button
-                      disabled
-                      className="w-full py-2 px-4 rounded-lg bg-[#222] text-[#666]"
-                    >
-                      Sold Out
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleBuyItem(item.id)}
-                      disabled={purchasing === item.id || balance < item.waxPrice}
-                      className="w-full py-2 px-4 rounded-lg bg-yellow-500 text-black font-medium hover:bg-yellow-400 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {purchasing === item.id
-                        ? "..."
-                        : balance < item.waxPrice
-                        ? "Not enough Wax"
-                        : "Buy"}
-                    </button>
+                {pax.featured && (
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-white" />
+                )}
+                
+                <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-4">
+                  {String(index + 1).padStart(2, '0')} — {pax.name}
+                </p>
+                
+                <div className="mb-6">
+                  <p className="text-4xl font-bold tabular-nums mb-1">
+                    {pax.wax.toLocaleString()}
+                  </p>
+                  <p className="text-sm text-[--muted]">Wax</p>
+                  {pax.bonus && (
+                    <p className="text-xs text-green-500 mt-2">
+                      +{pax.bonus}% bonus
+                    </p>
                   )}
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
 
-      {/* Frames Tab */}
-      {activeTab === "frames" && (
-        <div>
-          {loading ? (
-            <p className="text-[#888]">Loading frames...</p>
-          ) : frames.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-4xl mb-4">🖼️</div>
-              <p className="text-[#888]">No frames available yet.</p>
-              <p className="text-sm text-[#666]">Check back soon for profile frames!</p>
-            </div>
-          ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {frames.map((item) => (
-                <div
-                  key={item.id}
-                  className={`border rounded-xl p-4 bg-[#111] ${
-                    item.isLimited ? "border-red-500/50" : "border-[#333]"
+                <button
+                  onClick={() => handleBuyWaxPax(pax.id)}
+                  disabled={purchasing === pax.id}
+                  className={`w-full py-3 px-4 text-[11px] tracking-[0.15em] uppercase font-medium transition disabled:opacity-50 ${
+                    pax.featured
+                      ? "bg-white text-black hover:bg-[#e5e5e5]"
+                      : "border border-[--border] hover:border-white"
                   }`}
                 >
-                  {item.isLimited && item.remaining !== null && (
-                    <div className="text-xs text-red-400 mb-2">
-                      ⏰ Limited: {item.remaining} left
-                    </div>
-                  )}
-
-                  <div className="text-center mb-4">
-                    <div className="text-4xl mb-2">
-                      {item.imageUrl ? (
-                        <img src={item.imageUrl} alt={item.name} className="w-16 h-16 mx-auto" />
-                      ) : (
-                        "🖼️"
-                      )}
-                    </div>
-                    <div className="font-bold">{item.name}</div>
-                    {item.description && (
-                      <p className="text-sm text-[#888] mt-1">{item.description}</p>
-                    )}
-                  </div>
-
-                  <div className="text-center mb-4">
-                    <span className="text-yellow-500 font-bold">
-                      🕯️ {item.waxPrice.toLocaleString()}
-                    </span>
-                  </div>
-
-                  {item.owned ? (
-                    <button
-                      disabled
-                      className="w-full py-2 px-4 rounded-lg bg-green-900/30 text-green-500 border border-green-600/30"
-                    >
-                      ✓ Owned
-                    </button>
-                  ) : !item.available ? (
-                    <button
-                      disabled
-                      className="w-full py-2 px-4 rounded-lg bg-[#222] text-[#666]"
-                    >
-                      Sold Out
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleBuyItem(item.id)}
-                      disabled={purchasing === item.id || balance < item.waxPrice}
-                      className="w-full py-2 px-4 rounded-lg bg-yellow-500 text-black font-medium hover:bg-yellow-400 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {purchasing === item.id
-                        ? "..."
-                        : balance < item.waxPrice
-                        ? "Not enough Wax"
-                        : "Buy"}
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                  {purchasing === pax.id ? "..." : `$${pax.price}`}
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
       )}
 
-      {/* Upgrade CTA */}
-      <div className="mt-12 p-6 bg-gradient-to-r from-yellow-900/20 to-purple-900/20 border border-yellow-600/30 rounded-xl text-center">
-        <h3 className="text-xl font-bold mb-2">Want More Wax?</h3>
-        <p className="text-[#888] mb-4">
-          Upgrade to Wax+ or Pro to earn Wax faster with multipliers and monthly grants!
-        </p>
-        <button
-          onClick={() => router.push("/pricing")}
-          className="px-6 py-2 bg-yellow-500 text-black font-bold rounded-lg hover:bg-yellow-400 transition"
-        >
-          View Plans
-        </button>
-      </div>
+      {/* Items Tab */}
+      {activeTab === "items" && (
+        <section className="max-w-7xl mx-auto px-6 py-10">
+          {loading ? (
+            <p className="text-[--muted]">Loading items...</p>
+          ) : allItems.length === 0 ? (
+            <div className="py-16 text-center">
+              <p className="text-[--muted] mb-2">No items available yet.</p>
+              <p className="text-sm text-[--muted]">Check back soon for badges and frames.</p>
+            </div>
+          ) : (
+            <>
+              {/* Badges */}
+              {badges.length > 0 && (
+                <div className="mb-12">
+                  <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-6">
+                    Badges
+                  </p>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[--border]">
+                    {badges.map((item) => (
+                      <div
+                        key={item.id}
+                        className="p-6 bg-[--background]"
+                      >
+                        {item.isLimited && item.remaining !== null && (
+                          <p className="text-[10px] tracking-[0.15em] uppercase text-[#ff3b3b] mb-4">
+                            Limited — {item.remaining} left
+                          </p>
+                        )}
+
+                        <div className="mb-4">
+                          {item.imageUrl ? (
+                            <img 
+                              src={item.imageUrl} 
+                              alt={item.name} 
+                              className="w-12 h-12 object-contain"
+                            />
+                          ) : (
+                            <div className="w-12 h-12 border border-[--border] flex items-center justify-center">
+                              <span className="text-xs font-bold">B</span>
+                            </div>
+                          )}
+                        </div>
+
+                        <p className="font-medium mb-1">{item.name}</p>
+                        {item.description && (
+                          <p className="text-sm text-[--muted] mb-4">{item.description}</p>
+                        )}
+
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm tabular-nums">
+                            {item.waxPrice.toLocaleString()} Wax
+                          </span>
+                          
+                          {item.owned ? (
+                            <span className="text-[10px] tracking-[0.15em] uppercase text-[--muted]">
+                              Owned
+                            </span>
+                          ) : !item.available ? (
+                            <span className="text-[10px] tracking-[0.15em] uppercase text-[--muted]">
+                              Sold Out
+                            </span>
+                          ) : (
+                            <button
+                              onClick={() => handleBuyItem(item.id)}
+                              disabled={purchasing === item.id || balance < item.waxPrice}
+                              className="text-[10px] tracking-[0.15em] uppercase hover:underline disabled:opacity-50 disabled:no-underline"
+                            >
+                              {purchasing === item.id ? "..." : balance < item.waxPrice ? "Not enough" : "Buy"}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Frames */}
+              {frames.length > 0 && (
+                <div>
+                  <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-6">
+                    Profile Frames
+                  </p>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[--border]">
+                    {frames.map((item) => (
+                      <div
+                        key={item.id}
+                        className="p-6 bg-[--background]"
+                      >
+                        {item.isLimited && item.remaining !== null && (
+                          <p className="text-[10px] tracking-[0.15em] uppercase text-[#ff3b3b] mb-4">
+                            Limited — {item.remaining} left
+                          </p>
+                        )}
+
+                        <div className="mb-4">
+                          {item.imageUrl ? (
+                            <img 
+                              src={item.imageUrl} 
+                              alt={item.name} 
+                              className="w-16 h-16 object-contain"
+                            />
+                          ) : (
+                            <div className="w-16 h-16 border-2 border-[--border]" />
+                          )}
+                        </div>
+
+                        <p className="font-medium mb-1">{item.name}</p>
+                        {item.description && (
+                          <p className="text-sm text-[--muted] mb-4">{item.description}</p>
+                        )}
+
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm tabular-nums">
+                            {item.waxPrice.toLocaleString()} Wax
+                          </span>
+                          
+                          {item.owned ? (
+                            <span className="text-[10px] tracking-[0.15em] uppercase text-[--muted]">
+                              Owned
+                            </span>
+                          ) : !item.available ? (
+                            <span className="text-[10px] tracking-[0.15em] uppercase text-[--muted]">
+                              Sold Out
+                            </span>
+                          ) : (
+                            <button
+                              onClick={() => handleBuyItem(item.id)}
+                              disabled={purchasing === item.id || balance < item.waxPrice}
+                              className="text-[10px] tracking-[0.15em] uppercase hover:underline disabled:opacity-50 disabled:no-underline"
+                            >
+                              {purchasing === item.id ? "..." : balance < item.waxPrice ? "Not enough" : "Buy"}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </section>
+      )}
+
+      {/* Footer CTA */}
+      <section className="border-t border-[--border]">
+        <div className="max-w-7xl mx-auto px-6 py-10">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div>
+              <p className="text-sm text-[--muted]">
+                Want to earn Wax faster? Upgrade for multipliers and monthly grants.
+              </p>
+            </div>
+            <Link
+              href="/pricing"
+              className="inline-flex items-center gap-2 px-5 py-3 bg-white text-black text-[11px] uppercase tracking-[0.15em] font-medium hover:bg-[#e5e5e5] transition"
+            >
+              View Plans
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer nav */}
+      <footer className="border-t border-[--border]">
+        <div className="max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
+          <Link
+            href="/wallet"
+            className="text-[11px] tracking-[0.15em] uppercase text-[--muted] hover:text-white transition-colors flex items-center gap-2"
+          >
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+            </svg>
+            Wallet
+          </Link>
+          <Link
+            href="/pricing"
+            className="text-[11px] tracking-[0.15em] uppercase text-[--muted] hover:text-white transition-colors flex items-center gap-2"
+          >
+            Pricing
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </Link>
+        </div>
+      </footer>
     </div>
   )
 }

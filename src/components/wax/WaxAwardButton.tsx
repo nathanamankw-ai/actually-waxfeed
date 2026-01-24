@@ -18,24 +18,27 @@ type Props = {
 const WAX_TYPE_CONFIG = {
   standard: {
     name: "Standard",
-    icon: "🕯️",
-    color: "text-yellow-500",
-    bgColor: "bg-yellow-500",
-    description: "Show appreciation",
+    label: "S",
+    color: "",
+    borderColor: "border-[--border]",
+    cost: "5 Wax",
+    requirement: null,
   },
   premium: {
     name: "Premium",
-    icon: "💜",
+    label: "P",
     color: "text-purple-400",
-    bgColor: "bg-purple-500",
-    description: "Extra special",
+    borderColor: "border-purple-500/50",
+    cost: "20 Wax",
+    requirement: "Wax+",
   },
   gold: {
     name: "GOLD",
-    icon: "✨",
-    color: "text-amber-400",
-    bgColor: "bg-amber-500",
-    description: "Highest honor",
+    label: "G",
+    color: "text-[#ffd700]",
+    borderColor: "border-[#ffd700]/50",
+    cost: "100 Wax",
+    requirement: "Pro",
   },
 }
 
@@ -91,15 +94,19 @@ export function WaxAwardButton({
       <button
         onClick={() => setShowDropdown(!showDropdown)}
         disabled={hasAwarded}
-        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition ${
+        className={`flex items-center gap-2 px-2 py-1 transition ${
           hasAwarded
-            ? "bg-yellow-500/20 text-yellow-500 cursor-default"
-            : "hover:bg-[#222] text-[#888] hover:text-yellow-500"
+            ? "text-[--muted] cursor-default"
+            : "hover:opacity-70"
         }`}
       >
-        <span>🕯️</span>
-        <span className="font-medium">{totalWax}</span>
-        {hasAwarded && <span className="text-xs">✓</span>}
+        <span className="text-[10px] tracking-[0.1em] uppercase">Wax</span>
+        <span className="font-bold tabular-nums">{totalWax}</span>
+        {hasAwarded && (
+          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        )}
       </button>
 
       {showDropdown && !hasAwarded && (
@@ -108,72 +115,63 @@ export function WaxAwardButton({
             className="fixed inset-0 z-40"
             onClick={() => setShowDropdown(false)}
           />
-          <div className="absolute left-0 bottom-full mb-2 w-56 bg-[#111] border border-[#333] rounded-xl shadow-xl z-50 overflow-hidden">
-            <div className="p-3 border-b border-[#333]">
-              <div className="text-sm font-medium">Award Wax</div>
-              <div className="text-xs text-[#888]">Costs Wax from your wallet</div>
+          <div 
+            className="absolute left-0 bottom-full mb-2 w-48 border border-[--border] shadow-xl z-50"
+            style={{ backgroundColor: 'var(--background)' }}
+          >
+            <div className="p-3 border-b border-[--border]">
+              <p className="text-[10px] tracking-[0.2em] uppercase text-[--muted]">
+                Award Wax
+              </p>
             </div>
 
             {error && (
-              <div className="p-2 bg-red-900/20 text-red-400 text-xs">
+              <div className="px-3 py-2 text-xs text-[#ff3b3b] border-b border-[--border]">
                 {error}
               </div>
             )}
 
-            <div className="p-2 space-y-1">
-              {/* Standard */}
-              <button
-                onClick={() => handleAward("standard")}
-                disabled={awarding === "standard"}
-                className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-[#222] transition text-left"
-              >
-                <span className="text-xl">{WAX_TYPE_CONFIG.standard.icon}</span>
-                <div className="flex-1">
-                  <div className="font-medium">{WAX_TYPE_CONFIG.standard.name}</div>
-                  <div className="text-xs text-[#888]">5 Wax</div>
-                </div>
-                {awarding === "standard" && <span className="text-[#888]">...</span>}
-              </button>
-
-              {/* Premium */}
-              <button
-                onClick={() => handleAward("premium")}
-                disabled={awarding === "premium"}
-                className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-[#222] transition text-left"
-              >
-                <span className="text-xl">{WAX_TYPE_CONFIG.premium.icon}</span>
-                <div className="flex-1">
-                  <div className={`font-medium ${WAX_TYPE_CONFIG.premium.color}`}>
-                    {WAX_TYPE_CONFIG.premium.name}
-                  </div>
-                  <div className="text-xs text-[#888]">20 Wax · Wax+ required</div>
-                </div>
-                {awarding === "premium" && <span className="text-[#888]">...</span>}
-              </button>
-
-              {/* Gold */}
-              <button
-                onClick={() => handleAward("gold")}
-                disabled={awarding === "gold"}
-                className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-[#222] transition text-left"
-              >
-                <span className="text-xl">{WAX_TYPE_CONFIG.gold.icon}</span>
-                <div className="flex-1">
-                  <div className={`font-medium ${WAX_TYPE_CONFIG.gold.color}`}>
-                    {WAX_TYPE_CONFIG.gold.name}
-                  </div>
-                  <div className="text-xs text-[#888]">100 Wax · Pro required</div>
-                </div>
-                {awarding === "gold" && <span className="text-[#888]">...</span>}
-              </button>
+            <div className="p-2">
+              {(["standard", "premium", "gold"] as WaxType[]).map((type) => {
+                const config = WAX_TYPE_CONFIG[type]
+                return (
+                  <button
+                    key={type}
+                    onClick={() => handleAward(type)}
+                    disabled={awarding === type}
+                    className="w-full flex items-center gap-3 p-2 hover:bg-[--border]/20 transition text-left disabled:opacity-50"
+                  >
+                    <div className={`w-6 h-6 border ${config.borderColor} flex items-center justify-center flex-shrink-0`}>
+                      <span className={`text-[10px] font-bold ${config.color}`}>
+                        {config.label}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-sm font-medium ${config.color}`}>
+                        {config.name}
+                      </p>
+                      <p className="text-[10px] text-[--muted]">
+                        {config.cost}
+                        {config.requirement && ` · ${config.requirement}`}
+                      </p>
+                    </div>
+                    {awarding === type && (
+                      <span className="text-[--muted] text-xs">...</span>
+                    )}
+                  </button>
+                )
+              })}
             </div>
 
-            <div className="p-2 border-t border-[#333]">
+            <div className="p-2 border-t border-[--border]">
               <button
-                onClick={() => router.push("/wallet")}
-                className="w-full text-center text-xs text-[#888] hover:text-white transition py-1"
+                onClick={() => {
+                  setShowDropdown(false)
+                  router.push("/wallet")
+                }}
+                className="w-full text-center text-[10px] tracking-[0.15em] uppercase text-[--muted] hover:text-white transition py-1"
               >
-                View your Wax balance →
+                View Balance →
               </button>
             </div>
           </div>

@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState, useEffect } from "react"
 import { formatDistanceToNow } from "date-fns"
+import Link from "next/link"
 
 type WalletStats = {
   balance: number
@@ -28,23 +29,23 @@ type Transaction = {
   metadata: Record<string, unknown> | null
 }
 
-const TX_TYPE_ICONS: Record<string, string> = {
-  DAILY_CLAIM: "📅",
-  STREAK_BONUS: "🔥",
-  REVIEW_REWARD: "✍️",
-  WAX_RECEIVED: "🎁",
-  FIRST_ALBUM_BONUS: "🏆",
-  REFERRAL_BONUS: "👥",
-  SUBSCRIPTION_GRANT: "⭐",
-  PURCHASE: "💳",
-  AWARD_STANDARD: "🕯️",
-  AWARD_PREMIUM: "💜",
-  AWARD_GOLD: "✨",
-  BOOST_REVIEW: "🚀",
-  BUY_BADGE: "🏅",
-  BUY_FRAME: "🖼️",
-  USERNAME_CHANGE: "✏️",
-  TRENDING_BONUS: "📈",
+const TX_TYPE_LABELS: Record<string, string> = {
+  DAILY_CLAIM: "Daily",
+  STREAK_BONUS: "Streak",
+  REVIEW_REWARD: "Review",
+  WAX_RECEIVED: "Received",
+  FIRST_ALBUM_BONUS: "First Review",
+  REFERRAL_BONUS: "Referral",
+  SUBSCRIPTION_GRANT: "Monthly Grant",
+  PURCHASE: "Purchase",
+  AWARD_STANDARD: "Awarded",
+  AWARD_PREMIUM: "Premium",
+  AWARD_GOLD: "GOLD",
+  BOOST_REVIEW: "Boost",
+  BUY_BADGE: "Badge",
+  BUY_FRAME: "Frame",
+  USERNAME_CHANGE: "Username",
+  TRENDING_BONUS: "Trending",
 }
 
 export default function WalletPage() {
@@ -62,7 +63,7 @@ export default function WalletPage() {
 
   useEffect(() => {
     if (purchaseSuccess === "success" && waxAmount) {
-      setMessage(`🎉 Success! ${waxAmount} Wax has been added to your wallet!`)
+      setMessage(`+${waxAmount} Wax added to your wallet`)
     }
   }, [purchaseSuccess, waxAmount])
 
@@ -115,9 +116,8 @@ export default function WalletPage() {
       const data = await res.json()
 
       if (data.success) {
-        setMessage(`🎉 Claimed ${data.data.earned} Wax!`)
+        setMessage(`+${data.data.earned} Wax claimed`)
         setStats(data.data.stats)
-        // Refresh transactions
         const txRes = await fetch("/api/wax/transactions?limit=30")
         const txData = await txRes.json()
         if (txData.success) {
@@ -135,198 +135,287 @@ export default function WalletPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <p className="text-[#888]">Loading wallet...</p>
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
+        <div className="max-w-7xl mx-auto px-6 py-12">
+          <p className="text-[--muted]">Loading...</p>
+        </div>
       </div>
     )
   }
 
   if (!stats) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <p className="text-[#888]">Failed to load wallet data.</p>
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
+        <div className="max-w-7xl mx-auto px-6 py-12">
+          <p className="text-[--muted]">Failed to load wallet.</p>
+        </div>
       </div>
     )
   }
 
   const weeklyProgress = stats.weeklyCap
-    ? (stats.weeklyEarned / stats.weeklyCap) * 100
+    ? Math.min((stats.weeklyEarned / stats.weeklyCap) * 100, 100)
     : 0
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold tracking-tighter mb-8">Wax Wallet</h1>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
+      {/* Header */}
+      <section style={{ borderBottom: '1px solid var(--border)' }}>
+        <div className="max-w-7xl mx-auto px-6 py-12 lg:py-16">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
+            <div>
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-3">
+                Wallet
+              </p>
+              <div className="flex items-baseline gap-4">
+                <span className="text-6xl lg:text-7xl font-bold tracking-tight tabular-nums">
+                  {stats.balance.toLocaleString()}
+                </span>
+                <span className="text-2xl text-[--muted]">Wax</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-6 lg:gap-8">
+              <div className="text-center">
+                <p className="text-3xl font-light tabular-nums">{stats.currentStreak}</p>
+                <p className="text-[10px] tracking-[0.2em] uppercase text-[--muted]">Day Streak</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-light tabular-nums">{stats.earnMultiplier}x</p>
+                <p className="text-[10px] tracking-[0.2em] uppercase text-[--muted]">Multiplier</p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-medium">
+                  {stats.tier === "WAX_PRO" ? "Pro" : stats.tier === "WAX_PLUS" ? "Wax+" : "Free"}
+                </p>
+                <p className="text-[10px] tracking-[0.2em] uppercase text-[--muted]">Tier</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {message && (
-        <div className={`mb-6 p-4 rounded-lg ${
-          message.includes("🎉")
-            ? "bg-green-900/20 border border-green-600/30"
-            : "bg-yellow-900/20 border border-yellow-600/30"
-        }`}>
-          {message}
+        <div className="border-b border-[--border]">
+          <div className="max-w-7xl mx-auto px-6 py-4">
+            <p className="text-sm">{message}</p>
+          </div>
         </div>
       )}
 
-      {/* Balance Card */}
-      <div className="bg-gradient-to-br from-yellow-900/30 to-orange-900/30 border border-yellow-600/30 rounded-2xl p-6 mb-6">
-        <div className="flex justify-between items-start mb-6">
-          <div>
-            <div className="text-sm text-[#888] mb-1">Your Balance</div>
-            <div className="text-5xl font-bold text-yellow-500">
-              🕯️ {stats.balance.toLocaleString()}
+      {/* Daily Claim + Stats */}
+      <section className="border-b border-[--border]">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-4">
+            {/* Daily Claim */}
+            <div className="px-6 py-8 lg:border-r border-b lg:border-b-0 border-[--border]">
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-4">
+                Daily Reward
+              </p>
+              <button
+                onClick={handleClaimDaily}
+                disabled={!stats.canClaimDaily || claiming}
+                className={`w-full py-3 px-4 text-[11px] tracking-[0.15em] uppercase font-medium transition ${
+                  stats.canClaimDaily
+                    ? "bg-white text-black hover:bg-[#e5e5e5]"
+                    : "border border-[--border] text-[--muted] cursor-not-allowed"
+                }`}
+              >
+                {claiming ? "Claiming..." : stats.canClaimDaily ? "Claim Daily Wax" : "Claimed Today"}
+              </button>
+              {stats.currentStreak > 0 && (
+                <p className="text-xs text-[--muted] mt-3">
+                  +{Math.min(stats.currentStreak * 2, 20)} streak bonus
+                </p>
+              )}
             </div>
-          </div>
-          <div className="text-right">
-            <div className="text-sm text-[#888]">Tier</div>
-            <div className={`font-bold ${
-              stats.tier === "WAX_PRO" ? "text-purple-400" 
-              : stats.tier === "WAX_PLUS" ? "text-yellow-500" 
-              : "text-[#888]"
-            }`}>
-              {stats.tier === "WAX_PRO" ? "Pro" : stats.tier === "WAX_PLUS" ? "Wax+" : "Free"}
-            </div>
-            {stats.earnMultiplier > 1 && (
-              <div className="text-sm text-green-500">{stats.earnMultiplier}x earning</div>
-            )}
-          </div>
-        </div>
 
-        {/* Daily Claim */}
-        <div className="flex items-center gap-4">
-          <button
-            onClick={handleClaimDaily}
-            disabled={!stats.canClaimDaily || claiming}
-            className={`flex-1 py-3 px-4 rounded-lg font-bold transition ${
-              stats.canClaimDaily
-                ? "bg-yellow-500 text-black hover:bg-yellow-400"
-                : "bg-[#333] text-[#666] cursor-not-allowed"
-            }`}
-          >
-            {claiming ? "Claiming..." : stats.canClaimDaily ? "🎁 Claim Daily Wax" : "✓ Daily Claimed"}
-          </button>
-          <div className="text-center">
-            <div className="text-2xl">🔥</div>
-            <div className="text-sm font-bold">{stats.currentStreak}</div>
-            <div className="text-xs text-[#888]">streak</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Stats Grid */}
-      <div className="grid sm:grid-cols-3 gap-4 mb-8">
-        <div className="bg-[#111] border border-[#333] rounded-xl p-4">
-          <div className="text-sm text-[#888] mb-1">Lifetime Earned</div>
-          <div className="text-2xl font-bold text-green-500">
-            +{stats.lifetimeEarned.toLocaleString()}
-          </div>
-        </div>
-        <div className="bg-[#111] border border-[#333] rounded-xl p-4">
-          <div className="text-sm text-[#888] mb-1">Lifetime Spent</div>
-          <div className="text-2xl font-bold text-red-400">
-            -{stats.lifetimeSpent.toLocaleString()}
-          </div>
-        </div>
-        <div className="bg-[#111] border border-[#333] rounded-xl p-4">
-          <div className="text-sm text-[#888] mb-1">Longest Streak</div>
-          <div className="text-2xl font-bold text-orange-500">
-            🔥 {stats.currentStreak}
-          </div>
-        </div>
-      </div>
-
-      {/* Weekly Cap Progress (Free users only) */}
-      {stats.weeklyCap !== null && (
-        <div className="bg-[#111] border border-[#333] rounded-xl p-4 mb-8">
-          <div className="flex justify-between items-center mb-2">
-            <div className="font-medium">Weekly Earning Progress</div>
-            <div className="text-sm text-[#888]">
-              Resets in {stats.daysUntilReset} day{stats.daysUntilReset !== 1 ? "s" : ""}
-            </div>
-          </div>
-          <div className="h-3 bg-[#333] rounded-full overflow-hidden mb-2">
-            <div
-              className={`h-full rounded-full transition-all ${
-                weeklyProgress >= 100 ? "bg-red-500" : "bg-yellow-500"
-              }`}
-              style={{ width: `${Math.min(weeklyProgress, 100)}%` }}
-            />
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-[#888]">
-              {stats.weeklyEarned} / {stats.weeklyCap} Wax earned
-            </span>
-            {weeklyProgress >= 100 ? (
-              <span className="text-red-400">Cap reached!</span>
-            ) : (
-              <span className="text-green-500">{stats.weeklyRemaining} remaining</span>
-            )}
-          </div>
-          {weeklyProgress >= 80 && (
-            <div className="mt-3 p-3 bg-yellow-900/20 border border-yellow-600/30 rounded-lg">
-              <p className="text-sm">
-                ⚠️ {weeklyProgress >= 100 ? "You've hit your weekly cap!" : "Almost at your weekly cap!"}{" "}
-                <button 
-                  onClick={() => router.push("/pricing")}
-                  className="text-yellow-500 underline hover:no-underline"
-                >
-                  Upgrade for unlimited earning →
-                </button>
+            {/* Lifetime Stats */}
+            <div className="px-6 py-8 lg:border-r border-b lg:border-b-0 border-[--border]">
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-4">
+                Lifetime Earned
+              </p>
+              <p className="text-3xl font-light tabular-nums text-green-500">
+                +{stats.lifetimeEarned.toLocaleString()}
               </p>
             </div>
-          )}
+
+            <div className="px-6 py-8 lg:border-r border-b lg:border-b-0 border-[--border]">
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-4">
+                Lifetime Spent
+              </p>
+              <p className="text-3xl font-light tabular-nums text-[#ff3b3b]">
+                −{stats.lifetimeSpent.toLocaleString()}
+              </p>
+            </div>
+
+            {/* Weekly Cap (Free users) */}
+            <div className="px-6 py-8">
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-4">
+                {stats.weeklyCap !== null ? "Weekly Cap" : "Weekly Earned"}
+              </p>
+              {stats.weeklyCap !== null ? (
+                <>
+                  <p className="text-3xl font-light tabular-nums">
+                    {stats.weeklyEarned}/{stats.weeklyCap}
+                  </p>
+                  <div className="mt-3 h-1 bg-[--border]">
+                    <div 
+                      className={`h-full transition-all ${weeklyProgress >= 100 ? 'bg-[#ff3b3b]' : 'bg-white'}`}
+                      style={{ width: `${weeklyProgress}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-[--muted] mt-2">
+                    Resets in {stats.daysUntilReset}d
+                  </p>
+                </>
+              ) : (
+                <p className="text-3xl font-light tabular-nums">
+                  {stats.weeklyEarned}
+                  <span className="text-sm text-[--muted] ml-2">this week</span>
+                </p>
+              )}
+            </div>
+          </div>
         </div>
+      </section>
+
+      {/* Upgrade prompt for capped users */}
+      {stats.weeklyCap !== null && weeklyProgress >= 80 && (
+        <section className="border-b border-[--border]">
+          <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <p className="text-sm text-[--muted]">
+              {weeklyProgress >= 100 ? "Weekly cap reached." : "Approaching weekly cap."}{" "}
+              Upgrade for unlimited earning.
+            </p>
+            <Link
+              href="/pricing"
+              className="text-[11px] tracking-[0.15em] uppercase hover:underline"
+            >
+              View Plans →
+            </Link>
+          </div>
+        </section>
       )}
 
-      {/* Transaction History */}
-      <div className="bg-[#111] border border-[#333] rounded-xl overflow-hidden">
-        <div className="p-4 border-b border-[#333]">
-          <h2 className="font-bold text-lg">Transaction History</h2>
-        </div>
-        
-        {transactions.length === 0 ? (
-          <div className="p-8 text-center text-[#888]">
-            No transactions yet. Start earning Wax by reviewing albums!
-          </div>
-        ) : (
-          <div className="divide-y divide-[#222]">
-            {transactions.map((tx) => (
-              <div key={tx.id} className="p-4 flex items-center gap-4 hover:bg-[#1a1a1a] transition">
-                <div className="text-2xl">
-                  {TX_TYPE_ICONS[tx.type] || "💰"}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium truncate">{tx.description}</div>
-                  <div className="text-sm text-[#888]">
-                    {formatDistanceToNow(new Date(tx.createdAt), { addSuffix: true })}
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col lg:flex-row">
+          {/* Transactions */}
+          <section className="lg:w-2/3 px-6 py-10 lg:border-r border-[--border]">
+            <div className="flex items-center justify-between mb-6">
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted]">
+                Transactions
+              </p>
+              <p className="text-[10px] tracking-[0.15em] uppercase text-[--muted]">
+                {transactions.length} recent
+              </p>
+            </div>
+
+            {transactions.length === 0 ? (
+              <div className="py-12 text-center">
+                <p className="text-[--muted]">No transactions yet.</p>
+                <p className="text-sm text-[--muted] mt-2">
+                  Start earning Wax by reviewing albums.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-0">
+                {transactions.map((tx, index) => (
+                  <div 
+                    key={tx.id} 
+                    className="flex items-center gap-4 py-4 border-b border-[--border] last:border-b-0"
+                  >
+                    <div className="w-16 text-[10px] tracking-[0.15em] uppercase text-[--muted]">
+                      {TX_TYPE_LABELS[tx.type] || tx.type}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm truncate">{tx.description}</p>
+                      <p className="text-[10px] text-[--muted]">
+                        {formatDistanceToNow(new Date(tx.createdAt), { addSuffix: true })}
+                      </p>
+                    </div>
+                    <div className={`font-bold tabular-nums ${tx.amount > 0 ? "text-green-500" : "text-[#ff3b3b]"}`}>
+                      {tx.amount > 0 ? "+" : ""}{tx.amount}
+                    </div>
                   </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* Quick Actions */}
+          <section className="lg:w-1/3 px-6 py-10 border-t lg:border-t-0 border-[--border]">
+            <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-6">
+              Quick Actions
+            </p>
+
+            <div className="space-y-4">
+              <Link
+                href="/shop"
+                className="block p-4 border border-[--border] hover:border-white transition group"
+              >
+                <p className="text-sm font-medium group-hover:text-[--muted] transition">
+                  Shop
+                </p>
+                <p className="text-xs text-[--muted] mt-1">
+                  Buy Wax Pax & items
+                </p>
+              </Link>
+
+              <Link
+                href="/pricing"
+                className="block p-4 border border-[--border] hover:border-white transition group"
+              >
+                <p className="text-sm font-medium group-hover:text-[--muted] transition">
+                  Upgrade
+                </p>
+                <p className="text-xs text-[--muted] mt-1">
+                  Get Wax+ or Pro
+                </p>
+              </Link>
+
+              <Link
+                href="/reviews"
+                className="block p-4 border border-[--border] hover:border-white transition group"
+              >
+                <p className="text-sm font-medium group-hover:text-[--muted] transition">
+                  Write Review
+                </p>
+                <p className="text-xs text-[--muted] mt-1">
+                  Earn +10 Wax
+                </p>
+              </Link>
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-[--border]">
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-4">
+                How to Earn
+              </p>
+              <div className="space-y-3 text-sm text-[--muted]">
+                <div className="flex justify-between">
+                  <span>Daily login</span>
+                  <span>+5</span>
                 </div>
-                <div className={`font-bold ${tx.amount > 0 ? "text-green-500" : "text-red-400"}`}>
-                  {tx.amount > 0 ? "+" : ""}{tx.amount.toLocaleString()}
+                <div className="flex justify-between">
+                  <span>First review of day</span>
+                  <span>+10</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>First album review</span>
+                  <span>+15</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Streak bonus</span>
+                  <span>+2/day</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Trending review</span>
+                  <span>+50</span>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Quick Actions */}
-      <div className="mt-8 grid sm:grid-cols-2 gap-4">
-        <button
-          onClick={() => router.push("/shop")}
-          className="p-4 bg-[#111] border border-[#333] rounded-xl text-left hover:border-yellow-500/50 transition"
-        >
-          <div className="text-2xl mb-2">🛒</div>
-          <div className="font-bold">Shop</div>
-          <div className="text-sm text-[#888]">Buy Wax Pax & items</div>
-        </button>
-        <button
-          onClick={() => router.push("/pricing")}
-          className="p-4 bg-[#111] border border-[#333] rounded-xl text-left hover:border-yellow-500/50 transition"
-        >
-          <div className="text-2xl mb-2">⭐</div>
-          <div className="font-bold">Upgrade</div>
-          <div className="text-sm text-[#888]">Get Wax+ or Pro</div>
-        </button>
+            </div>
+          </section>
+        </div>
       </div>
     </div>
   )
