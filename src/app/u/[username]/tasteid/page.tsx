@@ -103,6 +103,54 @@ export default async function TasteIDPage({ params }: Props) {
   const futureSelvesMusic = (tasteId.futureSelvesMusic as unknown as MusicalFutureSelf[]) || []
   const polarityScore2 = tasteId.polarityScore2
 
+  // Generate personalized insight based on signature
+  const getSignatureInsight = (sig: ListeningSignature): string => {
+    const sorted = Object.entries(sig).sort((a, b) => b[1] - a[1])
+    const dominant = sorted[0][0]
+    const secondary = sorted[1][0]
+
+    const insights: Record<string, string> = {
+      discovery: `You're an explorer at heart - always seeking new sounds and pushing your taste boundaries. You thrive on finding music before it hits the mainstream.`,
+      comfort: `You know what you love and you love what you know. There's wisdom in returning to albums that shaped you - they're part of your identity.`,
+      deep_dive: `When you find an artist you connect with, you go ALL in. Discographies don't stand a chance against your completionist energy.`,
+      reactive: `You stay plugged into what's happening NOW. New releases, trending albums, the cultural moment - you're always in the conversation.`,
+      emotional: `Music hits you differently. Your ratings aren't just numbers - they're reflections of genuine emotional experiences with albums.`,
+      social: `Music is better shared. You're tuned into what your community is listening to and your taste is shaped by the people around you.`,
+      aesthetic: `You appreciate the full package - the art, the presentation, the vibe. Albums aren't just audio to you, they're experiences.`,
+    }
+
+    return insights[dominant] || `Your listening style is uniquely yours.`
+  }
+
+  // Get network description for tooltips
+  const getNetworkMeaning = (networkId: string): string => {
+    const meanings: Record<string, string> = {
+      discovery: "How much you explore new artists and genres",
+      comfort: "How often you return to familiar favorites",
+      deep_dive: "Your tendency to go deep into artist catalogs",
+      reactive: "How much you engage with new releases and trends",
+      emotional: "The intensity of your reactions (high/low ratings)",
+      social: "How much friend activity influences your listening",
+      aesthetic: "Your attraction to visual presentation and curation",
+    }
+    return meanings[networkId] || ""
+  }
+
+  // Get pattern explanation
+  const getPatternMeaning = (pattern: string): string => {
+    const meanings: Record<string, string> = {
+      'Discovery↔Comfort Oscillation': "You balance exploring new music with returning to favorites - a healthy listening rhythm",
+      'Deep Dive Sprints': "When you find an artist you like, you explore their whole catalog",
+      'New Release Hunter': "You stay on top of new drops and engage with music as it comes out",
+      'Emotional Listener': "Your ratings reflect genuine emotional responses, not just technical judgment",
+      'Critical Ear': "You have high standards - a 10 from you really means something",
+      'Music Optimist': "You find something to love in most music - your enthusiasm is contagious",
+      'Discography Completionist': "You don't stop at hits - you explore artists' full bodies of work",
+      'Genre Explorer': "Your taste spans many genres - you refuse to be boxed in",
+    }
+    return meanings[pattern] || "A unique pattern in your listening behavior"
+  }
+
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="max-w-4xl mx-auto p-8">
@@ -297,7 +345,7 @@ export default async function TasteIDPage({ params }: Props) {
             {/* Background accent */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/5 to-transparent" />
 
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-3 mb-4">
               <div className="w-2 h-2 bg-white animate-pulse" />
               <h2 className="text-xs uppercase tracking-[0.3em] text-white font-bold">
                 LISTENING SIGNATURE
@@ -307,16 +355,26 @@ export default async function TasteIDPage({ params }: Props) {
               </span>
             </div>
 
-            <div className="space-y-3">
+            {/* Personalized insight */}
+            <p className="text-neutral-300 mb-6 leading-relaxed">
+              {getSignatureInsight(listeningSignature)}
+            </p>
+
+            <div className="space-y-4">
               {formatListeningSignature(listeningSignature).map((network, i) => (
                 <div key={network.network} className="group">
                   <div className="flex items-center gap-4">
                     <span className="text-xl w-8">{network.icon}</span>
                     <div className="flex-1">
                       <div className="flex justify-between items-baseline mb-1">
-                        <span className="text-sm font-bold uppercase tracking-wide">
-                          {network.name}
-                        </span>
+                        <div>
+                          <span className="text-sm font-bold uppercase tracking-wide">
+                            {network.name}
+                          </span>
+                          <span className="text-xs text-neutral-600 ml-2 hidden sm:inline">
+                            {getNetworkMeaning(network.network)}
+                          </span>
+                        </div>
                         <span className="text-sm text-neutral-400 font-mono">
                           {network.percentage}%
                         </span>
@@ -337,13 +395,18 @@ export default async function TasteIDPage({ params }: Props) {
             </div>
 
             {polarityScore2 && (
-              <div className="mt-6 pt-4 border-t border-neutral-800 flex items-center justify-between">
-                <span className="text-xs uppercase tracking-widest text-neutral-500">
-                  POLARITY SCORE 2.0
-                </span>
-                <span className="text-2xl font-bold font-mono">
-                  {polarityScore2.toFixed(2)}
-                </span>
+              <div className="mt-6 pt-4 border-t border-neutral-800">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs uppercase tracking-widest text-neutral-500">
+                    POLARITY SCORE 2.0
+                  </span>
+                  <span className="text-2xl font-bold font-mono">
+                    {polarityScore2.toFixed(2)}
+                  </span>
+                </div>
+                <p className="text-xs text-neutral-600">
+                  How distinct and consistent your listening signature is. Higher = more defined taste identity.
+                </p>
               </div>
             )}
           </div>
@@ -355,13 +418,21 @@ export default async function TasteIDPage({ params }: Props) {
             <h2 className="text-xs uppercase tracking-widest text-neutral-500 font-bold mb-4">
               YOUR PATTERNS
             </h2>
-            <div className="flex flex-wrap gap-2">
+            <div className="space-y-3">
               {signaturePatterns.map((pattern) => (
                 <div
                   key={pattern}
-                  className="px-4 py-2 bg-white text-black font-bold text-sm uppercase tracking-wide"
+                  className="border border-neutral-800 p-4 hover:border-white transition-colors"
                 >
-                  {pattern}
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-2 h-2 bg-white" />
+                    <span className="font-bold uppercase tracking-wide">
+                      {pattern}
+                    </span>
+                  </div>
+                  <p className="text-sm text-neutral-400 pl-5">
+                    {getPatternMeaning(pattern)}
+                  </p>
                 </div>
               ))}
             </div>
