@@ -49,17 +49,17 @@ export function BillboardList({ albums }: BillboardListProps) {
                   />
                 )}
 
-                {/* Rank badge */}
-                <div className="absolute top-0 left-0 bg-black/90 backdrop-blur-sm px-1.5 py-0.5 min-w-[24px]">
-                  <span className="text-white text-[11px] font-bold tabular-nums">
+                {/* Rank badge - high contrast in both light/dark */}
+                <div className="absolute top-0 left-0 bg-foreground px-1.5 py-0.5 min-w-[24px]">
+                  <span className="text-background text-[11px] font-bold tabular-nums">
                     {album.billboardRank}
                   </span>
                 </div>
 
-                {/* Rating badge */}
+                {/* Rating badge - inverted colors for contrast */}
                 {album.averageRating !== null && (
-                  <div className="absolute bottom-0 right-0 bg-white text-black px-1.5 py-0.5">
-                    <span className="text-[10px] font-bold tabular-nums">
+                  <div className="absolute bottom-0 right-0 bg-background px-1.5 py-0.5">
+                    <span className="text-foreground text-[10px] font-bold tabular-nums">
                       {album.averageRating.toFixed(1)}
                     </span>
                   </div>
