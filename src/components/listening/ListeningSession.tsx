@@ -64,6 +64,7 @@ export function ListeningSession({ session, onUpdate }: ListeningSessionProps) {
   const [localMessages, setLocalMessages] = useState<Message[]>(session.messages)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
+  const playingPromiseRef = useRef<Promise<void> | null>(null)
 
   useEffect(() => {
     setLocalMessages(session.messages)
@@ -73,13 +74,26 @@ export function ListeningSession({ session, onUpdate }: ListeningSessionProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [localMessages])
 
-  // Sync audio playback
+  // Sync audio playback with proper promise handling
   useEffect(() => {
-    if (audioRef.current && session.currentAlbum?.tracks[session.currentTrackIndex]?.previewUrl) {
-      if (session.isPlaying) {
-        audioRef.current.play().catch(() => {})
+    const audio = audioRef.current
+    if (!audio || !session.currentAlbum?.tracks[session.currentTrackIndex]?.previewUrl) {
+      return
+    }
+
+    if (session.isPlaying) {
+      playingPromiseRef.current = audio.play().catch((err) => {
+        // Log autoplay restrictions for debugging
+        if (err.name === "NotAllowedError") {
+          console.warn("Audio autoplay blocked by browser")
+        }
+      })
+    } else {
+      // Wait for any pending play promise before pausing
+      if (playingPromiseRef.current) {
+        playingPromiseRef.current.then(() => audio.pause()).catch(() => audio.pause())
       } else {
-        audioRef.current.pause()
+        audio.pause()
       }
     }
   }, [session.isPlaying, session.currentTrackIndex, session.currentAlbum])

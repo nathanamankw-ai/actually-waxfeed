@@ -76,8 +76,24 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { recipientId, content, type = "text", metadata } = body
 
+    // Input validation
+    const MAX_MESSAGE_LENGTH = 10000
+    const ALLOWED_TYPES = ["text", "album_share", "review_share"]
+
     if (!recipientId || !content) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+    }
+
+    if (typeof content !== "string" || content.length > MAX_MESSAGE_LENGTH) {
+      return NextResponse.json({ error: "Message too long" }, { status: 400 })
+    }
+
+    if (!ALLOWED_TYPES.includes(type)) {
+      return NextResponse.json({ error: "Invalid message type" }, { status: 400 })
+    }
+
+    if (recipientId === session.user.id) {
+      return NextResponse.json({ error: "Cannot message yourself" }, { status: 400 })
     }
 
     // Check if conversation exists

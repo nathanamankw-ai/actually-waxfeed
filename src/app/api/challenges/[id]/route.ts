@@ -7,6 +7,21 @@ import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
+// Validate progress JSON structure
+function validateProgress(data: unknown): { albumsRated: string[]; score: number } {
+  if (
+    typeof data === "object" &&
+    data !== null &&
+    "albumsRated" in data &&
+    Array.isArray((data as Record<string, unknown>).albumsRated) &&
+    "score" in data &&
+    typeof (data as Record<string, unknown>).score === "number"
+  ) {
+    return data as { albumsRated: string[]; score: number }
+  }
+  return { albumsRated: [], score: 0 }
+}
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -113,7 +128,8 @@ export async function PATCH(
     }
 
     if (action === "decline") {
-      if (challenge.status !== "pending") {
+      // Only partner can decline a pending challenge
+      if (!isPartner || challenge.status !== "pending") {
         return NextResponse.json({ error: "Cannot decline challenge" }, { status: 400 })
       }
 
@@ -132,7 +148,7 @@ export async function PATCH(
       }
 
       const progressField = isCreator ? "creatorProgress" : "partnerProgress"
-      const currentProgress = (challenge[progressField] as { albumsRated: string[]; score: number }) || { albumsRated: [], score: 0 }
+      const currentProgress = validateProgress(challenge[progressField])
 
       // Add album to progress
       if (!currentProgress.albumsRated.includes(albumId)) {
@@ -147,8 +163,8 @@ export async function PATCH(
 
       // Check if challenge is complete
       const updatedChallenge = await prisma.tasteChallenge.findUnique({ where: { id } })
-      const creatorProgress = updatedChallenge?.creatorProgress as { albumsRated: string[]; score: number }
-      const partnerProgress = updatedChallenge?.partnerProgress as { albumsRated: string[]; score: number }
+      const creatorProgress = validateProgress(updatedChallenge?.creatorProgress)
+      const partnerProgress = validateProgress(updatedChallenge?.partnerProgress)
 
       // For "rate_same_album" type, complete when both have rated
       if (challenge.challengeType === "rate_same_album") {

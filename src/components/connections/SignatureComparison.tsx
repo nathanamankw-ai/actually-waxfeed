@@ -36,7 +36,7 @@ export function SignatureComparison({
   animated = true,
 }: SignatureComparisonProps) {
   const [animationProgress, setAnimationProgress] = useState(animated ? 0 : 1)
-  const animationRef = useRef<number>(null)
+  const animationRef = useRef<number | undefined>(undefined)
 
   useEffect(() => {
     if (!animated) return
@@ -58,7 +58,7 @@ export function SignatureComparison({
 
     animationRef.current = requestAnimationFrame(animate)
     return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current)
+      if (animationRef.current !== undefined) cancelAnimationFrame(animationRef.current)
     }
   }, [animated])
 
@@ -169,18 +169,16 @@ export function SignatureComparison({
 }
 
 interface SignatureComparisonMiniProps {
-  userSignature: ListeningSignature
+  userSignature?: ListeningSignature
   otherResonance: Record<string, number>
-  contrast: Record<string, number>
+  contrast?: Record<string, number>
 }
 
 /**
  * Mini bar chart showing network resonance and contrast
  */
 export function SignatureComparisonMini({
-  userSignature,
   otherResonance,
-  contrast,
 }: SignatureComparisonMiniProps) {
   const [animated, setAnimated] = useState(false)
 
@@ -189,17 +187,12 @@ export function SignatureComparisonMini({
     return () => clearTimeout(timer)
   }, [])
 
-  // Find top resonating and contrasting networks
-  const resonanceEntries = Object.entries(otherResonance).sort((a, b) => b[1] - a[1])
-  const topResonance = resonanceEntries.slice(0, 3)
-
   return (
     <div className="space-y-2">
       <p className="text-[9px] uppercase tracking-wider text-[--muted]">Network Alignment</p>
       <div className="grid grid-cols-7 gap-1">
         {NETWORKS.map(network => {
           const resonance = otherResonance[network] || 0
-          const diff = contrast[network] || 0
           const { color, name } = NETWORK_LABELS[network]
 
           return (
@@ -211,7 +204,7 @@ export function SignatureComparisonMini({
                 <div
                   className="absolute bottom-0 left-0 right-0 transition-all duration-700 ease-out"
                   style={{
-                    height: animated ? `${resonance * 300}%` : "0%",
+                    height: animated ? `${Math.min(resonance * 300, 100)}%` : "0%",
                     backgroundColor: color,
                     opacity: 0.6,
                   }}

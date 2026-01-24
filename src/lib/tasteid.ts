@@ -1885,16 +1885,27 @@ export interface EnhancedTasteMatch {
 }
 
 /**
+ * Network keys used for signature operations
+ */
+const SIGNATURE_NETWORKS = [
+  'discovery',
+  'comfort',
+  'deep_dive',
+  'reactive',
+  'emotional',
+  'social',
+  'aesthetic',
+] as const satisfies readonly (keyof ListeningSignature)[]
+
+/**
  * Compute cosine similarity between two listening signatures
  */
 export function computeSignatureSimilarity(sig1: ListeningSignature, sig2: ListeningSignature): number {
-  const networks = ['discovery', 'comfort', 'deep_dive', 'reactive', 'emotional', 'social', 'aesthetic'] as const
-
   let dotProduct = 0
   let norm1 = 0
   let norm2 = 0
 
-  for (const network of networks) {
+  for (const network of SIGNATURE_NETWORKS) {
     const v1 = sig1[network] || 0
     const v2 = sig2[network] || 0
     dotProduct += v1 * v2
@@ -1913,10 +1924,9 @@ export function computeNetworkResonance(
   sig1: ListeningSignature,
   sig2: ListeningSignature
 ): Record<string, number> {
-  const networks = ['discovery', 'comfort', 'deep_dive', 'reactive', 'emotional', 'social', 'aesthetic'] as const
   const resonance: Record<string, number> = {}
 
-  for (const network of networks) {
+  for (const network of SIGNATURE_NETWORKS) {
     const v1 = sig1[network] || 0
     const v2 = sig2[network] || 0
     // Resonance is high when both are high, low when either is low
@@ -1933,10 +1943,9 @@ export function computeNetworkContrast(
   sig1: ListeningSignature,
   sig2: ListeningSignature
 ): Record<string, number> {
-  const networks = ['discovery', 'comfort', 'deep_dive', 'reactive', 'emotional', 'social', 'aesthetic'] as const
   const contrast: Record<string, number> = {}
 
-  for (const network of networks) {
+  for (const network of SIGNATURE_NETWORKS) {
     const v1 = sig1[network] || 0
     const v2 = sig2[network] || 0
     contrast[network] = v2 - v1  // Positive means user2 is higher

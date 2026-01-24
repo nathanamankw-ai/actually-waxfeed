@@ -248,7 +248,7 @@ export default async function Home() {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col lg:flex-row">
           {/* LEFT: Trending */}
-          <section className="lg:w-1/2 px-6 py-12 lg:py-16 lg:border-r border-[--border] flex flex-col">
+          <section className="lg:w-1/2 px-6 py-12 lg:py-16 lg:border-r border-[--border]">
             <div className="flex items-baseline justify-between mb-8">
               <h2 className="text-[11px] tracking-[0.2em] uppercase text-[--muted]">
                 Trending
