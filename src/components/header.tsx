@@ -111,14 +111,17 @@ export function Header() {
           <Link href="/discover" className="no-underline hover:opacity-60 transition-opacity">
             DISCOVER
           </Link>
-          <Link href="/trending" className="no-underline hover:opacity-60 transition-opacity">
-            TRENDING
+          <Link href="/radar" className="no-underline hover:opacity-60 transition-opacity flex items-center gap-1">
+            <svg className="w-3 h-3 text-[#ffd700]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            RADAR
+          </Link>
+          <Link href="/leaderboard" className="no-underline hover:opacity-60 transition-opacity">
+            RANKS
           </Link>
           <Link href="/lists" className="no-underline hover:opacity-60 transition-opacity">
             LISTS
-          </Link>
-          <Link href="/hot-takes" className="no-underline hover:opacity-60 transition-opacity">
-            HOT TAKES
           </Link>
 
           {/* Tastemaker Score - Always visible when logged in */}

@@ -91,19 +91,24 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
-      {/* Header */}
+      {/* Hero - The Offer */}
       <section style={{ borderBottom: '1px solid var(--border)' }}>
-        <div className="max-w-7xl mx-auto px-6 py-12 lg:py-16">
-          <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-3">
-            Membership
+        <div className="max-w-4xl mx-auto px-6 py-16 lg:py-24 text-center">
+          <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-6">
+            An offer you can't refuse
           </p>
-          <h1 className="text-4xl lg:text-5xl font-bold tracking-[-0.02em] mb-4">
-            Prove Your Taste
+          <h1 className="text-4xl lg:text-6xl font-bold tracking-[-0.02em] mb-6">
+            Your taste.<br />Verified forever.
           </h1>
-          <p className="text-base text-[--muted] max-w-xl">
-            Everyone earns First Spin badges. Subscribers get more Wax to tip, 
-            trending predictions, and priority visibility.
+          <p className="text-lg text-[--muted] max-w-2xl mx-auto mb-8">
+            Every album you call before it blows up is recorded. Every Gold Spin is proof. 
+            This isn't a subscription—it's your permanent music credibility.
           </p>
+          <div className="inline-flex items-center gap-2 px-4 py-2 border border-[#ffd700]/30 text-sm">
+            <span className="text-[#ffd700]">47 Gold Spins</span>
+            <span className="text-[--muted]">=</span>
+            <span>"I called 47 albums before they trended"</span>
+          </div>
         </div>
       </section>
 
@@ -115,82 +120,82 @@ export default function PricingPage() {
         </div>
       )}
 
-      {/* First Spin Explanation */}
+      {/* The Deal */}
       <section className="border-b border-[--border]">
-        <div className="max-w-7xl mx-auto px-6 py-12">
-          <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-8">
-            How First Spin Works
-          </p>
-          <div className="grid lg:grid-cols-3 gap-8">
-            <div>
-              <div className="w-12 h-12 border border-[--border] flex items-center justify-center mb-4">
-                <span className="text-2xl font-bold">1</span>
+        <div className="max-w-7xl mx-auto px-6 py-16">
+          <div className="max-w-3xl">
+            <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-4">
+              Here's the deal
+            </p>
+            <h2 className="text-2xl lg:text-3xl font-bold mb-6">
+              Everyone earns badges fairly.<br />
+              Subscribers maximize their shot.
+            </h2>
+            <p className="text-[--muted] mb-8">
+              Free users and subscribers both earn badges when they call albums early. 
+              The difference? Subscribers see what's <span className="text-white">about to trend</span>—so 
+              they can still get in before it's too late.
+            </p>
+            
+            {/* The Killer Feature */}
+            <div className="border-2 border-white/20 p-6 mb-8">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 border border-[#ffd700] flex items-center justify-center flex-shrink-0">
+                  <svg className="w-6 h-6 text-[#ffd700]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-lg font-bold mb-2">Trending Radar</p>
+                  <p className="text-sm text-[--muted] mb-3">
+                    See albums at 70, 80, 90 reviews—approaching the 100 threshold. 
+                    You can still review and qualify for a badge before it trends.
+                  </p>
+                  <p className="text-xs text-[#ffd700]">
+                    This feature alone has helped subscribers earn 3x more Gold Spins.
+                  </p>
+                </div>
               </div>
-              <p className="text-lg font-medium mb-2">Review Early</p>
-              <p className="text-sm text-[--muted]">
-                When you review an album, your position is recorded. #1, #7, #42—you're on record.
-              </p>
-            </div>
-            <div>
-              <div className="w-12 h-12 border border-[--border] flex items-center justify-center mb-4">
-                <span className="text-2xl font-bold">2</span>
-              </div>
-              <p className="text-lg font-medium mb-2">Album Trends</p>
-              <p className="text-sm text-[--muted]">
-                When an album hits 100+ reviews, it's trending. The algorithm checks who was early.
-              </p>
-            </div>
-            <div>
-              <div className="w-12 h-12 border border-[--border] flex items-center justify-center mb-4">
-                <span className="text-2xl font-bold">3</span>
-              </div>
-              <p className="text-lg font-medium mb-2">Earn Badges</p>
-              <p className="text-sm text-[--muted]">
-                Early reviewers get Gold, Silver, or Bronze Spin badges—plus Wax rewards.
-              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Badge Tiers */}
+      {/* Simple Math */}
       <section className="border-b border-[--border]">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-3">
-            <div className="px-6 py-10 lg:border-r border-b lg:border-b-0 border-[--border]">
-              <div className="w-12 h-12 border-2 border-[#ffd700] flex items-center justify-center mb-4">
-                <span className="text-xl font-bold text-[#ffd700]">G</span>
-              </div>
-              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-2">
-                Gold Spin
+        <div className="max-w-7xl mx-auto px-6 py-16">
+          <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-8">
+            Do the math
+          </p>
+          <div className="grid lg:grid-cols-3 gap-8">
+            <div className="p-6 border border-[--border]">
+              <p className="text-5xl font-bold mb-2">1</p>
+              <p className="text-lg font-medium mb-2">Gold Spin per month</p>
+              <p className="text-sm text-[--muted] mb-4">
+                Just ONE early call on a trending album earns you 100 Wax.
               </p>
-              <p className="text-3xl font-bold text-[#ffd700] mb-2">+100 Wax</p>
-              <p className="text-sm text-[--muted]">
-                First 10 reviewers. Proves elite taste. Adds 10 to your Tastemaker Score.
-              </p>
-            </div>
-            <div className="px-6 py-10 lg:border-r border-b lg:border-b-0 border-[--border]">
-              <div className="w-12 h-12 border-2 border-gray-400 flex items-center justify-center mb-4">
-                <span className="text-xl font-bold text-gray-400">S</span>
-              </div>
-              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-2">
-                Silver Spin
-              </p>
-              <p className="text-3xl font-bold text-gray-400 mb-2">+50 Wax</p>
-              <p className="text-sm text-[--muted]">
-                First 50 reviewers. Still early, still counts. Adds 5 to your Tastemaker Score.
+              <p className="text-xs text-[--muted]">
+                Worth: ~$1 in Wax value
               </p>
             </div>
-            <div className="px-6 py-10">
-              <div className="w-12 h-12 border-2 border-amber-700 flex items-center justify-center mb-4">
-                <span className="text-xl font-bold text-amber-700">B</span>
-              </div>
-              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-2">
-                Bronze Spin
+            <div className="p-6 border border-[--border]">
+              <p className="text-5xl font-bold mb-2">$5</p>
+              <p className="text-lg font-medium mb-2">Wax+ subscription</p>
+              <p className="text-sm text-[--muted] mb-4">
+                Trending Radar alone helps you catch 2-3 more badges per month.
               </p>
-              <p className="text-3xl font-bold text-amber-700 mb-2">+25 Wax</p>
-              <p className="text-sm text-[--muted]">
-                First 100 reviewers. You caught it early. Adds 2 to your Tastemaker Score.
+              <p className="text-xs text-[--muted]">
+                ROI: 200-300 Wax = $2-3 value
+              </p>
+            </div>
+            <div className="p-6 border border-[#ffd700]/30">
+              <p className="text-5xl font-bold text-[#ffd700] mb-2">∞</p>
+              <p className="text-lg font-medium mb-2">Permanent record</p>
+              <p className="text-sm text-[--muted] mb-4">
+                Your Tastemaker Score lives forever. It's your music resume.
+              </p>
+              <p className="text-xs text-[#ffd700]">
+                Worth: Priceless credibility
               </p>
             </div>
           </div>
@@ -199,235 +204,315 @@ export default function PricingPage() {
 
       {/* Pricing Grid */}
       <section className="border-b border-[--border]">
-        <div className="max-w-7xl mx-auto px-6 py-12">
-          <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-8">
-            Membership Tiers
-          </p>
-        </div>
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-3">
-          {/* Free Tier */}
-          <div className="px-6 py-10 border-t lg:border-r border-[--border]">
-            <div className="mb-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-3">
+            {/* Free Tier */}
+            <div className="px-6 py-12 lg:border-r border-b lg:border-b-0 border-[--border]">
               <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-3">
                 Free
               </p>
-              <div className="flex items-baseline gap-1 mb-4">
-                <span className="text-5xl font-bold tracking-tight">$0</span>
+              <div className="flex items-baseline gap-1 mb-2">
+                <span className="text-4xl font-bold">$0</span>
               </div>
-              <p className="text-sm text-[--muted]">
-                For everyone
+              <p className="text-sm text-[--muted] mb-8">
+                Earn badges. Build your score. Forever free.
               </p>
+
+              <div className="space-y-3 mb-8">
+                <div className="flex items-center gap-3">
+                  <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-sm">Earn First Spin badges</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-sm">Build Tastemaker Score</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-sm">+5 Wax per review</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-sm">Tip reviews (50/week limit)</span>
+                </div>
+                <div className="flex items-center gap-3 text-[--muted]">
+                  <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  <span className="text-sm">No Trending Radar</span>
+                </div>
+              </div>
+
+              <button
+                disabled
+                className="w-full py-3 px-4 border border-[--border] text-[--muted] text-[11px] tracking-[0.15em] uppercase cursor-not-allowed"
+              >
+                {currentTier === "FREE" ? "Current" : "Downgrade"}
+              </button>
             </div>
 
-            <div className="space-y-3 mb-8">
-              <div className="flex items-start gap-3">
-                <span className="text-[--muted] mt-0.5">+</span>
-                <span className="text-sm">Earn First Spin badges</span>
+            {/* Wax+ Tier - THE MAIN OFFER */}
+            <div className="px-6 py-12 lg:border-r border-b lg:border-b-0 border-[--border] relative bg-white/[0.02]">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-white" />
+              <div className="absolute -top-3 left-6 px-3 py-1 bg-white text-black text-[9px] tracking-wider uppercase font-bold">
+                Most Popular
               </div>
-              <div className="flex items-start gap-3">
-                <span className="text-[--muted] mt-0.5">+</span>
-                <span className="text-sm">+5 Wax per review</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-[--muted] mt-0.5">+</span>
-                <span className="text-sm">Tastemaker Score</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-[--muted] mt-0.5">+</span>
-                <span className="text-sm">Tip reviews (Standard)</span>
-              </div>
-              <div className="flex items-start gap-3 text-[--muted]">
-                <span className="mt-0.5">−</span>
-                <span className="text-sm">50 Wax tip limit/week</span>
-              </div>
-            </div>
-
-            <button
-              disabled
-              className="w-full py-3 px-4 border border-[--border] text-[--muted] text-[11px] tracking-[0.15em] uppercase cursor-not-allowed"
-            >
-              {currentTier === "FREE" ? "Current Plan" : "Downgrade via Portal"}
-            </button>
-          </div>
-
-          {/* Wax+ Tier */}
-          <div className="px-6 py-10 border-t lg:border-r border-[--border] relative">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-white" />
-            
-            <div className="mb-8">
-              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-3">
+              
+              <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-3 mt-2">
                 Wax+
               </p>
-              <div className="flex items-baseline gap-1 mb-4">
-                <span className="text-5xl font-bold tracking-tight">$4.99</span>
+              <div className="flex items-baseline gap-1 mb-2">
+                <span className="text-4xl font-bold">$4.99</span>
                 <span className="text-sm text-[--muted]">/mo</span>
               </div>
-              <p className="text-sm text-[--muted]">
-                For active reviewers
+              <p className="text-sm text-[--muted] mb-8">
+                See what's about to trend. Never miss a Gold Spin.
               </p>
+
+              <div className="space-y-3 mb-8">
+                <div className="flex items-center gap-3">
+                  <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-sm">Everything in Free</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <svg className="w-4 h-4 text-[#ffd700] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  <span className="text-sm font-medium">Trending Radar</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-sm">Unlimited tipping</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-sm">Premium tips (20 Wax)</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-sm">Early notifications</span>
+                </div>
+              </div>
+
+              {currentTier === "WAX_PLUS" ? (
+                <button
+                  onClick={handleManageSubscription}
+                  disabled={loading === "manage"}
+                  className="w-full py-3 px-4 border border-white text-[11px] tracking-[0.15em] uppercase hover:bg-white/10 transition disabled:opacity-50"
+                >
+                  {loading === "manage" ? "Loading..." : "Manage"}
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleSubscribe("WAX_PLUS")}
+                  disabled={loading === "WAX_PLUS" || currentTier === "WAX_PRO"}
+                  className="w-full py-4 bg-white text-black text-[11px] tracking-[0.15em] uppercase font-bold hover:bg-[#e5e5e5] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading === "WAX_PLUS" ? "Loading..." : currentTier === "WAX_PRO" ? "Current: Pro" : "Start Catching Trends"}
+                </button>
+              )}
             </div>
 
-            <div className="space-y-3 mb-8">
-              <div className="flex items-start gap-3">
-                <span className="text-white mt-0.5">+</span>
-                <span className="text-sm">Everything in Free</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-white mt-0.5">+</span>
-                <span className="text-sm font-medium">Unlimited Wax tipping</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-white mt-0.5">+</span>
-                <span className="text-sm">Trending predictions</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-white mt-0.5">+</span>
-                <span className="text-sm">Priority badge visibility</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-white mt-0.5">+</span>
-                <span className="text-sm">Tip Premium Wax (20)</span>
-              </div>
-            </div>
-
-            {currentTier === "WAX_PLUS" ? (
-              <button
-                onClick={handleManageSubscription}
-                disabled={loading === "manage"}
-                className="w-full py-3 px-4 border border-[--border] text-[11px] tracking-[0.15em] uppercase hover:bg-[--border]/20 transition disabled:opacity-50"
-              >
-                {loading === "manage" ? "Loading..." : "Manage Subscription"}
-              </button>
-            ) : (
-              <button
-                onClick={() => handleSubscribe("WAX_PLUS")}
-                disabled={loading === "WAX_PLUS" || currentTier === "WAX_PRO"}
-                className="w-full py-3 px-4 bg-white text-black text-[11px] tracking-[0.15em] uppercase font-medium hover:bg-[#e5e5e5] transition disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading === "WAX_PLUS" ? "Loading..." : currentTier === "WAX_PRO" ? "Current: Pro" : "Upgrade"}
-              </button>
-            )}
-          </div>
-
-          {/* Pro Tier */}
-          <div className="px-6 py-10 border-t border-[--border] relative">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-[#ffd700]" />
-            
-            <div className="mb-8">
+            {/* Pro Tier */}
+            <div className="px-6 py-12 relative">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-[#ffd700]" />
+              
               <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-3">
                 Pro
               </p>
-              <div className="flex items-baseline gap-1 mb-4">
-                <span className="text-5xl font-bold tracking-tight">$9.99</span>
+              <div className="flex items-baseline gap-1 mb-2">
+                <span className="text-4xl font-bold">$9.99</span>
                 <span className="text-sm text-[--muted]">/mo</span>
               </div>
-              <p className="text-sm text-[--muted]">
-                For tastemakers
+              <p className="text-sm text-[--muted] mb-8">
+                For serious tastemakers. Maximum credibility.
+              </p>
+
+              <div className="space-y-3 mb-8">
+                <div className="flex items-center gap-3">
+                  <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-sm">Everything in Wax+</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <svg className="w-4 h-4 text-[#ffd700] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-sm font-medium text-[#ffd700]">GOLD tips (100 Wax)</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <svg className="w-4 h-4 text-[#ffd700] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-sm">Momentum Analytics</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <svg className="w-4 h-4 text-[#ffd700] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-sm">Verified badge eligible</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <svg className="w-4 h-4 text-[#ffd700] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-sm">Featured in leaderboards</span>
+                </div>
+              </div>
+
+              {currentTier === "WAX_PRO" ? (
+                <button
+                  onClick={handleManageSubscription}
+                  disabled={loading === "manage"}
+                  className="w-full py-3 px-4 border border-[#ffd700]/50 text-[#ffd700] text-[11px] tracking-[0.15em] uppercase hover:bg-[#ffd700]/10 transition disabled:opacity-50"
+                >
+                  {loading === "manage" ? "Loading..." : "Manage"}
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleSubscribe("WAX_PRO")}
+                  disabled={loading === "WAX_PRO"}
+                  className="w-full py-4 bg-[#ffd700] text-black text-[11px] tracking-[0.15em] uppercase font-bold hover:bg-[#ffed4a] transition disabled:opacity-50"
+                >
+                  {loading === "WAX_PRO" ? "Loading..." : "Go Pro"}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* The Real Value */}
+      <section className="border-b border-[--border]">
+        <div className="max-w-4xl mx-auto px-6 py-16 text-center">
+          <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-6">
+            The real value
+          </p>
+          <h2 className="text-2xl lg:text-3xl font-bold mb-6">
+            This isn't about Wax.<br />It's about proof.
+          </h2>
+          <p className="text-[--muted] mb-8 max-w-2xl mx-auto">
+            Anyone can say "I was listening to them before they blew up." 
+            Only WAXFEED gives you timestamped, verified proof that you called it.
+          </p>
+          <div className="grid sm:grid-cols-3 gap-6 text-left max-w-3xl mx-auto">
+            <div className="p-4 border border-[--border]">
+              <p className="text-sm font-medium mb-1">For DJs</p>
+              <p className="text-xs text-[--muted]">
+                "My Tastemaker Score is 340. I've called 12 Gold Spins."
               </p>
             </div>
-
-            <div className="space-y-3 mb-8">
-              <div className="flex items-start gap-3">
-                <span className="text-[#ffd700] mt-0.5">+</span>
-                <span className="text-sm">Everything in Wax+</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-[#ffd700] mt-0.5">+</span>
-                <span className="text-sm font-medium">Tip GOLD Wax (100)</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-[#ffd700] mt-0.5">+</span>
-                <span className="text-sm">Advanced analytics</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-[#ffd700] mt-0.5">+</span>
-                <span className="text-sm">Verified badge eligible</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-[#ffd700] mt-0.5">+</span>
-                <span className="text-sm">Early access features</span>
-              </div>
+            <div className="p-4 border border-[--border]">
+              <p className="text-sm font-medium mb-1">For Writers</p>
+              <p className="text-xs text-[--muted]">
+                "Check my WAXFEED—I reviewed this album 6 months before Pitchfork."
+              </p>
             </div>
-
-            {currentTier === "WAX_PRO" ? (
-              <button
-                onClick={handleManageSubscription}
-                disabled={loading === "manage"}
-                className="w-full py-3 px-4 border border-[#ffd700]/50 text-[#ffd700] text-[11px] tracking-[0.15em] uppercase hover:bg-[#ffd700]/10 transition disabled:opacity-50"
-              >
-                {loading === "manage" ? "Loading..." : "Manage Subscription"}
-              </button>
-            ) : (
-              <button
-                onClick={() => handleSubscribe("WAX_PRO")}
-                disabled={loading === "WAX_PRO"}
-                className="w-full py-3 px-4 bg-[#ffd700] text-black text-[11px] tracking-[0.15em] uppercase font-medium hover:bg-[#ffed4a] transition disabled:opacity-50"
-              >
-                {loading === "WAX_PRO" ? "Loading..." : "Go Pro"}
-              </button>
-            )}
+            <div className="p-4 border border-[--border]">
+              <p className="text-sm font-medium mb-1">For A&R</p>
+              <p className="text-xs text-[--muted]">
+                "I spotted 8 artists before they signed. Here's the proof."
+              </p>
+            </div>
           </div>
+        </div>
+      </section>
+
+      {/* Urgency */}
+      <section className="border-b border-[--border] bg-white/[0.02]">
+        <div className="max-w-4xl mx-auto px-6 py-12 text-center">
+          <p className="text-lg font-medium mb-3">
+            Albums are trending every day.
+          </p>
+          <p className="text-sm text-[--muted] mb-6">
+            Every day you're not reviewing is a potential Gold Spin you're missing.
+            The algorithm doesn't wait.
+          </p>
+          <Link
+            href="/discover"
+            className="inline-block px-8 py-4 bg-white text-black text-[11px] tracking-[0.15em] uppercase font-bold hover:bg-[#e5e5e5] transition"
+          >
+            Start Calling Albums
+          </Link>
         </div>
       </section>
 
       {/* FAQ */}
-      <section className="border-b border-[--border]">
+      <section>
         <div className="max-w-7xl mx-auto px-6 py-12">
           <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-8">
-            FAQ
+            Questions
           </p>
-          <div className="grid lg:grid-cols-2 gap-8">
+          <div className="grid lg:grid-cols-2 gap-8 max-w-4xl">
             <div>
-              <p className="text-sm font-medium mb-2">Do I need to pay for First Spin badges?</p>
+              <p className="text-sm font-medium mb-2">What if I cancel?</p>
               <p className="text-sm text-[--muted]">
-                No. Everyone earns badges for free. Just review albums early and wait for them to trend.
+                Your badges and Tastemaker Score stay forever. You just lose 
+                access to Trending Radar and premium features.
               </p>
             </div>
             <div>
-              <p className="text-sm font-medium mb-2">What do subscribers get?</p>
+              <p className="text-sm font-medium mb-2">Is badge earning fair?</p>
               <p className="text-sm text-[--muted]">
-                Unlimited tipping, trending predictions, higher-tier Wax awards (Premium/GOLD), 
-                and priority visibility for your reviews.
+                100% fair. Free users and subscribers earn badges the same way. 
+                Subscribers just have better tools to find opportunities.
               </p>
             </div>
             <div>
-              <p className="text-sm font-medium mb-2">What is Wax used for?</p>
+              <p className="text-sm font-medium mb-2">What's Trending Radar?</p>
               <p className="text-sm text-[--muted]">
-                Tip reviewers you appreciate. Higher tips give them more Wax and visibility.
-                It's social currency that shows community respect.
+                A feed showing albums approaching 100 reviews. Review them now, 
+                and you'll still qualify for badges when they trend.
               </p>
             </div>
             <div>
-              <p className="text-sm font-medium mb-2">Can I cancel anytime?</p>
+              <p className="text-sm font-medium mb-2">Can I try before subscribing?</p>
               <p className="text-sm text-[--muted]">
-                Yes. Manage or cancel via the billing portal. Your badges and Tastemaker Score stay forever.
+                Yes. Free forever. Earn badges, build your score. Subscribe 
+                when you want to maximize your shot.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer nav */}
+      {/* Final CTA */}
       <footer className="border-t border-[--border]">
-        <div className="max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
-          <Link
-            href="/wallet"
-            className="text-[11px] tracking-[0.15em] uppercase text-[--muted] hover:text-white transition-colors flex items-center gap-2"
-          >
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18" />
-            </svg>
-            Your Spins
-          </Link>
-          <Link
-            href="/leaderboard"
-            className="text-[11px] tracking-[0.15em] uppercase text-[--muted] hover:text-white transition-colors flex items-center gap-2"
-          >
-            Leaderboard
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </Link>
+        <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-[--muted]">
+            Your taste. Verified forever.
+          </p>
+          <div className="flex gap-4">
+            <Link
+              href="/wallet"
+              className="text-[11px] tracking-[0.15em] uppercase text-[--muted] hover:text-white transition-colors"
+            >
+              Your Spins
+            </Link>
+            <Link
+              href="/leaderboard"
+              className="text-[11px] tracking-[0.15em] uppercase text-[--muted] hover:text-white transition-colors"
+            >
+              Leaderboard
+            </Link>
+          </div>
         </div>
       </footer>
     </div>

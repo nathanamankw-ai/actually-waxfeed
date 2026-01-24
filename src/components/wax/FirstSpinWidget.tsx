@@ -10,6 +10,7 @@ type UserStats = {
   silverSpinCount: number
   bronzeSpinCount: number
   waxBalance: number
+  tier: string
 }
 
 export function FirstSpinWidget() {
@@ -33,6 +34,7 @@ export function FirstSpinWidget() {
             silverSpinCount: data.data.silverSpinCount || 0,
             bronzeSpinCount: data.data.bronzeSpinCount || 0,
             waxBalance: data.data.balance || 0,
+            tier: data.data.tier || "FREE",
           })
         }
       } catch (error) {
@@ -50,37 +52,35 @@ export function FirstSpinWidget() {
         {/* Header */}
         <div className="p-4 border-b border-[--border]">
           <h3 className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-2">
-            First Spin
+            Your Taste, Verified
           </h3>
-          <p className="text-xl font-bold">Prove Your Taste</p>
+          <p className="text-xl font-bold">Called It First?</p>
+          <p className="text-xl font-bold text-[--muted]">Prove It.</p>
         </div>
 
-        {/* Value Prop */}
+        {/* The Hook */}
         <div className="p-4 border-b border-[--border]">
           <p className="text-sm text-[--muted] mb-4">
-            Review albums early. If they blow up, you get credit.
+            Every album you review records your position. If it trends later, you get credited.
           </p>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <span className="w-8 h-8 flex items-center justify-center border border-[#ffd700] text-[#ffd700] text-xs font-bold">G</span>
-              <div>
-                <p className="text-sm font-medium">Gold Spin</p>
-                <p className="text-xs text-[--muted]">First 10 reviewers</p>
-              </div>
+          <div className="p-3 border border-[#ffd700]/30 mb-4">
+            <p className="text-sm">
+              <span className="text-[#ffd700] font-bold">47 Gold Spins</span>
+              <span className="text-[--muted]"> = "I called 47 albums before anyone"</span>
+            </p>
+          </div>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-[#ffd700]">Gold Spin</span>
+              <span className="text-[--muted]">First 10 → +100 Wax</span>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="w-8 h-8 flex items-center justify-center border border-gray-400 text-gray-400 text-xs font-bold">S</span>
-              <div>
-                <p className="text-sm font-medium">Silver Spin</p>
-                <p className="text-xs text-[--muted]">First 50 reviewers</p>
-              </div>
+            <div className="flex justify-between">
+              <span className="text-gray-400">Silver Spin</span>
+              <span className="text-[--muted]">First 50 → +50 Wax</span>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="w-8 h-8 flex items-center justify-center border border-amber-700 text-amber-700 text-xs font-bold">B</span>
-              <div>
-                <p className="text-sm font-medium">Bronze Spin</p>
-                <p className="text-xs text-[--muted]">First 100 reviewers</p>
-              </div>
+            <div className="flex justify-between">
+              <span className="text-amber-700">Bronze Spin</span>
+              <span className="text-[--muted]">First 100 → +25 Wax</span>
             </div>
           </div>
         </div>
@@ -91,7 +91,7 @@ export function FirstSpinWidget() {
             href="/login"
             className="block w-full py-3 bg-white text-black text-center text-[10px] tracking-[0.15em] uppercase font-bold hover:bg-[#e5e5e5] transition no-underline"
           >
-            Start Collecting Spins
+            Start Building Your Record
           </Link>
         </div>
       </div>
@@ -109,6 +109,8 @@ export function FirstSpinWidget() {
   }
 
   const hasAnySpins = stats && (stats.goldSpinCount > 0 || stats.silverSpinCount > 0 || stats.bronzeSpinCount > 0)
+  const totalSpins = (stats?.goldSpinCount || 0) + (stats?.silverSpinCount || 0) + (stats?.bronzeSpinCount || 0)
+  const isSubscriber = stats?.tier && stats.tier !== "FREE"
 
   return (
     <div className="border border-[--border]">
@@ -116,17 +118,19 @@ export function FirstSpinWidget() {
       <div className="p-4 border-b border-[--border]">
         <div className="flex items-center justify-between mb-1">
           <h3 className="text-[10px] tracking-[0.3em] uppercase text-[--muted]">
-            Tastemaker
+            Tastemaker Score
           </h3>
-          <span className="text-[10px] tracking-[0.2em] uppercase text-[--muted]">
-            Score
-          </span>
+          {isSubscriber && (
+            <span className="text-[9px] tracking-wider uppercase px-1.5 py-0.5 bg-[#ffd700]/20 text-[#ffd700]">
+              {stats?.tier === "WAX_PRO" ? "Pro" : "Wax+"}
+            </span>
+          )}
         </div>
-        <div className="flex items-center justify-between">
-          <p className="text-3xl font-bold tabular-nums">{stats?.tastemakeScore || 0}</p>
+        <div className="flex items-baseline justify-between">
+          <p className="text-4xl font-bold tabular-nums">{stats?.tastemakeScore || 0}</p>
           <div className="text-right">
-            <p className="text-sm text-[--muted]">{stats?.waxBalance?.toLocaleString() || 0}</p>
-            <p className="text-[10px] text-[--muted]">Wax</p>
+            <p className="text-lg font-bold tabular-nums">{stats?.waxBalance?.toLocaleString() || 0}</p>
+            <p className="text-[9px] text-[--muted] uppercase">Wax</p>
           </div>
         </div>
       </div>
@@ -134,54 +138,73 @@ export function FirstSpinWidget() {
       {/* Spin Badges */}
       <div className="p-4 border-b border-[--border]">
         <div className="flex items-center justify-between gap-2">
-          <div className="flex-1 text-center p-3 border border-[--border]">
-            <div className="w-8 h-8 mx-auto mb-1 flex items-center justify-center border border-[#ffd700] text-[#ffd700] text-xs font-bold">
-              G
-            </div>
-            <p className="text-2xl font-bold tabular-nums">{stats?.goldSpinCount || 0}</p>
+          <div className="flex-1 text-center p-2">
+            <p className="text-2xl font-bold tabular-nums text-[#ffd700]">{stats?.goldSpinCount || 0}</p>
             <p className="text-[9px] text-[--muted] uppercase tracking-wider">Gold</p>
           </div>
-          <div className="flex-1 text-center p-3 border border-[--border]">
-            <div className="w-8 h-8 mx-auto mb-1 flex items-center justify-center border border-gray-400 text-gray-400 text-xs font-bold">
-              S
-            </div>
-            <p className="text-2xl font-bold tabular-nums">{stats?.silverSpinCount || 0}</p>
+          <div className="w-px h-8 bg-[--border]" />
+          <div className="flex-1 text-center p-2">
+            <p className="text-2xl font-bold tabular-nums text-gray-400">{stats?.silverSpinCount || 0}</p>
             <p className="text-[9px] text-[--muted] uppercase tracking-wider">Silver</p>
           </div>
-          <div className="flex-1 text-center p-3 border border-[--border]">
-            <div className="w-8 h-8 mx-auto mb-1 flex items-center justify-center border border-amber-700 text-amber-700 text-xs font-bold">
-              B
-            </div>
-            <p className="text-2xl font-bold tabular-nums">{stats?.bronzeSpinCount || 0}</p>
+          <div className="w-px h-8 bg-[--border]" />
+          <div className="flex-1 text-center p-2">
+            <p className="text-2xl font-bold tabular-nums text-amber-700">{stats?.bronzeSpinCount || 0}</p>
             <p className="text-[9px] text-[--muted] uppercase tracking-wider">Bronze</p>
           </div>
         </div>
       </div>
 
-      {/* How It Works / Call to Action */}
+      {/* Actions */}
       <div className="p-4">
-        {hasAnySpins ? (
+        {isSubscriber ? (
+          // Subscriber: Show Radar link prominently
           <div>
-            <p className="text-sm text-[--muted] mb-3">
-              You've called {stats?.goldSpinCount + stats?.silverSpinCount + stats?.bronzeSpinCount} trending album{(stats?.goldSpinCount + stats?.silverSpinCount + stats?.bronzeSpinCount) !== 1 ? 's' : ''} early.
-            </p>
+            <Link
+              href="/radar"
+              className="flex items-center justify-between w-full p-3 border border-[#ffd700]/30 hover:border-[#ffd700] transition mb-3 no-underline"
+            >
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-[#ffd700]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <span className="text-sm font-medium">Trending Radar</span>
+              </div>
+              <span className="text-xs text-[--muted]">See what's close →</span>
+            </Link>
             <Link
               href="/discover"
-              className="block w-full py-2.5 border border-[--border] text-center text-[10px] tracking-[0.15em] uppercase hover:border-white transition no-underline"
+              className="block w-full py-2 text-center text-[10px] tracking-[0.15em] uppercase text-[--muted] hover:text-white transition no-underline"
             >
-              Find Your Next Call
+              Discover Albums
             </Link>
           </div>
         ) : (
+          // Free user: Upsell Radar
           <div>
-            <p className="text-sm text-[--muted] mb-3">
-              Review albums before they trend. Earn badges when you're right.
-            </p>
+            {hasAnySpins ? (
+              <p className="text-xs text-[--muted] mb-3">
+                {totalSpins} badge{totalSpins !== 1 ? 's' : ''} earned. Keep building your record.
+              </p>
+            ) : (
+              <p className="text-xs text-[--muted] mb-3">
+                Review albums before they trend to earn badges.
+              </p>
+            )}
+            <Link
+              href="/radar"
+              className="flex items-center justify-center gap-2 w-full py-2.5 border border-[--border] text-center text-[10px] tracking-[0.15em] uppercase hover:border-[#ffd700] hover:text-[#ffd700] transition no-underline mb-2"
+            >
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              Unlock Trending Radar
+            </Link>
             <Link
               href="/discover"
               className="block w-full py-2.5 bg-white text-black text-center text-[10px] tracking-[0.15em] uppercase font-bold hover:bg-[#e5e5e5] transition no-underline"
             >
-              Discover New Albums
+              Find Albums
             </Link>
           </div>
         )}
