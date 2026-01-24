@@ -176,6 +176,7 @@ export default async function TasteIDPage({ params }: Props) {
   // Generate personalized insight based on signature
   const getSignatureInsight = (sig: ListeningSignature): string => {
     const sorted = Object.entries(sig).sort((a, b) => b[1] - a[1])
+    if (sorted.length === 0) return `Your listening style is uniquely yours.`
     const dominant = sorted[0][0]
 
     const insights: Record<string, string> = {
