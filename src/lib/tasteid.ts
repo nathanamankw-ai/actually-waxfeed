@@ -1157,7 +1157,7 @@ function computePolarityScore2(
   // Engagement consistency - regular activity over time
   const reviewDates = reviews.map(r => r.createdAt.getTime())
   const timeSpan = reviewDates.length > 0 ? Math.max(...reviewDates) - Math.min(...reviewDates) : 0
-  const daysCovered = timeSpan / (1000 * 60 * 60 * 24)
+  const daysCovered = Math.max(timeSpan / (1000 * 60 * 60 * 24), 1) // At least 1 day
   const activityDensity = reviews.length / Math.max(daysCovered / 7, 1) // Reviews per week
   const consistencyFactor = Math.min(activityDensity / 5, 1) * 0.15
 
@@ -1215,14 +1215,18 @@ export async function computeTasteMatch(
   // 4. Shared genres (top overlap)
   const sharedGenres = taste1.topGenres.filter(g => taste2.topGenres.includes(g))
 
-  // 5. Find shared highly-rated albums
+  // 5. Find shared highly-rated albums (limited to recent for performance)
   const reviews1 = await prisma.review.findMany({
     where: { userId: userId1, rating: { gte: 8 } },
     select: { albumId: true },
+    orderBy: { createdAt: 'desc' },
+    take: 100,
   })
   const reviews2 = await prisma.review.findMany({
     where: { userId: userId2, rating: { gte: 8 } },
     select: { albumId: true },
+    orderBy: { createdAt: 'desc' },
+    take: 100,
   })
   const albums1 = new Set(reviews1.map(r => r.albumId))
   const albums2 = new Set(reviews2.map(r => r.albumId))
@@ -2018,23 +2022,24 @@ export function generateConnectionReason(
   const topResonanceNetwork = Object.entries(networkResonance)
     .sort((a, b) => b[1] - a[1])[0]?.[0]
 
-  const topContrastNetwork = Object.entries(networkContrast)
-    .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]))[0]
+  const contrastEntries = Object.entries(networkContrast).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]))
+  const topContrastEntry = contrastEntries[0]
 
   switch (matchType) {
     case 'taste_twin':
       return `You're musical twins! ${sharedGenres.length > 0 ? `Both deeply into ${sharedGenres.slice(0, 2).join(' and ')}.` : 'Remarkably similar listening patterns.'}`
 
     case 'network_resonance':
-      return `Strong ${topResonanceNetwork?.replace('_', ' ')} energy alignment. You both engage with music in similar ways.`
+      return `Strong ${topResonanceNetwork?.replace('_', ' ') || 'listening'} energy alignment. You both engage with music in similar ways.`
 
     case 'explorer_guide':
       return 'One of you is a musical explorer who could introduce the other to new sounds.'
 
     case 'opposite_attracts':
-      if (topContrastNetwork) {
-        const direction = topContrastNetwork[1] > 0 ? 'more' : 'less'
-        return `Different but fascinating. They're ${direction} ${topContrastNetwork[0].replace('_', ' ')}-driven than you.`
+      if (topContrastEntry) {
+        const [networkName, value] = topContrastEntry
+        const direction = value > 0 ? 'more' : 'less'
+        return `Different but fascinating. They're ${direction} ${networkName.replace('_', ' ')}-driven than you.`
       }
       return 'Different tastes that could expand your horizons.'
 
