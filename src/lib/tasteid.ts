@@ -949,7 +949,8 @@ function detectSignaturePatterns(
     const decade = `${Math.floor(year / 10) * 10}s`
     decadeCounts[decade] = (decadeCounts[decade] || 0) + 1
   })
-  const maxDecadePercent = Math.max(...Object.values(decadeCounts)) / reviews.length
+  const decadeValues = Object.values(decadeCounts)
+  const maxDecadePercent = decadeValues.length > 0 ? Math.max(...decadeValues, 0) / reviews.length : 0
   if (maxDecadePercent > 0.6) {
     patterns.push('Era Specialist')
   }
@@ -1146,7 +1147,7 @@ function computePolarityScore2(
 
   // Signature strength - how clear/distinct is the listening signature?
   const signatureValues = Object.values(signature)
-  const maxSignature = Math.max(...signatureValues)
+  const maxSignature = signatureValues.length > 0 ? Math.max(...signatureValues, 0) : 0
   const signatureStrength = maxSignature > 0.3 ? 0.8 : maxSignature > 0.2 ? 0.6 : 0.4
   const signatureFactor = signatureStrength * 0.2
 
@@ -1155,7 +1156,7 @@ function computePolarityScore2(
 
   // Engagement consistency - regular activity over time
   const reviewDates = reviews.map(r => r.createdAt.getTime())
-  const timeSpan = Math.max(...reviewDates) - Math.min(...reviewDates)
+  const timeSpan = reviewDates.length > 0 ? Math.max(...reviewDates) - Math.min(...reviewDates) : 0
   const daysCovered = timeSpan / (1000 * 60 * 60 * 24)
   const activityDensity = reviews.length / Math.max(daysCovered / 7, 1) // Reviews per week
   const consistencyFactor = Math.min(activityDensity / 5, 1) * 0.15
@@ -1528,7 +1529,8 @@ export function formatListeningSignature(signature: ListeningSignature): Array<{
   deviationAmount: number
 }> {
   const entries = Object.entries(signature) as [keyof ListeningSignature, number][]
-  const maxActivation = Math.max(...entries.map(([, v]) => v))
+  if (entries.length === 0) return []
+  const maxActivation = Math.max(...entries.map(([, v]) => v), 0.01) // Fallback to 0.01 to avoid division by zero
 
   return entries
     .sort((a, b) => b[1] - a[1])

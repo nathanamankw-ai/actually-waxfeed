@@ -666,7 +666,7 @@ export default async function TasteIDPage({ params }: Props) {
                   {/* Next steps */}
                   <div className="text-xs text-neutral-600">
                     <span className="uppercase tracking-wider">Next: </span>
-                    {future.nextSteps[0]}
+                    {future.nextSteps?.[0] || 'Continue exploring'}
                   </div>
                 </div>
               ))}
