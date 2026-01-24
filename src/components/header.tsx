@@ -7,13 +7,41 @@ import { DefaultAvatar } from "./default-avatar"
 import { WaxfeedLogo } from "./waxfeed-logo"
 import { useTheme } from "./theme-provider"
 
+type WaxStats = {
+  balance: number
+  canClaimDaily: boolean
+  currentStreak: number
+}
+
 export function Header() {
   const { data: session, status } = useSession()
   const { theme, toggleTheme } = useTheme()
   const [searchQuery, setSearchQuery] = useState("")
   const [showDropdown, setShowDropdown] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [waxStats, setWaxStats] = useState<WaxStats | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Fetch Wax balance
+  useEffect(() => {
+    const fetchWax = async () => {
+      if (!session?.user) return
+      try {
+        const res = await fetch("/api/wax/balance")
+        const data = await res.json()
+        if (data.success) {
+          setWaxStats({
+            balance: data.data.balance,
+            canClaimDaily: data.data.canClaimDaily,
+            currentStreak: data.data.currentStreak,
+          })
+        }
+      } catch (error) {
+        console.error("Failed to fetch wax:", error)
+      }
+    }
+    fetchWax()
+  }, [session])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -89,6 +117,21 @@ export function Header() {
             HOT TAKES
           </Link>
 
+          {/* Wax Balance - Always visible when logged in */}
+          {session && waxStats && (
+            <Link
+              href="/wallet"
+              className="flex items-center gap-2 px-3 py-1.5 no-underline hover:opacity-70 transition-opacity relative"
+              style={{ border: '1px solid var(--header-border)' }}
+            >
+              <span className="text-[10px] tracking-[0.1em] uppercase opacity-60">Wax</span>
+              <span className="font-bold tabular-nums">{waxStats.balance.toLocaleString()}</span>
+              {waxStats.canClaimDaily && (
+                <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500" title="Daily reward ready!" />
+              )}
+            </Link>
+          )}
+
           {/* Theme toggle */}
           <button
             onClick={toggleTheme}
@@ -133,6 +176,37 @@ export function Header() {
                     <p className="font-bold">{session.user?.username || session.user?.name}</p>
                     <p className="text-xs" style={{ opacity: 0.6 }}>{session.user?.email}</p>
                   </div>
+                  
+                  {/* Wax Section */}
+                  {waxStats && (
+                    <div style={{ borderBottom: '1px solid var(--header-border)' }}>
+                      <Link
+                        href="/wallet"
+                        className="flex items-center justify-between px-4 py-2 no-underline hover:opacity-70"
+                        onClick={() => setShowDropdown(false)}
+                      >
+                        <span>Wallet</span>
+                        <span className="font-bold tabular-nums">{waxStats.balance.toLocaleString()}</span>
+                      </Link>
+                      {waxStats.canClaimDaily && (
+                        <Link
+                          href="/wallet"
+                          className="block px-4 py-2 no-underline text-green-500 text-sm"
+                          onClick={() => setShowDropdown(false)}
+                        >
+                          Claim daily Wax →
+                        </Link>
+                      )}
+                      <Link
+                        href="/shop"
+                        className="block px-4 py-2 no-underline hover:opacity-70"
+                        onClick={() => setShowDropdown(false)}
+                      >
+                        Shop
+                      </Link>
+                    </div>
+                  )}
+
                   <Link
                     href={`/u/${session.user?.username || session.user?.id}`}
                     className="block px-4 py-2 no-underline hover:opacity-70"
@@ -182,8 +256,22 @@ export function Header() {
           )}
         </nav>
 
-        {/* Mobile/Tablet: Search icon + Menu button */}
+        {/* Mobile/Tablet: Wax + Search + Menu */}
         <div className="flex lg:hidden items-center gap-2">
+          {/* Wax Balance - Mobile */}
+          {session && waxStats && (
+            <Link
+              href="/wallet"
+              className="flex items-center gap-1.5 px-2 py-1 no-underline relative"
+              style={{ border: '1px solid var(--header-border)' }}
+            >
+              <span className="font-bold tabular-nums text-sm">{waxStats.balance.toLocaleString()}</span>
+              {waxStats.canClaimDaily && (
+                <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500" />
+              )}
+            </Link>
+          )}
+
           {/* Search icon - links to search page */}
           <Link
             href="/search"
@@ -325,6 +413,50 @@ export function Header() {
             {status !== "loading" && (
               session ? (
                 <div className="mt-4" style={{ borderTop: '1px solid var(--header-border)' }}>
+                  {/* Wax Section - Mobile */}
+                  {waxStats && (
+                    <div style={{ borderBottom: '1px solid var(--header-border)' }}>
+                      <Link
+                        href="/wallet"
+                        className="flex items-center justify-between px-4 py-4 no-underline"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <div>
+                          <span className="text-[10px] tracking-[0.15em] uppercase" style={{ opacity: 0.6 }}>Your Wax</span>
+                          <p className="text-2xl font-bold tabular-nums">{waxStats.balance.toLocaleString()}</p>
+                        </div>
+                        {waxStats.currentStreak > 0 && (
+                          <div className="text-right">
+                            <span className="text-[10px] tracking-[0.15em] uppercase" style={{ opacity: 0.6 }}>Streak</span>
+                            <p className="text-xl font-bold">{waxStats.currentStreak}</p>
+                          </div>
+                        )}
+                      </Link>
+                      {waxStats.canClaimDaily && (
+                        <Link
+                          href="/wallet"
+                          className="flex items-center justify-between px-4 py-3 no-underline bg-green-500/10"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <span className="text-green-500 font-medium">Claim Daily Wax</span>
+                          <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </Link>
+                      )}
+                      <Link
+                        href="/shop"
+                        className="flex items-center justify-between px-4 py-4 text-base no-underline hover:opacity-70"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <span>Shop</span>
+                        <svg className="w-5 h-5" style={{ opacity: 0.5 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </Link>
+                    </div>
+                  )}
+
                   {/* User info header */}
                   <div className="px-4 py-4 flex items-center gap-3" style={{ opacity: 0.9 }}>
                     {session.user?.image ? (

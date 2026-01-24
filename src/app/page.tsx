@@ -3,6 +3,7 @@ import { DefaultAvatar } from "@/components/default-avatar"
 import Link from "next/link"
 import { auth } from "@/lib/auth"
 import { format, formatDistanceToNow } from "date-fns"
+import { DailyObjectives } from "@/components/wax/DailyObjectives"
 
 export const dynamic = "force-dynamic"
 
@@ -211,34 +212,40 @@ export default async function Home() {
               </div>
             )}
 
-            {/* RIGHT: TasteID Promo (30%) */}
-            <div className="lg:w-[30%] px-6 py-10 border-t lg:border-t-0 border-[--border] flex flex-col">
-              <div className="flex items-center gap-2 mb-4">
-                <h2 className="text-[11px] tracking-[0.2em] uppercase text-[--muted]">
-                  TasteID
-                </h2>
-                <span className="text-[8px] px-1 py-0.5 bg-white/10 text-[--muted] uppercase tracking-wider">Beta</span>
-              </div>
+            {/* RIGHT: Daily Objectives or TasteID (30%) */}
+            <div className="lg:w-[30%] px-6 py-10 border-t lg:border-t-0 border-[--border]">
+              {session ? (
+                <DailyObjectives />
+              ) : (
+                <div className="flex flex-col h-full">
+                  <div className="flex items-center gap-2 mb-4">
+                    <h2 className="text-[11px] tracking-[0.2em] uppercase text-[--muted]">
+                      TasteID
+                    </h2>
+                    <span className="text-[8px] px-1 py-0.5 bg-white/10 text-[--muted] uppercase tracking-wider">Beta</span>
+                  </div>
 
-              <div className="flex-1 flex flex-col justify-center">
-                <p className="text-sm text-[--muted] mb-4">
-                  Discover your musical archetype and find your taste twins.
-                </p>
+                  <div className="flex-1 flex flex-col justify-center">
+                    <p className="text-sm text-[--muted] mb-4">
+                      Discover your musical archetype and find your taste twins.
+                    </p>
 
-                <Link
-                  href="/taste-setup"
-                  className="block w-full py-2.5 bg-white text-black text-center text-[10px] tracking-[0.15em] uppercase font-bold hover:bg-[#e5e5e5] transition-colors mb-3"
-                >
-                  Get Your TasteID
-                </Link>
+                    <Link
+                      href="/taste-setup"
+                      className="block w-full py-2.5 bg-white text-black text-center text-[10px] tracking-[0.15em] uppercase font-bold hover:bg-[#e5e5e5] transition-colors mb-3"
+                    >
+                      Get Your TasteID
+                    </Link>
 
-                <Link
-                  href="/discover/similar-tasters"
-                  className="text-[10px] text-[--muted] hover:text-white transition-colors"
-                >
-                  Find Similar Tasters →
-                </Link>
-              </div>
+                    <Link
+                      href="/discover/similar-tasters"
+                      className="text-[10px] text-[--muted] hover:text-white transition-colors"
+                    >
+                      Find Similar Tasters →
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
