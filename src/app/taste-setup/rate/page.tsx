@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { BrainNetworkIcon } from "@/components/icons/network-icons"
 
 interface Album {
   id: string
@@ -93,7 +94,7 @@ export default function TasteSetupRatePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "var(--background)", color: "var(--foreground)" }}>
         <div className="text-xl uppercase tracking-wider animate-pulse">
           Loading albums...
         </div>
@@ -103,10 +104,10 @@ export default function TasteSetupRatePage() {
 
   if (albums.length === 0) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center p-8">
+      <div className="min-h-screen flex items-center justify-center p-8" style={{ backgroundColor: "var(--background)", color: "var(--foreground)" }}>
         <div className="text-center space-y-4">
           <p className="text-xl">No albums available for rating.</p>
-          <Link href="/" className="text-neutral-400 hover:text-white">
+          <Link href="/" className="text-[--muted] hover:text-[--foreground]">
             Go to homepage →
           </Link>
         </div>
@@ -115,14 +116,14 @@ export default function TasteSetupRatePage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
+    <div className="min-h-screen p-8" style={{ backgroundColor: "var(--background)", color: "var(--foreground)" }}>
       <div className="max-w-xl mx-auto space-y-8">
         {/* Progress */}
         <div className="flex justify-center gap-2">
-          <div className="w-3 h-3 bg-neutral-700" />
-          <div className="w-3 h-3 bg-white" />
-          <div className="w-3 h-3 bg-neutral-700" />
-          <div className="w-3 h-3 bg-neutral-700" />
+          <div className="w-3 h-3 bg-[--border]" />
+          <div className="w-3 h-3 bg-[--foreground]" />
+          <div className="w-3 h-3 bg-[--border]" />
+          <div className="w-3 h-3 bg-[--border]" />
         </div>
 
         {/* Header */}
@@ -130,8 +131,8 @@ export default function TasteSetupRatePage() {
           <h1 className="text-2xl font-bold uppercase tracking-wider">
             RATE ALBUMS
           </h1>
-          <p className="text-neutral-400">
-            Rate at least 20 albums to generate your TasteID
+          <p className="text-[--muted]">
+            Rate at least 20 albums to unlock your TasteID
           </p>
         </div>
 
@@ -140,11 +141,11 @@ export default function TasteSetupRatePage() {
           {Array.from({ length: 20 }).map((_, i) => (
             <div
               key={i}
-              className={`w-2 h-2 ${i < ratedCount ? "bg-white" : "bg-neutral-800"}`}
+              className={`w-2 h-2 ${i < ratedCount ? "bg-violet-500" : "bg-[--border]"}`}
             />
           ))}
         </div>
-        <p className="text-center text-sm text-neutral-500">
+        <p className="text-center text-sm text-[--muted]">
           {ratedCount} / 20 minimum
         </p>
 
@@ -153,7 +154,7 @@ export default function TasteSetupRatePage() {
           <div className="space-y-6">
             {/* Album display */}
             <div className="flex flex-col items-center gap-4">
-              <div className="w-64 h-64 border-2 border-white">
+              <div className="w-64 h-64 border-2 border-[--foreground]">
                 {currentAlbum.coverArtUrlMedium || currentAlbum.coverArtUrl ? (
                   <img
                     src={currentAlbum.coverArtUrlMedium || currentAlbum.coverArtUrl || ""}
@@ -161,12 +162,12 @@ export default function TasteSetupRatePage() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-neutral-800" />
+                  <div className="w-full h-full bg-[--surface]" />
                 )}
               </div>
               <div className="text-center">
                 <h2 className="text-xl font-bold">{currentAlbum.title}</h2>
-                <p className="text-neutral-400">{currentAlbum.artistName}</p>
+                <p className="text-[--muted]">{currentAlbum.artistName}</p>
               </div>
             </div>
 
@@ -178,16 +179,16 @@ export default function TasteSetupRatePage() {
                     key={i}
                     onClick={() => handleRate(i)}
                     className={`
-                      aspect-square border-2 border-white font-bold text-sm
-                      hover:bg-white hover:text-black transition-colors
-                      ${ratings[currentAlbum.id] === i ? "bg-white text-black" : ""}
+                      aspect-square border-2 border-[--foreground] font-bold text-sm
+                      hover:bg-[--foreground] hover:text-[--background] transition-colors
+                      ${ratings[currentAlbum.id] === i ? "bg-[--foreground] text-[--background]" : ""}
                     `}
                   >
                     {i}
                   </button>
                 ))}
               </div>
-              <div className="flex justify-between text-xs text-neutral-500 uppercase">
+              <div className="flex justify-between text-xs text-[--muted] uppercase">
                 <span>Skip it</span>
                 <span>Masterpiece</span>
               </div>
@@ -196,7 +197,7 @@ export default function TasteSetupRatePage() {
             {/* Skip button */}
             <button
               onClick={handleSkip}
-              className="w-full py-3 text-neutral-500 hover:text-white transition-colors"
+              className="w-full py-3 text-[--muted] hover:text-[--foreground] transition-colors"
             >
               Haven't heard it? Skip →
             </button>
@@ -206,10 +207,12 @@ export default function TasteSetupRatePage() {
         {/* Completion state */}
         {canProceed && (
           <div className="space-y-6 text-center">
-            <div className="text-4xl">🎉</div>
-            <h2 className="text-2xl font-bold uppercase">NICE TASTE!</h2>
-            <p className="text-neutral-400">
-              You've rated {ratedCount} albums. Ready to see your TasteID?
+            <div className="w-16 h-16 mx-auto flex items-center justify-center border-2 border-violet-500/50 bg-gradient-to-br from-violet-500/20 to-blue-500/20">
+              <BrainNetworkIcon size={32} color="rgb(139, 92, 246)" />
+            </div>
+            <h2 className="text-2xl font-bold uppercase">TASTEID READY</h2>
+            <p className="text-[--muted]">
+              You've rated {ratedCount} albums. Ready to see your music profile?
             </p>
 
             {/* Rated albums grid */}
@@ -219,7 +222,7 @@ export default function TasteSetupRatePage() {
                 .slice(0, 5)
                 .map((album) => (
                   <div key={album.id} className="text-center">
-                    <div className="w-12 h-12 border border-white">
+                    <div className="w-12 h-12 border border-[--foreground]">
                       {album.coverArtUrlMedium || album.coverArtUrl ? (
                         <img
                           src={album.coverArtUrlMedium || album.coverArtUrl || ""}
@@ -227,7 +230,7 @@ export default function TasteSetupRatePage() {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full bg-neutral-800" />
+                        <div className="w-full h-full bg-[--surface]" />
                       )}
                     </div>
                     <span className="text-xs font-bold">{ratings[album.id]}</span>
@@ -238,7 +241,7 @@ export default function TasteSetupRatePage() {
             <button
               onClick={handleComplete}
               disabled={isSubmitting}
-              className="w-full py-4 bg-white text-black font-bold uppercase tracking-wider text-lg hover:bg-neutral-200 transition-colors disabled:opacity-50"
+              className="w-full py-4 bg-gradient-to-r from-violet-500 to-blue-500 text-white font-bold uppercase tracking-wider text-lg hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {isSubmitting ? "COMPUTING..." : "REVEAL MY TASTEID"}
             </button>
@@ -246,7 +249,7 @@ export default function TasteSetupRatePage() {
             {currentIndex < albums.length - 1 && (
               <button
                 onClick={() => {}}
-                className="text-neutral-500 hover:text-white transition-colors"
+                className="text-[--muted] hover:text-[--foreground] transition-colors"
               >
                 Rate more albums →
               </button>

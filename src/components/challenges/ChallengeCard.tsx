@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { DefaultAvatar } from "@/components/default-avatar"
+import { CHALLENGE_TYPE_ICONS } from "@/components/icons/network-icons"
 
 interface Challenge {
   id: string
@@ -35,11 +36,11 @@ interface ChallengeCardProps {
   onDecline?: (id: string) => void
 }
 
-const CHALLENGE_TYPES: Record<string, { label: string; icon: string; color: string }> = {
-  discover_together: { label: "Discover Together", icon: "🔍", color: "text-blue-400" },
-  rate_same_album: { label: "Rate Same Album", icon: "⚔️", color: "text-amber-400" },
-  genre_swap: { label: "Genre Swap", icon: "🔄", color: "text-purple-400" },
-  decade_dive: { label: "Decade Dive", icon: "📅", color: "text-emerald-400" },
+const CHALLENGE_TYPES: Record<string, { label: string; color: string; iconColor: string }> = {
+  discover_together: { label: "Discover Together", color: "text-blue-400", iconColor: "rgb(59, 130, 246)" },
+  rate_same_album: { label: "Rate Same Album", color: "text-amber-400", iconColor: "rgb(245, 158, 11)" },
+  genre_swap: { label: "Genre Swap", color: "text-purple-400", iconColor: "rgb(168, 85, 247)" },
+  decade_dive: { label: "Decade Dive", color: "text-emerald-400", iconColor: "rgb(16, 185, 129)" },
 }
 
 const STATUS_STYLES: Record<string, { bg: string; text: string }> = {
@@ -78,7 +79,14 @@ export function ChallengeCard({ challenge, currentUserId, onAccept, onDecline }:
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-[--border]">
         <div className="flex items-center gap-2">
-          <span className={`text-lg ${typeInfo.color}`}>{typeInfo.icon}</span>
+          {CHALLENGE_TYPE_ICONS[challenge.challengeType as keyof typeof CHALLENGE_TYPE_ICONS] && (
+            <span className={`${typeInfo.color.replace('text-', 'bg-').replace('-400', '-500/10')} p-1`}>
+              {(() => {
+                const IconComponent = CHALLENGE_TYPE_ICONS[challenge.challengeType as keyof typeof CHALLENGE_TYPE_ICONS]
+                return <IconComponent size={16} color={typeInfo.iconColor} />
+              })()}
+            </span>
+          )}
           <span className="text-xs font-medium">{typeInfo.label}</span>
         </div>
         <span className={`text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 ${statusStyle.bg} ${statusStyle.text}`}>

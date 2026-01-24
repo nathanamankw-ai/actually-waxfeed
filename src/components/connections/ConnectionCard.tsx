@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { DefaultAvatar } from "@/components/default-avatar"
 import { SignatureComparisonMini } from "./SignatureComparison"
+import { MATCH_TYPE_ICONS } from "@/components/icons/network-icons"
 import type { EnhancedTasteMatch, ListeningSignature } from "@/lib/tasteid"
 
 interface ConnectionCardProps {
@@ -15,13 +16,13 @@ interface ConnectionCardProps {
   variant?: "card" | "compact"
 }
 
-const MATCH_TYPE_COLORS: Record<string, { bg: string; text: string; label: string }> = {
-  taste_twin: { bg: "bg-emerald-500/10", text: "text-emerald-400", label: "Taste Twin" },
-  network_resonance: { bg: "bg-blue-500/10", text: "text-blue-400", label: "Network Resonance" },
-  opposite_attracts: { bg: "bg-amber-500/10", text: "text-amber-400", label: "Opposite Attracts" },
-  explorer_guide: { bg: "bg-purple-500/10", text: "text-purple-400", label: "Explorer Guide" },
-  complementary: { bg: "bg-indigo-500/10", text: "text-indigo-400", label: "Complementary" },
-  genre_buddy: { bg: "bg-rose-500/10", text: "text-rose-400", label: "Genre Buddy" },
+const MATCH_TYPE_COLORS: Record<string, { bg: string; text: string; label: string; color: string }> = {
+  taste_twin: { bg: "bg-emerald-500/10", text: "text-emerald-400", label: "Taste Twin", color: "rgb(16, 185, 129)" },
+  network_resonance: { bg: "bg-blue-500/10", text: "text-blue-400", label: "Network Resonance", color: "rgb(59, 130, 246)" },
+  opposite_attracts: { bg: "bg-amber-500/10", text: "text-amber-400", label: "Opposite Attracts", color: "rgb(245, 158, 11)" },
+  explorer_guide: { bg: "bg-purple-500/10", text: "text-purple-400", label: "Explorer Guide", color: "rgb(168, 85, 247)" },
+  complementary: { bg: "bg-indigo-500/10", text: "text-indigo-400", label: "Complementary", color: "rgb(99, 102, 241)" },
+  genre_buddy: { bg: "bg-rose-500/10", text: "text-rose-400", label: "Genre Buddy", color: "rgb(244, 63, 94)" },
 }
 
 export function ConnectionCard({
@@ -81,11 +82,21 @@ export function ConnectionCard({
           <p className="text-sm font-semibold truncate">@{connection.username}</p>
           <p className="text-[10px] text-[--muted] truncate">{connection.connectionReason}</p>
         </div>
-        <div className="text-right flex-shrink-0">
-          <p className="text-lg font-bold">{connection.overallScore}%</p>
-          <span className={`text-[9px] ${matchStyle.text} font-bold tracking-wide uppercase`}>
-            {matchStyle.label}
-          </span>
+        <div className="text-right flex-shrink-0 flex items-center gap-2">
+          {MATCH_TYPE_ICONS[connection.matchType] && (
+            <span className={`${matchStyle.bg} p-1`}>
+              {(() => {
+                const IconComponent = MATCH_TYPE_ICONS[connection.matchType]
+                return <IconComponent size={12} color={matchStyle.color} />
+              })()}
+            </span>
+          )}
+          <div>
+            <p className="text-lg font-bold">{connection.overallScore}%</p>
+            <span className={`text-[9px] ${matchStyle.text} font-bold tracking-wide uppercase`}>
+              {matchStyle.label}
+            </span>
+          </div>
         </div>
       </Link>
     )
@@ -101,9 +112,19 @@ export function ConnectionCard({
     >
       {/* Header with match type badge */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-[--border]">
-        <span className={`text-[9px] ${matchStyle.text} font-bold tracking-[0.15em] uppercase px-2 py-0.5 ${matchStyle.bg}`}>
-          {matchStyle.label}
-        </span>
+        <div className="flex items-center gap-2">
+          {MATCH_TYPE_ICONS[connection.matchType] && (
+            <span className={`${matchStyle.bg} p-1`}>
+              {(() => {
+                const IconComponent = MATCH_TYPE_ICONS[connection.matchType]
+                return <IconComponent size={14} color={matchStyle.color} />
+              })()}
+            </span>
+          )}
+          <span className={`text-[9px] ${matchStyle.text} font-bold tracking-[0.15em] uppercase`}>
+            {matchStyle.label}
+          </span>
+        </div>
         <span className="text-[10px] text-[--muted]">
           {Math.round(connection.matchStrength * 100)}% confidence
         </span>
