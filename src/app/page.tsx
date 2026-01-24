@@ -354,16 +354,16 @@ export default async function Home() {
           </section>
 
           {/* RIGHT: Recent Reviews */}
-          <section className="lg:w-1/2 px-6 py-12 lg:py-16 border-t lg:border-t-0 border-[--border] flex flex-col">
+          <section className="lg:w-1/2 px-6 py-12 lg:py-16 border-t lg:border-t-0 border-[--border]">
             <div className="flex items-baseline justify-between mb-8">
               <h2 className="text-[11px] tracking-[0.2em] uppercase text-[--muted]">
                 Recent Reviews
               </h2>
             </div>
 
-            {/* Reviews list - grows to fill space */}
-            <div className="space-y-0 flex-1">
-              {recentReviews.map((review) => (
+            {/* Reviews list */}
+            <div className="space-y-0">
+              {recentReviews.slice(0, 10).map((review) => (
                 <Link
                   key={review.id}
                   href={`/album/${review.album.spotifyId}`}
