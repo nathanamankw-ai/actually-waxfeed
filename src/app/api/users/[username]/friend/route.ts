@@ -228,8 +228,9 @@ export async function POST(
         return errorResponse('Friend request already sent', 409)
       }
 
-      // If previously rejected, allow re-sending by updating the existing request
-      if (existingRequest.status === 'rejected') {
+      // If previously rejected OR accepted (but friendship was deleted/unfriended),
+      // allow re-sending by updating the existing request
+      if (existingRequest.status === 'rejected' || existingRequest.status === 'accepted') {
         await prisma.friendRequest.update({
           where: { id: existingRequest.id },
           data: {
