@@ -144,7 +144,7 @@ export default async function TasteIDPage({ params }: Props) {
             <h1 className="text-2xl font-bold uppercase tracking-wider">
               TASTEID NOT GENERATED
             </h1>
-            <p className="text-neutral-400">
+            <p className="text-muted-foreground">
               {isOwnProfile
                 ? "Your TasteID hasn't been computed yet. Review at least 3 albums to generate your unique taste fingerprint."
                 : `@${username} hasn't generated their TasteID yet.`}
@@ -280,7 +280,7 @@ export default async function TasteIDPage({ params }: Props) {
                 )}
               </div>
               <div>
-                <div className="text-xs uppercase tracking-widest text-neutral-500 font-bold mb-1">
+                <div className="text-xs uppercase tracking-widest text-muted-foreground font-bold mb-1">
                   TASTEID
                 </div>
                 <Link
@@ -303,7 +303,7 @@ export default async function TasteIDPage({ params }: Props) {
                 />
                 {secondaryInfo && (
                   <div>
-                    <span className="text-xs text-neutral-500 mr-2">ALSO:</span>
+                    <span className="text-xs text-muted-foreground mr-2">ALSO:</span>
                     <ArchetypeBadge {...secondaryInfo} size="sm" />
                   </div>
                 )}
@@ -355,7 +355,7 @@ export default async function TasteIDPage({ params }: Props) {
         {/* Defining Artists */}
         {tasteId.topArtists && tasteId.topArtists.length > 0 && (
           <div className="mb-6 sm:mb-8">
-            <h2 className="text-xs uppercase tracking-widest text-neutral-500 font-bold mb-4">
+            <h2 className="text-xs uppercase tracking-widest text-muted-foreground font-bold mb-4">
               DEFINING ARTISTS
             </h2>
             <ArtistDNAStrip artists={tasteId.topArtists} />
@@ -365,7 +365,7 @@ export default async function TasteIDPage({ params }: Props) {
         {/* Top Genres */}
         {tasteId.topGenres && tasteId.topGenres.length > 0 && (
           <div className="mb-6 sm:mb-8">
-            <h2 className="text-xs uppercase tracking-widest text-neutral-500 font-bold mb-4">
+            <h2 className="text-xs uppercase tracking-widest text-muted-foreground font-bold mb-4">
               TOP GENRES
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -374,7 +374,7 @@ export default async function TasteIDPage({ params }: Props) {
                 key={genre}
                 className="px-3 sm:px-4 py-2.5 sm:py-2 border-2 border-foreground flex items-center gap-2 min-h-[44px]"
               >
-                <span className="text-neutral-500 text-sm">{i + 1}</span>
+                <span className="text-muted-foreground text-sm">{i + 1}</span>
                 <span className="font-bold uppercase text-sm sm:text-base">{genre}</span>
               </div>
               ))}
@@ -385,7 +385,7 @@ export default async function TasteIDPage({ params }: Props) {
         {/* Decade Preferences */}
         {Object.keys(decadePrefs).length > 0 && (
           <div className="mb-6 sm:mb-8">
-            <h2 className="text-xs uppercase tracking-widest text-neutral-500 font-bold mb-4">
+            <h2 className="text-xs uppercase tracking-widest text-muted-foreground font-bold mb-4">
               DECADE PREFERENCES
             </h2>
             <div className="space-y-3 sm:space-y-2">
@@ -395,13 +395,13 @@ export default async function TasteIDPage({ params }: Props) {
                 .map(([decade, value]) => (
                   <div key={decade} className="flex items-center gap-3 sm:gap-4 min-h-[44px] sm:min-h-0">
                     <span className="w-14 sm:w-16 text-sm font-bold">{decade}</span>
-                    <div className="flex-1 h-5 sm:h-4 bg-neutral-800">
+                    <div className="flex-1 h-5 sm:h-4 bg-muted">
                       <div
                         className="h-full bg-foreground"
                         style={{ width: `${value * 100}%` }}
                       />
                     </div>
-                    <span className="w-12 text-right text-sm text-neutral-500">
+                    <span className="w-12 text-right text-sm text-muted-foreground">
                       {Math.round(value * 100)}%
                     </span>
                   </div>
@@ -411,9 +411,9 @@ export default async function TasteIDPage({ params }: Props) {
         )}
 
         {/* Review Depth */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8 border-2 border-neutral-800 p-3 sm:p-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8 border-2 border-border p-3 sm:p-4">
           <div>
-            <div className="text-xs uppercase tracking-widest text-neutral-500 font-bold mb-1">
+            <div className="text-xs uppercase tracking-widest text-muted-foreground font-bold mb-1">
               REVIEW STYLE
             </div>
             <div className="text-lg font-bold uppercase">
@@ -421,13 +421,13 @@ export default async function TasteIDPage({ params }: Props) {
             </div>
           </div>
           <div>
-            <div className="text-xs uppercase tracking-widest text-neutral-500 font-bold mb-1">
+            <div className="text-xs uppercase tracking-widest text-muted-foreground font-bold mb-1">
               REVIEWS ANALYZED
             </div>
             <div className="text-lg font-bold">{tasteId.reviewCount}</div>
           </div>
           <div>
-            <div className="text-xs uppercase tracking-widest text-neutral-500 font-bold mb-1">
+            <div className="text-xs uppercase tracking-widest text-muted-foreground font-bold mb-1">
               AVG REVIEW LENGTH
             </div>
             <div className="text-lg font-bold">{tasteId.avgReviewLength} words</div>
@@ -449,20 +449,20 @@ export default async function TasteIDPage({ params }: Props) {
                 <h2 className="text-xs uppercase tracking-[0.3em] text-foreground font-bold">
                   LISTENING SIGNATURE
                 </h2>
-                <span className="text-[10px] px-2 py-0.5 border border-neutral-700 text-neutral-500 uppercase tracking-wider">
+                <span className="text-[10px] px-2 py-0.5 border border-border text-muted-foreground uppercase tracking-wider">
                   POLARITY 1.2
                 </span>
               </div>
 
               {/* Personalized insight */}
-              <p className="text-neutral-300 mb-6 leading-relaxed">
+              <p className="text-muted-foreground mb-6 leading-relaxed">
                 {getSignatureInsight(listeningSignature)}
               </p>
 
               {/* Uniqueness indicator */}
               {uniqueness.standoutNetworks.length > 0 && (
-                <div className="mb-4 sm:mb-6 p-3 border border-neutral-800 bg-neutral-900/50">
-                  <div className="text-xs uppercase tracking-widest text-neutral-500 mb-2">
+                <div className="mb-4 sm:mb-6 p-3 border border-border bg-muted/50">
+                  <div className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
                     WHAT MAKES YOU UNIQUE
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -504,23 +504,23 @@ export default async function TasteIDPage({ params }: Props) {
                                 {network.deviation === 'above' ? '↑' : '↓'} {network.deviationAmount}%
                               </span>
                             )}
-                            <span className="text-[10px] sm:text-xs text-neutral-600 hidden md:inline">
+                            <span className="text-[10px] sm:text-xs text-muted-foreground hidden md:inline">
                               {getNetworkMeaning(network.network)}
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-[10px] text-neutral-600 hidden md:inline">
+                            <span className="text-[10px] text-muted-foreground hidden md:inline">
                               typical: {network.typicalRange.min}-{network.typicalRange.max}%
                             </span>
-                            <span className="text-sm text-neutral-400 font-mono">
+                            <span className="text-sm text-muted-foreground font-mono">
                               {network.percentage}%
                             </span>
                           </div>
                         </div>
-                        <div className="h-2 bg-neutral-900 overflow-hidden relative">
+                        <div className="h-2 bg-muted overflow-hidden relative">
                           {/* Typical range indicator */}
                           <div
-                            className="absolute h-full bg-neutral-700/50"
+                            className="absolute h-full bg-muted-foreground/20"
                             style={{
                               left: `${network.typicalRange.min}%`,
                               width: `${network.typicalRange.max - network.typicalRange.min}%`,
@@ -547,32 +547,32 @@ export default async function TasteIDPage({ params }: Props) {
                 ))}
               </div>
 
-              <div className="mt-4 sm:mt-6 pt-4 border-t border-neutral-800 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="mt-4 sm:mt-6 pt-4 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {polarityScore2 && (
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs uppercase tracking-widest text-neutral-500">
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground">
                         POLARITY 2.0
                       </span>
                       <span className="text-2xl font-bold font-mono">
                         {polarityScore2.toFixed(2)}
                       </span>
                     </div>
-                    <p className="text-xs text-neutral-600">
+                    <p className="text-xs text-muted-foreground">
                       Taste identity strength
                     </p>
                   </div>
                 )}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs uppercase tracking-widest text-neutral-500">
+                    <span className="text-xs uppercase tracking-widest text-muted-foreground">
                       UNIQUENESS
                     </span>
                     <span className="text-2xl font-bold font-mono">
                       {Math.round(uniqueness.score * 100)}%
                     </span>
                   </div>
-                  <p className="text-xs text-neutral-600">
+                  <p className="text-xs text-muted-foreground">
                     How distinct from typical
                   </p>
                 </div>
@@ -584,14 +584,14 @@ export default async function TasteIDPage({ params }: Props) {
         {/* Signature Patterns */}
         {signaturePatterns.length > 0 && (
           <div className="mb-6 sm:mb-8">
-            <h2 className="text-xs uppercase tracking-widest text-neutral-500 font-bold mb-4">
+            <h2 className="text-xs uppercase tracking-widest text-muted-foreground font-bold mb-4">
               YOUR PATTERNS
             </h2>
             <div className="space-y-3">
               {signaturePatterns.map((pattern: string) => (
                 <div
                   key={pattern}
-                  className="border border-neutral-800 p-4 hover:border-foreground transition-colors"
+                  className="border border-border p-4 hover:border-foreground transition-colors"
                 >
                   <div className="flex items-start gap-3 mb-2">
                     <div className="w-2 h-2 bg-foreground mt-1.5 flex-shrink-0" />
@@ -599,7 +599,7 @@ export default async function TasteIDPage({ params }: Props) {
                       {pattern}
                     </span>
                   </div>
-                  <p className="text-sm text-neutral-400 pl-5">
+                  <p className="text-sm text-muted-foreground pl-5">
                     {getPatternMeaning(pattern)}
                   </p>
                 </div>
@@ -611,14 +611,14 @@ export default async function TasteIDPage({ params }: Props) {
         {/* Memorable Moments */}
         {memorableMoments.length > 0 && (
           <div className="mb-6 sm:mb-8">
-            <h2 className="text-xs uppercase tracking-widest text-neutral-500 font-bold mb-4">
+            <h2 className="text-xs uppercase tracking-widest text-muted-foreground font-bold mb-4">
               MEMORABLE MOMENTS
             </h2>
             <div className="space-y-3">
               {memorableMoments.slice(0, 5).map((moment, i) => (
                 <div
                   key={i}
-                  className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 border border-neutral-800 hover:border-neutral-600 transition-colors"
+                  className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 border border-border hover:border-muted-foreground transition-colors"
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-11 h-11 sm:w-10 sm:h-10 border border-foreground flex items-center justify-center text-lg flex-shrink-0">
@@ -626,10 +626,10 @@ export default async function TasteIDPage({ params }: Props) {
                     </div>
                     <div className="flex-1 min-w-0 sm:w-auto">
                       <div className="font-bold truncate">{moment.albumTitle}</div>
-                      <div className="text-sm text-neutral-500">{moment.artistName}</div>
+                      <div className="text-sm text-muted-foreground">{moment.artistName}</div>
                     </div>
                   </div>
-                  <div className="text-xs text-neutral-600 uppercase tracking-wider pl-[60px] sm:pl-0 sm:ml-auto">
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider pl-[60px] sm:pl-0 sm:ml-auto">
                     {moment.description}
                   </div>
                 </div>
@@ -641,35 +641,35 @@ export default async function TasteIDPage({ params }: Props) {
         {/* Musical Future Selves */}
         {futureSelvesMusic.length > 0 && (
           <div className="mb-6 sm:mb-8">
-            <h2 className="text-xs uppercase tracking-widest text-neutral-500 font-bold mb-4">
+            <h2 className="text-xs uppercase tracking-widest text-muted-foreground font-bold mb-4">
               YOUR MUSICAL FUTURES
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {futureSelvesMusic.map((future) => (
                 <div
                   key={future.id}
-                  className="border-2 border-neutral-800 hover:border-foreground p-4 transition-colors group"
+                  className="border-2 border-border hover:border-foreground p-4 transition-colors group"
                 >
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="font-bold uppercase tracking-wide text-sm sm:text-base">
                       {future.name}
                     </h3>
-                    <span className="text-xs font-mono text-neutral-500">
+                    <span className="text-xs font-mono text-muted-foreground">
                       {Math.round(future.progress * 100)}%
                     </span>
                   </div>
-                  <p className="text-sm text-neutral-400 mb-3">
+                  <p className="text-sm text-muted-foreground mb-3">
                     {future.description}
                   </p>
                   {/* Progress bar */}
-                  <div className="h-1.5 sm:h-1 bg-neutral-900 mb-3">
+                  <div className="h-1.5 sm:h-1 bg-muted mb-3">
                     <div
                       className="h-full bg-foreground transition-all duration-500"
                       style={{ width: `${future.progress * 100}%` }}
                     />
                   </div>
                   {/* Next steps */}
-                  <div className="text-xs text-neutral-600">
+                  <div className="text-xs text-muted-foreground">
                     <span className="uppercase tracking-wider">Next: </span>
                     {future.nextSteps?.[0] || 'Continue exploring'}
                   </div>
@@ -697,17 +697,17 @@ export default async function TasteIDPage({ params }: Props) {
           )
 
           return (
-            <div className="mb-6 sm:mb-8 border border-neutral-800 p-4 sm:p-6">
+            <div className="mb-6 sm:mb-8 border border-border p-4 sm:p-6">
               <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4">
-                <h2 className="text-xs uppercase tracking-widest text-neutral-500 font-bold">
+                <h2 className="text-xs uppercase tracking-widest text-muted-foreground font-bold">
                   TASTE EVOLUTION
                 </h2>
-                <span className="text-[10px] px-2 py-0.5 border border-neutral-700 text-neutral-600">
+                <span className="text-[10px] px-2 py-0.5 border border-border text-muted-foreground">
                   since {oldestSnapshot.month}/{oldestSnapshot.year}
                 </span>
               </div>
 
-              <p className="text-neutral-300 mb-4">{comparison.interpretation}</p>
+              <p className="text-muted-foreground mb-4">{comparison.interpretation}</p>
 
               {significantChanges.length > 0 && (
                 <div className="space-y-2">
@@ -722,7 +722,7 @@ export default async function TasteIDPage({ params }: Props) {
                             ? 'text-green-400'
                             : change.direction === 'decreased'
                             ? 'text-orange-400'
-                            : 'text-neutral-500'
+                            : 'text-muted-foreground'
                         }`}
                       >
                         {change.direction === 'increased'
@@ -734,7 +734,7 @@ export default async function TasteIDPage({ params }: Props) {
                       <span className="uppercase font-bold">
                         {change.network.replace('_', ' ')}
                       </span>
-                      <span className="text-neutral-500">
+                      <span className="text-muted-foreground">
                         {change.change > 0 ? '+' : ''}
                         {change.change}%
                       </span>
@@ -743,10 +743,10 @@ export default async function TasteIDPage({ params }: Props) {
                 </div>
               )}
 
-              <div className="mt-4 pt-4 border-t border-neutral-800 flex items-center justify-between">
-                <span className="text-xs text-neutral-600">Overall drift</span>
+              <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">Overall drift</span>
                 <div className="flex items-center gap-2">
-                  <div className="w-24 h-2 bg-neutral-900">
+                  <div className="w-24 h-2 bg-muted">
                     <div
                       className={`h-full ${
                         comparison.overallDrift > 0.3
@@ -758,7 +758,7 @@ export default async function TasteIDPage({ params }: Props) {
                       style={{ width: `${comparison.overallDrift * 100}%` }}
                     />
                   </div>
-                  <span className="text-xs font-mono text-neutral-500">
+                  <span className="text-xs font-mono text-muted-foreground">
                     {Math.round(comparison.overallDrift * 100)}%
                   </span>
                 </div>
@@ -782,27 +782,27 @@ export default async function TasteIDPage({ params }: Props) {
           if (consolidation.length === 0) return null
 
           return (
-            <div className="mb-6 sm:mb-8 border border-neutral-800 p-4 sm:p-6">
+            <div className="mb-6 sm:mb-8 border border-border p-4 sm:p-6">
               <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4">
                 <div className="w-2 h-2 bg-green-400" />
-                <h2 className="text-xs uppercase tracking-widest text-neutral-500 font-bold">
+                <h2 className="text-xs uppercase tracking-widest text-muted-foreground font-bold">
                   TASTE CONSOLIDATION
                 </h2>
-                <span className="text-[10px] px-2 py-0.5 border border-neutral-700 text-neutral-500 uppercase tracking-wider">
+                <span className="text-[10px] px-2 py-0.5 border border-border text-muted-foreground uppercase tracking-wider">
                   WHAT&apos;S STICKING
                 </span>
               </div>
 
               <div className="mb-4">
                 <div className="text-lg font-bold mb-1">{summary.headline}</div>
-                <p className="text-neutral-400 text-sm">{summary.details}</p>
+                <p className="text-muted-foreground text-sm">{summary.details}</p>
               </div>
 
               {/* Core tastes grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {summary.coreGenres.length > 0 && (
                   <div>
-                    <div className="text-[10px] uppercase tracking-widest text-neutral-600 mb-2">
+                    <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
                       CORE GENRES
                     </div>
                     <div className="flex flex-wrap gap-1">
@@ -819,7 +819,7 @@ export default async function TasteIDPage({ params }: Props) {
                 )}
                 {summary.coreArtists.length > 0 && (
                   <div>
-                    <div className="text-[10px] uppercase tracking-widest text-neutral-600 mb-2">
+                    <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
                       CORE ARTISTS
                     </div>
                     <div className="flex flex-wrap gap-1">
@@ -837,14 +837,14 @@ export default async function TasteIDPage({ params }: Props) {
               </div>
 
               {/* Consolidation bars */}
-              <div className="mt-4 pt-4 border-t border-neutral-800 space-y-3 sm:space-y-2">
+              <div className="mt-4 pt-4 border-t border-border space-y-3 sm:space-y-2">
                 {consolidation.slice(0, 5).map((item) => (
                   <div key={`${item.type}-${item.name}`} className="flex items-center gap-2 sm:gap-3 min-h-[36px] sm:min-h-0">
-                    <span className="text-[10px] w-12 text-neutral-600 uppercase flex-shrink-0">
+                    <span className="text-[10px] w-12 text-muted-foreground uppercase flex-shrink-0">
                       {item.type}
                     </span>
                     <span className="w-24 sm:w-32 text-sm truncate">{item.name}</span>
-                    <div className="flex-1 h-2 sm:h-1.5 bg-neutral-900">
+                    <div className="flex-1 h-2 sm:h-1.5 bg-muted">
                       <div
                         className={`h-full ${
                           item.trend === 'strengthening'
@@ -862,7 +862,7 @@ export default async function TasteIDPage({ params }: Props) {
                           ? 'text-green-400'
                           : item.trend === 'fading'
                           ? 'text-orange-400'
-                          : 'text-neutral-500'
+                          : 'text-muted-foreground'
                       }`}
                     >
                       {item.trend === 'strengthening'
@@ -880,7 +880,7 @@ export default async function TasteIDPage({ params }: Props) {
 
         {/* Share */}
         {isOwnProfile && (
-          <div className="mb-6 sm:mb-8 border-2 border-neutral-800 p-4 sm:p-6">
+          <div className="mb-6 sm:mb-8 border-2 border-border p-4 sm:p-6">
             <TasteCardShare
               username={username}
               archetype={archetypeInfo.name}
@@ -895,14 +895,14 @@ export default async function TasteIDPage({ params }: Props) {
           )}
           <Link
             href={`/discover/similar-tasters`}
-            className="inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-2 border-2 border-neutral-700 text-sm font-bold uppercase tracking-wider hover:border-foreground transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-2 border-2 border-border text-sm font-bold uppercase tracking-wider hover:border-foreground transition-colors"
           >
             FIND SIMILAR TASTERS
           </Link>
         </div>
 
         {/* Last computed */}
-        <div className="mt-8 text-xs text-neutral-600">
+        <div className="mt-8 text-xs text-muted-foreground">
           Last computed:{" "}
           {new Date(tasteId.lastComputedAt).toLocaleDateString()}
         </div>
@@ -922,11 +922,11 @@ function StatCard({
 }) {
   return (
     <div className="border-2 border-foreground p-3 sm:p-4">
-      <div className="text-[10px] sm:text-[10px] uppercase tracking-widest text-neutral-500 font-bold mb-1">
+      <div className="text-[10px] sm:text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-1">
         {label}
       </div>
       <div className="text-xl sm:text-2xl font-bold">{value}</div>
-      <div className="text-[11px] sm:text-xs text-neutral-500 mt-1">{description}</div>
+      <div className="text-[11px] sm:text-xs text-muted-foreground mt-1">{description}</div>
     </div>
   )
 }
