@@ -47,7 +47,7 @@ export function BillboardList({ albums }: BillboardListProps) {
               className="group relative block"
             >
               {/* Album cover with rank badge */}
-              <div className="relative aspect-square bg-neutral-900 overflow-hidden">
+              <div className="relative aspect-square bg-muted overflow-hidden">
                 {album.coverArtUrl && (
                   <img
                     src={album.coverArtUrlLarge || album.coverArtUrl}
@@ -75,10 +75,10 @@ export function BillboardList({ albums }: BillboardListProps) {
 
               {/* Album info below */}
               <div className="mt-1.5 px-0.5">
-                <p className="text-[11px] font-semibold leading-tight truncate">
+                <p className="text-[11px] font-semibold leading-tight truncate text-foreground">
                   {album.title}
                 </p>
-                <p className="text-[10px] text-neutral-500 truncate">
+                <p className="text-[10px] text-muted-foreground truncate">
                   {album.artistName}
                 </p>
               </div>
@@ -89,7 +89,7 @@ export function BillboardList({ albums }: BillboardListProps) {
         {hasMore && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="w-full mt-5 py-3.5 flex items-center justify-center gap-2 text-sm font-medium bg-neutral-900 text-white active:bg-neutral-800 transition-colors min-h-[48px]"
+            className="w-full mt-5 py-3.5 flex items-center justify-center gap-2 text-sm font-medium bg-foreground text-background active:opacity-80 transition-colors min-h-[48px]"
           >
             <span>{isExpanded ? "Show Less" : `View All ${albums.length}`}</span>
             <svg
@@ -114,15 +114,15 @@ export function BillboardList({ albums }: BillboardListProps) {
           <Link
             key={album.id}
             href={`/album/${album.spotifyId}`}
-            className="flex items-center gap-4 p-3 hover:bg-neutral-900/50 transition-colors rounded-sm no-underline group"
+            className="flex items-center gap-4 p-3 hover:bg-muted/50 transition-colors rounded-sm no-underline group"
           >
             {/* Rank - high contrast */}
-            <span className="text-xl font-bold text-white w-8 flex-shrink-0 tabular-nums">
+            <span className="text-xl font-bold text-foreground w-8 flex-shrink-0 tabular-nums">
               {album.billboardRank}
             </span>
 
             {/* Cover */}
-            <div className="w-14 h-14 flex-shrink-0 bg-neutral-800 overflow-hidden">
+            <div className="w-14 h-14 flex-shrink-0 bg-muted overflow-hidden">
               {album.coverArtUrl && (
                 <img
                   src={album.coverArtUrl}
@@ -134,10 +134,10 @@ export function BillboardList({ albums }: BillboardListProps) {
 
             {/* Album info */}
             <div className="flex-1 min-w-0">
-              <p className="font-bold truncate group-hover:underline">
+              <p className="font-bold truncate group-hover:underline text-foreground">
                 {album.title}
               </p>
-              <p className="text-neutral-400 text-sm truncate">
+              <p className="text-muted-foreground text-sm truncate">
                 {album.artistName}
               </p>
             </div>
@@ -145,9 +145,9 @@ export function BillboardList({ albums }: BillboardListProps) {
             {/* Rating & reviews */}
             <div className="text-right flex-shrink-0">
               {album.averageRating !== null && (
-                <p className="font-bold text-base">{album.averageRating.toFixed(1)}</p>
+                <p className="font-bold text-base text-foreground">{album.averageRating.toFixed(1)}</p>
               )}
-              <p className="text-neutral-500 text-xs">
+              <p className="text-muted-foreground text-xs">
                 {album.totalReviews} {album.totalReviews === 1 ? "review" : "reviews"}
               </p>
             </div>
@@ -158,7 +158,7 @@ export function BillboardList({ albums }: BillboardListProps) {
       {hasMore && (
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full mt-4 py-3 flex items-center justify-center gap-2 text-sm text-neutral-400 hover:text-white transition-colors border border-neutral-800 hover:border-neutral-600"
+          className="w-full mt-4 py-3 flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors border border-border hover:border-muted-foreground"
         >
           <span>{isExpanded ? "Show Less" : `Show All ${albums.length}`}</span>
           <svg
