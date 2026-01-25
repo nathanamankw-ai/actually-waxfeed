@@ -64,10 +64,10 @@ export function CircleList({ onSelectCircle }: CircleListProps) {
 
   if (loading) {
     return (
-      <div className="p-4 space-y-4">
+      <div className="p-6 space-y-4">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="animate-pulse">
-            <div className="h-16 bg-[--muted] rounded" />
+          <div key={i} className="animate-pulse" style={{ animationDelay: `${i * 100}ms` }}>
+            <div className="h-24 bg-[--muted]/10 border border-[--border]" />
           </div>
         ))}
       </div>
@@ -76,9 +76,15 @@ export function CircleList({ onSelectCircle }: CircleListProps) {
 
   if (error) {
     return (
-      <div className="p-4 text-center text-[--muted]">
-        <p>{error}</p>
-        <button onClick={fetchCircles} className="mt-2 text-sm underline">
+      <div className="p-12 text-center">
+        <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center border border-[--border]">
+          <span className="text-xl">⚠</span>
+        </div>
+        <p className="text-[--muted] mb-4">{error}</p>
+        <button
+          onClick={fetchCircles}
+          className="px-4 py-2 text-sm border border-[--border] hover:border-[#ffd700] hover:text-[#ffd700] transition-colors"
+        >
           Try again
         </button>
       </div>
@@ -87,17 +93,22 @@ export function CircleList({ onSelectCircle }: CircleListProps) {
 
   if (userCircles.length === 0) {
     return (
-      <div className="p-6 text-center">
-        <div className="text-4xl mb-4">🎭</div>
-        <h3 className="font-medium mb-2">No circles yet</h3>
-        <p className="text-sm text-[--muted] mb-4">
-          Review more albums to discover your taste archetype and unlock your circles!
+      <div className="p-12 text-center">
+        <div className="w-16 h-16 mx-auto mb-6 flex items-center justify-center bg-[#ffd700]/10 border border-[#ffd700]/30">
+          <span className="text-3xl">🎭</span>
+        </div>
+        <h3 className="text-lg font-semibold mb-2">No circles yet</h3>
+        <p className="text-sm text-[--muted] mb-6 max-w-xs mx-auto leading-relaxed">
+          Review more albums to discover your taste archetype and unlock your circles
         </p>
-        <Link 
+        <Link
           href="/discover"
-          className="text-sm text-[#ffd700] hover:underline"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#ffd700] text-black text-sm font-medium hover:bg-[#ffed4a] transition-colors group"
         >
-          Start reviewing →
+          <span>Start reviewing</span>
+          <svg className="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
         </Link>
       </div>
     )
@@ -106,12 +117,15 @@ export function CircleList({ onSelectCircle }: CircleListProps) {
   return (
     <div>
       {/* Your Circles */}
-      <div className="p-4 border-b border-[--border]">
-        <h3 className="text-xs uppercase tracking-wider text-[--muted] mb-3">
-          Your Circles
-        </h3>
+      <div className="p-6 border-b border-[--border]">
+        <div className="flex items-center gap-2 mb-5">
+          <div className="w-1.5 h-1.5 bg-[#ffd700]" />
+          <h3 className="text-[11px] tracking-[0.2em] uppercase text-[--muted]">
+            Your Circles
+          </h3>
+        </div>
         <div className="space-y-3">
-          {userCircles.map((circle) => (
+          {userCircles.map((circle, index) => (
             <Link
               key={circle.id}
               href={`/circles/${circle.archetype}`}
@@ -121,38 +135,62 @@ export function CircleList({ onSelectCircle }: CircleListProps) {
                   onSelectCircle(circle.archetype)
                 }
               }}
-              className="block p-4 bg-[--muted]/10 hover:bg-[--muted]/20 transition-colors"
+              className="block group animate-slide-up"
+              style={{ animationDelay: `${index * 80}ms` }}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <ArchetypeBadge 
-                      archetype={circle.archetype} 
-                      isPrimary={circle.isPrimary}
-                      size="md"
-                    />
-                    {circle.isPrimary && (
-                      <span className="text-[10px] text-[#ffd700]">PRIMARY</span>
-                    )}
+              <div className={`p-5 border transition-all duration-200 ${
+                circle.isPrimary
+                  ? 'bg-gradient-to-r from-[#ffd700]/10 to-transparent border-[#ffd700]/40 hover:border-[#ffd700]'
+                  : 'bg-[--muted]/5 border-[--border] hover:border-[--muted] hover:bg-[--muted]/10'
+              }`}>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2.5 mb-2">
+                      <ArchetypeBadge
+                        archetype={circle.archetype}
+                        isPrimary={circle.isPrimary}
+                        size="md"
+                      />
+                      {circle.isPrimary && (
+                        <span className="text-[9px] tracking-[0.15em] uppercase text-[#ffd700] font-medium px-1.5 py-0.5 bg-[#ffd700]/10">
+                          Primary
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-[--muted] leading-relaxed line-clamp-2">
+                      {circle.description}
+                    </p>
                   </div>
-                  <p className="text-xs text-[--muted]">{circle.description}</p>
+                  <div className="text-right flex-shrink-0">
+                    <p className="text-lg font-bold tabular-nums">{circle.memberCount.toLocaleString()}</p>
+                    <p className="text-[10px] tracking-wider uppercase text-[--muted]">members</p>
+                  </div>
                 </div>
-                <span className="text-xs text-[--muted] flex-shrink-0">
-                  {circle.memberCount.toLocaleString()} members
-                </span>
-              </div>
 
-              {circle.lastMessage && (
-                <div className="mt-3 pt-3 border-t border-[--border]">
-                  <p className="text-xs text-[--muted] truncate">
-                    <span className="font-medium">@{circle.lastMessage.user.username}</span>:{' '}
-                    {circle.lastMessage.content}
-                  </p>
-                  <p className="text-[10px] text-[--muted]/60 mt-1">
-                    {formatDistanceToNow(new Date(circle.lastMessage.createdAt), { addSuffix: true })}
-                  </p>
+                {circle.lastMessage && (
+                  <div className="mt-4 pt-4 border-t border-[--border]/50">
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="w-1 h-1 bg-green-500 animate-pulse" style={{ borderRadius: '50%' }} />
+                      <span className="text-[10px] tracking-wider uppercase text-[--muted]">Latest</span>
+                    </div>
+                    <p className="text-sm text-[--muted] truncate">
+                      <span className="text-[--foreground] font-medium">@{circle.lastMessage.user.username}</span>
+                      <span className="mx-1.5 opacity-50">·</span>
+                      {circle.lastMessage.content}
+                    </p>
+                    <p className="text-[10px] text-[--muted]/50 mt-1">
+                      {formatDistanceToNow(new Date(circle.lastMessage.createdAt), { addSuffix: true })}
+                    </p>
+                  </div>
+                )}
+
+                {/* Hover arrow indicator */}
+                <div className="absolute right-5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <svg className="w-5 h-5 text-[--muted]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+                  </svg>
                 </div>
-              )}
+              </div>
             </Link>
           ))}
         </div>
@@ -160,42 +198,52 @@ export function CircleList({ onSelectCircle }: CircleListProps) {
 
       {/* Other Circles */}
       {otherCircles.length > 0 && (
-        <div className="p-4">
+        <div className="p-6">
           <button
             onClick={() => setShowAll(!showAll)}
-            className="flex items-center justify-between w-full text-xs uppercase tracking-wider text-[--muted] mb-3"
+            className="flex items-center justify-between w-full group mb-4"
           >
-            <span>Other Circles ({otherCircles.length})</span>
-            <svg 
-              className={`w-4 h-4 transition-transform ${showAll ? 'rotate-180' : ''}`}
-              fill="none" 
-              viewBox="0 0 24 24" 
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 bg-[--muted]/50" />
+              <span className="text-[11px] tracking-[0.2em] uppercase text-[--muted] group-hover:text-[--foreground] transition-colors">
+                Other Circles
+              </span>
+              <span className="text-[10px] text-[--muted]/50 ml-1">({otherCircles.length})</span>
+            </div>
+            <svg
+              className={`w-4 h-4 text-[--muted] transition-transform duration-200 ${showAll ? 'rotate-180' : ''}`}
+              fill="none"
+              viewBox="0 0 24 24"
               stroke="currentColor"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
 
-          {showAll && (
-            <div className="space-y-2">
-              {otherCircles.map((circle) => (
-                <div
-                  key={circle.id}
-                  className="p-3 bg-[--muted]/5 border border-[--border] opacity-60"
-                >
-                  <div className="flex items-center justify-between">
+          <div className={`space-y-2 overflow-hidden transition-all duration-300 ${showAll ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+            {otherCircles.map((circle, index) => (
+              <div
+                key={circle.id}
+                className="p-4 bg-[--muted]/5 border border-[--border] opacity-50 hover:opacity-70 transition-opacity"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
                     <ArchetypeBadge archetype={circle.archetype} size="sm" />
-                    <span className="text-[10px] text-[--muted]">
-                      {circle.memberCount.toLocaleString()} members
+                    <span className="text-[10px] text-[--muted]/70">
+                      <svg className="w-3 h-3 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                      Requires archetype
                     </span>
                   </div>
-                  <p className="text-[10px] text-[--muted] mt-1">
-                    Requires this archetype to join
-                  </p>
+                  <span className="text-[10px] text-[--muted] tabular-nums">
+                    {circle.memberCount.toLocaleString()} members
+                  </span>
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

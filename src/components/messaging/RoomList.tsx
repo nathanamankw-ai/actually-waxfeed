@@ -58,13 +58,17 @@ export function RoomList({ onSelectRoom }: RoomListProps) {
 
   if (loading) {
     return (
-      <div className="p-4 space-y-4">
+      <div className="p-6 space-y-4">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="animate-pulse flex items-center gap-3">
-            <div className="w-16 h-16 bg-[--muted]" />
+          <div
+            key={i}
+            className="flex items-center gap-4 animate-pulse"
+            style={{ animationDelay: `${i * 100}ms` }}
+          >
+            <div className="w-16 h-16 bg-[--muted]/20" />
             <div className="flex-1 space-y-2">
-              <div className="h-4 bg-[--muted] rounded w-1/2" />
-              <div className="h-3 bg-[--muted] rounded w-1/3" />
+              <div className="h-4 bg-[--muted]/20 w-1/2" />
+              <div className="h-3 bg-[--muted]/10 w-1/3" />
             </div>
           </div>
         ))}
@@ -74,9 +78,20 @@ export function RoomList({ onSelectRoom }: RoomListProps) {
 
   if (error) {
     return (
-      <div className="p-4 text-center text-[--muted]">
-        <p>{error}</p>
-        <button onClick={fetchRooms} className="mt-2 text-sm underline">
+      <div className="p-8 text-center animate-fade-in">
+        <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center border border-red-500/30 bg-red-500/10">
+          <svg className="w-6 h-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <p className="text-[--muted] mb-4 text-sm">{error}</p>
+        <button
+          onClick={fetchRooms}
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#ffd700] border border-[#ffd700]/30 hover:bg-[#ffd700]/10 transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
           Try again
         </button>
       </div>
@@ -85,17 +100,24 @@ export function RoomList({ onSelectRoom }: RoomListProps) {
 
   if (rooms.length === 0) {
     return (
-      <div className="p-6 text-center">
-        <div className="text-4xl mb-4">🎵</div>
-        <h3 className="font-medium mb-2">No album rooms yet</h3>
-        <p className="text-sm text-[--muted] mb-4">
-          Review albums to unlock their chat rooms and discuss with other reviewers.
+      <div className="p-10 text-center animate-fade-in">
+        <div className="w-16 h-16 mx-auto mb-5 flex items-center justify-center border border-[--border] bg-[--muted]/5">
+          <svg className="w-8 h-8 text-[--muted]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+          </svg>
+        </div>
+        <h3 className="font-semibold text-lg mb-2">No album rooms yet</h3>
+        <p className="text-sm text-[--muted] mb-6 max-w-xs mx-auto leading-relaxed">
+          Review albums to unlock their exclusive chat rooms and discuss with other reviewers.
         </p>
-        <Link 
+        <Link
           href="/discover"
-          className="text-sm text-[#ffd700] hover:underline"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#ffd700] text-black font-semibold text-sm hover:bg-[#ffed4a] transition-colors group"
         >
-          Discover albums to review →
+          <span>Discover albums</span>
+          <svg className="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
         </Link>
       </div>
     )
@@ -104,26 +126,28 @@ export function RoomList({ onSelectRoom }: RoomListProps) {
   return (
     <div>
       {/* Sort controls */}
-      <div className="p-4 border-b border-[--border] flex items-center gap-2">
-        <span className="text-xs text-[--muted]">Sort:</span>
-        {(['activity', 'recent', 'alphabetical'] as const).map((sort) => (
-          <button
-            key={sort}
-            onClick={() => setSortBy(sort)}
-            className={`px-2 py-1 text-xs ${
-              sortBy === sort 
-                ? 'bg-[#ffd700] text-black font-medium' 
-                : 'bg-[--muted]/10 text-[--muted] hover:bg-[--muted]/20'
-            }`}
-          >
-            {sort === 'activity' ? 'Most Active' : sort === 'recent' ? 'Recent' : 'A-Z'}
-          </button>
-        ))}
+      <div className="px-6 py-4 border-b border-[--border] flex items-center gap-3">
+        <span className="text-[10px] tracking-wide uppercase text-[--muted]">Sort by</span>
+        <div className="flex gap-1">
+          {(['activity', 'recent', 'alphabetical'] as const).map((sort) => (
+            <button
+              key={sort}
+              onClick={() => setSortBy(sort)}
+              className={`px-3 py-1.5 text-xs font-medium transition-all ${
+                sortBy === sort
+                  ? 'bg-[#ffd700] text-black'
+                  : 'bg-[--muted]/5 text-[--muted] hover:bg-[--muted]/10 border border-[--border]'
+              }`}
+            >
+              {sort === 'activity' ? 'Most Active' : sort === 'recent' ? 'Recent' : 'A-Z'}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Room list */}
       <div className="divide-y divide-[--border]">
-        {rooms.map((room) => (
+        {rooms.map((room, index) => (
           <Link
             key={room.id}
             href={`/rooms/${room.album.id}`}
@@ -133,9 +157,10 @@ export function RoomList({ onSelectRoom }: RoomListProps) {
                 onSelectRoom(room.album.id)
               }
             }}
-            className="block p-4 hover:bg-[--muted]/10 transition-colors"
+            className="block p-5 transition-all duration-200 animate-fade-in group hover:bg-[--muted]/5 border-l-2 border-l-transparent hover:border-l-[#ffd700]/50"
+            style={{ animationDelay: `${index * 50}ms` }}
           >
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-4">
               {/* Album art */}
               <div className="relative flex-shrink-0">
                 {room.album.coverArtUrlMedium ? (
@@ -145,14 +170,16 @@ export function RoomList({ onSelectRoom }: RoomListProps) {
                     className="w-16 h-16 object-cover"
                   />
                 ) : (
-                  <div className="w-16 h-16 bg-[--muted] flex items-center justify-center">
-                    <span className="text-2xl">💿</span>
+                  <div className="w-16 h-16 bg-[--muted]/10 border border-[--border] flex items-center justify-center">
+                    <svg className="w-8 h-8 text-[--muted]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                    </svg>
                   </div>
                 )}
                 {room.userBadge && (
-                  <div className="absolute -bottom-1 -right-1">
-                    <FirstSpinBadge 
-                      badge={room.userBadge} 
+                  <div className="absolute -bottom-1.5 -right-1.5">
+                    <FirstSpinBadge
+                      badge={room.userBadge}
                       position={room.userReviewPosition}
                       size="sm"
                     />
@@ -162,27 +189,48 @@ export function RoomList({ onSelectRoom }: RoomListProps) {
 
               {/* Content */}
               <div className="flex-1 min-w-0">
-                <h3 className="font-medium truncate">{room.album.title}</h3>
+                <h3 className="font-semibold truncate group-hover:text-[#ffd700] transition-colors">
+                  {room.album.title}
+                </h3>
                 <p className="text-sm text-[--muted] truncate">{room.album.artistName}</p>
-                
-                <div className="flex items-center gap-3 mt-2 text-[10px] text-[--muted]">
-                  <span>{room.messageCount} messages</span>
-                  <span>{room.album.totalReviews} reviewers</span>
+
+                <div className="flex items-center gap-3 mt-2 text-[10px] text-[--muted]/70 tracking-wide uppercase">
+                  <span className="flex items-center gap-1">
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    {room.messageCount}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    {room.album.totalReviews}
+                  </span>
                 </div>
 
                 {room.lastMessage && (
-                  <p className="text-xs text-[--muted] mt-1 truncate">
-                    <span className="font-medium">@{room.lastMessage.user.username}</span>: {room.lastMessage.content}
+                  <p className="text-xs text-[--muted] mt-2 truncate">
+                    <span className="font-medium text-[--foreground]/80">@{room.lastMessage.user.username}</span>
+                    <span className="mx-1.5 opacity-50">·</span>
+                    {room.lastMessage.content}
                   </p>
                 )}
               </div>
 
-              {/* Activity indicator */}
-              {room.lastActivity && (
-                <span className="text-[10px] text-[--muted] flex-shrink-0">
-                  {formatDistanceToNow(new Date(room.lastActivity), { addSuffix: true })}
-                </span>
-              )}
+              {/* Activity & Arrow */}
+              <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                {room.lastActivity && (
+                  <span className="text-[10px] text-[--muted]/60 tracking-wide">
+                    {formatDistanceToNow(new Date(room.lastActivity), { addSuffix: true })}
+                  </span>
+                )}
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                  <svg className="w-5 h-5 text-[--muted]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
             </div>
           </Link>
         ))}

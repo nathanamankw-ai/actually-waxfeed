@@ -9,13 +9,14 @@ interface MessageInputProps {
   maxLength?: number
 }
 
-export function MessageInput({ 
-  onSend, 
+export function MessageInput({
+  onSend,
   disabled = false,
   placeholder = 'Type a message...',
   maxLength = 2000,
 }: MessageInputProps) {
   const [content, setContent] = useState('')
+  const [isFocused, setIsFocused] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   // Auto-resize textarea
@@ -42,25 +43,34 @@ export function MessageInput({
   }
 
   const remaining = maxLength - content.length
+  const hasContent = content.trim().length > 0
 
   return (
-    <div className="p-4 border-t border-[--border]">
-      <div className="flex items-end gap-2">
+    <div className={`p-5 border-t transition-all duration-200 ${
+      isFocused
+        ? 'border-[#ffd700]/40 bg-gradient-to-t from-[#ffd700]/5 to-transparent'
+        : 'border-[--border]'
+    }`}>
+      <div className="flex items-end gap-3">
         <div className="flex-1 relative">
           <textarea
             ref={textareaRef}
             value={content}
             onChange={(e) => setContent(e.target.value.slice(0, maxLength))}
             onKeyDown={handleKeyDown}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
             placeholder={placeholder}
             disabled={disabled}
             rows={1}
-            className="w-full p-3 pr-12 bg-[--muted]/10 resize-none focus:outline-none focus:ring-1 focus:ring-[#ffd700] disabled:opacity-50"
-            style={{ minHeight: '48px', maxHeight: '150px' }}
+            className="w-full p-4 pr-14 bg-[--muted]/5 border border-[--border] resize-none focus:outline-none focus:border-[#ffd700]/40 disabled:opacity-50 transition-colors text-sm leading-relaxed placeholder:text-[--muted]/50"
+            style={{ minHeight: '56px', maxHeight: '150px' }}
           />
           {remaining < 100 && (
-            <span className={`absolute bottom-2 right-2 text-[10px] ${
-              remaining < 20 ? 'text-red-500' : 'text-[--muted]'
+            <span className={`absolute bottom-4 right-4 text-[10px] font-semibold tabular-nums transition-all ${
+              remaining < 20
+                ? 'text-red-400 animate-pulse'
+                : 'text-[--muted]/40'
             }`}>
               {remaining}
             </span>
@@ -68,15 +78,38 @@ export function MessageInput({
         </div>
         <button
           onClick={handleSubmit}
-          disabled={!content.trim() || disabled}
-          className="px-4 py-3 bg-[#ffd700] text-black font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#ffed4a] transition-colors"
+          disabled={!hasContent || disabled}
+          className={`px-6 py-4 font-semibold text-sm transition-all duration-200 flex items-center gap-2 ${
+            hasContent && !disabled
+              ? 'bg-[#ffd700] text-black hover:bg-[#ffed4a] active:scale-[0.98]'
+              : 'bg-[--muted]/10 text-[--muted]/50 cursor-not-allowed'
+          }`}
         >
-          {disabled ? '...' : 'Send'}
+          {disabled ? (
+            <span className="w-4 h-4 border-2 border-current border-t-transparent animate-spin" />
+          ) : (
+            <>
+              <span className="tracking-wide">Send</span>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </>
+          )}
         </button>
       </div>
-      <p className="text-[10px] text-[--muted] mt-2">
-        Press Enter to send, Shift+Enter for new line
-      </p>
+      <div className="flex items-center justify-between mt-3">
+        <p className="text-[10px] text-[--muted]/40 tracking-wide">
+          <kbd className="px-1.5 py-0.5 bg-[--muted]/10 text-[--muted]/60 font-mono">Enter</kbd>
+          <span className="mx-2 opacity-50">send</span>
+          <kbd className="px-1.5 py-0.5 bg-[--muted]/10 text-[--muted]/60 font-mono">Shift+Enter</kbd>
+          <span className="ml-2 opacity-50">new line</span>
+        </p>
+        {hasContent && (
+          <p className="text-[10px] text-[--muted]/40 tabular-nums animate-fade-in">
+            {content.trim().split(/\s+/).length} words
+          </p>
+        )}
+      </div>
     </div>
   )
 }

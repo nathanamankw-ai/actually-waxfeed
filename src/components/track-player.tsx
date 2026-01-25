@@ -42,7 +42,7 @@ export function TrackPlayer({ tracks, albumId, albumTitle, artistName, coverArtU
   const [isPlaying, setIsPlaying] = useState(false)
   const [progress, setProgress] = useState(0)
   const audioRef = useRef<HTMLAudioElement | null>(null)
-  
+
   // Track ratings state
   const [userRatings, setUserRatings] = useState<Record<string, TrackRating>>({})
   const [loadingRatings, setLoadingRatings] = useState(false)
@@ -168,43 +168,51 @@ export function TrackPlayer({ tracks, albumId, albumTitle, artistName, coverArtU
   const tracksWithPreviews = tracks.filter(t => t.previewUrl)
 
   return (
-    <div className="border border-[--border] bg-[--background]">
+    <div className="border border-[--border] bg-[#0a0a0a] animate-fade-in">
       <audio ref={audioRef} className="hidden" />
 
       {/* Header with Progress */}
       <div className="flex items-center justify-between gap-3 p-3 border-b border-[--border]">
         <div className="flex items-center gap-3">
-          <div className="text-xs text-[--muted]">
-            {tracksWithPreviews.length}/{tracks.length} previews
+          <div className="flex items-center gap-2 text-[10px] text-[--muted]">
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="tabular-nums">{tracksWithPreviews.length}/{tracks.length} previews</span>
           </div>
           {session && (
             <button
               onClick={() => setShowRatings(!showRatings)}
-              className={`text-xs px-2 py-1 border transition-colors ${
-                showRatings 
-                  ? "border-[#ffd700] text-[#ffd700]" 
-                  : "border-[--border] text-[--muted] hover:border-[#ffd700] hover:text-[#ffd700]"
+              className={`text-[10px] tracking-[0.1em] uppercase px-2.5 py-1.5 border transition-all ${
+                showRatings
+                  ? "border-[#ffd700] text-[#ffd700] bg-[#ffd700]/5"
+                  : "border-[--border] text-[--muted] hover:border-[#ffd700]/50 hover:text-[#ffd700]"
               }`}
             >
               {showRatings ? "Hide Ratings" : "Rate Tracks"}
             </button>
           )}
         </div>
-        
+
         {/* Progress indicator */}
         {session && ratedCount > 0 && (
           <Tooltip content={`You've rated ${ratedCount}/${totalCount} tracks${avgUserRating ? ` (avg: ${avgUserRating.toFixed(1)})` : ""}`}>
             <div className="flex items-center gap-2 cursor-help">
-              <div className="w-16 h-1.5 bg-[--border] rounded-full overflow-hidden">
-                <div 
+              <div className="w-16 h-1 bg-[--border] overflow-hidden">
+                <div
                   className={`h-full transition-all ${progressPercent === 100 ? "bg-green-500" : "bg-[#ffd700]"}`}
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
-              <span className="text-xs text-[--muted] tabular-nums">
+              <span className="text-[10px] text-[--muted] tabular-nums">
                 {ratedCount}/{totalCount}
               </span>
-              {progressPercent === 100 && <span className="text-green-500 text-xs">✓</span>}
+              {progressPercent === 100 && (
+                <svg className="w-3 h-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              )}
             </div>
           </Tooltip>
         )}
@@ -212,7 +220,7 @@ export function TrackPlayer({ tracks, albumId, albumTitle, artistName, coverArtU
 
       {/* Track List */}
       <div className="max-h-[400px] overflow-y-auto">
-        {tracks.map((track) => {
+        {tracks.map((track, index) => {
           const isActive = currentTrack?.id === track.id
           const hasPreview = !!track.previewUrl
           const userRating = userRatings[track.id]?.rating ?? null
@@ -221,40 +229,42 @@ export function TrackPlayer({ tracks, albumId, albumTitle, artistName, coverArtU
           return (
             <div
               key={track.id}
-              className={`flex items-center gap-2 px-3 py-2 border-b border-[--border]/50 last:border-0 group ${
-                hasPreview ? "cursor-pointer hover:bg-[--border]/20" : "opacity-60"
-              } ${isActive ? "bg-[--border]/30" : ""}`}
+              className={`flex items-center gap-2 px-3 py-2.5 border-b border-[--border]/30 last:border-0 group transition-all animate-fade-in ${
+                hasPreview ? "cursor-pointer hover:bg-[--muted]/5" : "opacity-50"
+              } ${isActive ? "bg-[#ffd700]/5 border-l-2 border-l-[#ffd700]" : ""}`}
+              style={{ animationDelay: `${index * 20}ms` }}
             >
               {/* Track Number / Play Button */}
-              <div 
+              <div
                 className="w-6 text-center flex-shrink-0"
                 onClick={() => hasPreview && playTrack(track)}
               >
                 {hasPreview ? (
                   isActive && isPlaying ? (
-                    <svg className="w-4 h-4 mx-auto text-[--foreground]" fill="currentColor" viewBox="0 0 24 24">
-                      <rect x="6" y="4" width="4" height="16" />
-                      <rect x="14" y="4" width="4" height="16" />
-                    </svg>
+                    <div className="flex items-center justify-center gap-0.5">
+                      <div className="w-0.5 h-3 bg-[#ffd700] animate-pulse" />
+                      <div className="w-0.5 h-4 bg-[#ffd700] animate-pulse" style={{ animationDelay: '100ms' }} />
+                      <div className="w-0.5 h-2 bg-[#ffd700] animate-pulse" style={{ animationDelay: '200ms' }} />
+                    </div>
                   ) : (
-                    <svg className="w-4 h-4 mx-auto text-[--muted] group-hover:text-[--foreground]" fill="currentColor" viewBox="0 0 24 24">
+                    <svg className={`w-4 h-4 mx-auto transition-colors ${isActive ? 'text-[#ffd700]' : 'text-[--muted] group-hover:text-[--foreground]'}`} fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z" />
                     </svg>
                   )
                 ) : (
-                  <span className="text-xs text-[--muted]">{track.trackNumber}</span>
+                  <span className="text-xs text-[--muted] tabular-nums">{track.trackNumber}</span>
                 )}
               </div>
 
               {/* Track Info */}
               <div className="flex-1 min-w-0" onClick={() => hasPreview && playTrack(track)}>
-                <p className={`text-sm truncate ${isActive ? "text-[--foreground]" : "text-[--foreground]/80"}`}>
+                <p className={`text-sm truncate transition-colors ${isActive ? "text-[#ffd700] font-medium" : "text-[--foreground]/80 group-hover:text-[--foreground]"}`}>
                   {track.name}
                 </p>
                 {isActive && (
-                  <div className="mt-1 h-1 bg-[--border] rounded-full overflow-hidden">
+                  <div className="mt-1.5 h-0.5 bg-[--border] overflow-hidden">
                     <div
-                      className="h-full bg-[--foreground] transition-all duration-100"
+                      className="h-full bg-[#ffd700] transition-all duration-100"
                       style={{ width: `${progress}%` }}
                     />
                   </div>
@@ -279,14 +289,14 @@ export function TrackPlayer({ tracks, albumId, albumTitle, artistName, coverArtU
               )}
 
               {/* Duration */}
-              <div className="text-xs text-[--muted] tabular-nums w-10 text-right">
+              <div className="text-[10px] text-[--muted] tabular-nums w-10 text-right">
                 {formatDuration(track.durationMs)}
               </div>
 
               {/* Lyrics Link */}
               <Link
                 href={`/lyrics/${track.id}`}
-                className="text-[--muted] hover:text-[--foreground] p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="text-[--muted] hover:text-[#ffd700] p-1 opacity-0 group-hover:opacity-100 transition-all"
                 onClick={(e) => e.stopPropagation()}
                 title="View lyrics"
               >
@@ -301,7 +311,7 @@ export function TrackPlayer({ tracks, albumId, albumTitle, artistName, coverArtU
                   href={track.spotifyUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#1DB954] hover:text-[#1ed760] p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="text-[#1DB954] hover:text-[#1ed760] p-1 opacity-0 group-hover:opacity-100 transition-all"
                   onClick={(e) => e.stopPropagation()}
                   title="Open in Spotify"
                 >
@@ -317,25 +327,25 @@ export function TrackPlayer({ tracks, albumId, albumTitle, artistName, coverArtU
 
       {/* Now Playing Bar */}
       {currentTrack && (
-        <div className="flex items-center gap-3 p-3 border-t border-[--border] bg-[--border]/20">
+        <div className="flex items-center gap-3 p-3 border-t border-[--border] bg-gradient-to-r from-[#ffd700]/10 to-transparent animate-fade-in">
           {coverArtUrl && (
             <img src={coverArtUrl} alt="" className="w-10 h-10 object-cover" />
           )}
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate">{currentTrack.name}</p>
-            <p className="text-xs text-[--muted] truncate">{artistName}</p>
+            <p className="text-[10px] text-[--muted] truncate">{artistName}</p>
           </div>
           <button
             onClick={() => playTrack(currentTrack)}
-            className="w-8 h-8 flex items-center justify-center bg-[--foreground] rounded-full hover:scale-105 transition-transform"
+            className="w-10 h-10 flex items-center justify-center bg-[#ffd700] hover:bg-[#ffed4a] transition-colors"
           >
             {isPlaying ? (
-              <svg className="w-4 h-4 text-[--background]" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 24 24">
                 <rect x="6" y="4" width="4" height="16" />
                 <rect x="14" y="4" width="4" height="16" />
               </svg>
             ) : (
-              <svg className="w-4 h-4 text-[--background] ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z" />
               </svg>
             )}
@@ -347,12 +357,12 @@ export function TrackPlayer({ tracks, albumId, albumTitle, artistName, coverArtU
 }
 
 // Inline track rating widget
-function TrackRatingWidget({ 
-  trackId, 
-  currentRating, 
-  isLoading, 
-  onRate 
-}: { 
+function TrackRatingWidget({
+  trackId,
+  currentRating,
+  isLoading,
+  onRate
+}: {
   trackId: string
   currentRating: number | null
   isLoading: boolean
@@ -363,7 +373,7 @@ function TrackRatingWidget({
 
   // Quick rating: 5 buttons for 2, 4, 6, 8, 10
   return (
-    <div 
+    <div
       className="flex items-center gap-0.5"
       onMouseLeave={() => setHoverRating(null)}
     >
@@ -383,7 +393,11 @@ function TrackRatingWidget({
           }`}
           title={`Rate ${rating}/10`}
         >
-          {rating === 10 ? "★" : ""}
+          {rating === 10 && (
+            <svg className="w-2 h-2 mx-auto" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clipRule="evenodd" />
+            </svg>
+          )}
         </button>
       ))}
       {displayRating !== null && (

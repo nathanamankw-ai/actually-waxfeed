@@ -66,7 +66,7 @@ export function TrackList({ albumId, albumTitle, initialTracks, initialProgress 
 
   const handleRateTrack = async (trackId: string, rating: number) => {
     if (!session) return
-    
+
     setRatingTrack(trackId)
     try {
       const res = await fetch(`/api/tracks/${trackId}/review`, {
@@ -77,14 +77,14 @@ export function TrackList({ albumId, albumTitle, initialTracks, initialProgress 
 
       if (res.ok) {
         // Update local state
-        setTracks(prev => prev.map(t => 
+        setTracks(prev => prev.map(t =>
           t.id === trackId ? { ...t, userRating: rating } : t
         ))
         // Recalculate progress
         setProgress(prev => {
           if (!prev) return prev
           const newRated = prev.rated + (tracks.find(t => t.id === trackId)?.userRating === null ? 1 : 0)
-          const newRatings = tracks.map(t => 
+          const newRatings = tracks.map(t =>
             t.id === trackId ? rating : t.userRating
           ).filter((r): r is number => r !== null)
           const newAvg = newRatings.length > 0
@@ -114,8 +114,11 @@ export function TrackList({ albumId, albumTitle, initialTracks, initialProgress 
 
   if (loading) {
     return (
-      <div className="border border-[--border] p-4">
-        <p className="text-sm text-[--muted]">Loading tracks...</p>
+      <div className="border border-[--border] p-6 animate-fade-in">
+        <div className="flex items-center gap-3">
+          <div className="w-4 h-4 border-2 border-[--muted] border-t-[#ffd700] animate-spin" />
+          <p className="text-sm text-[--muted]">Loading tracks...</p>
+        </div>
       </div>
     )
   }
@@ -137,45 +140,55 @@ export function TrackList({ albumId, albumTitle, initialTracks, initialProgress 
   const visibleTracks = expanded ? tracks : tracks.slice(0, 5)
 
   return (
-    <div className="border border-[--border]">
+    <div className="border border-[--border] animate-fade-in">
       {/* Header with Progress */}
       <div className="p-4 border-b border-[--border] flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <h3 className="text-sm font-bold uppercase tracking-wider">Tracklist</h3>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <svg className="w-4 h-4 text-[--muted]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+            </svg>
+            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[--muted]">Tracklist</h3>
+          </div>
           {session && progress && (
             <Tooltip content={`You've rated ${progress.rated} of ${progress.total} tracks${progress.userAverageRating ? ` (avg: ${progress.userAverageRating.toFixed(1)})` : ""}`}>
               <div className="flex items-center gap-2 cursor-help">
-                <div className="w-20 h-1.5 bg-[--border] rounded-full overflow-hidden">
-                  <div 
+                <div className="w-20 h-1 bg-[--border] overflow-hidden">
+                  <div
                     className={`h-full transition-all ${progress.isComplete ? "bg-green-500" : "bg-[#ffd700]"}`}
                     style={{ width: `${progress.percent}%` }}
                   />
                 </div>
-                <span className="text-xs text-[--muted]">
+                <span className="text-[10px] text-[--muted] tabular-nums">
                   {progress.rated}/{progress.total}
                 </span>
                 {progress.isComplete && (
-                  <span className="text-xs text-green-500">✓</span>
+                  <svg className="w-3 h-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
                 )}
               </div>
             </Tooltip>
           )}
         </div>
         {!session && (
-          <span className="text-xs text-[--muted]">Sign in to rate tracks</span>
+          <span className="text-[10px] text-[--muted] tracking-wide">Sign in to rate tracks</span>
         )}
       </div>
 
       {/* Track List */}
-      <div className="divide-y divide-[--border]">
+      <div className="divide-y divide-[--border]/50">
         {(expanded ? Object.entries(tracksByDisc) : [[1, visibleTracks]]).map(([disc, discTracks]) => (
-          <div key={disc}>
+          <div key={String(disc)}>
             {hasMultipleDiscs && expanded && (
-              <div className="px-4 py-2 bg-[--border]/20 text-xs text-[--muted] uppercase tracking-wider">
-                Disc {disc}
+              <div className="px-4 py-2 bg-[--muted]/5 text-[10px] text-[--muted] uppercase tracking-[0.2em] flex items-center gap-2">
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Disc {String(disc)}
               </div>
             )}
-            {(discTracks as Track[]).map((track) => (
+            {(discTracks as Track[]).map((track, index) => (
               <TrackRow
                 key={track.id}
                 track={track}
@@ -183,6 +196,7 @@ export function TrackList({ albumId, albumTitle, initialTracks, initialProgress 
                 isRating={ratingTrack === track.id}
                 onRate={(rating) => handleRateTrack(track.id, rating)}
                 formatDuration={formatDuration}
+                animationDelay={index * 30}
               />
             ))}
           </div>
@@ -193,9 +207,23 @@ export function TrackList({ albumId, albumTitle, initialTracks, initialProgress 
       {tracks.length > 5 && (
         <button
           onClick={() => setExpanded(!expanded)}
-          className="w-full p-3 text-sm text-[--muted] hover:text-[--foreground] transition-colors border-t border-[--border]"
+          className="w-full p-3 text-[10px] tracking-[0.15em] uppercase text-[--muted] hover:text-[#ffd700] hover:bg-[#ffd700]/5 transition-all border-t border-[--border] flex items-center justify-center gap-2"
         >
-          {expanded ? "Show less" : `Show all ${tracks.length} tracks`}
+          {expanded ? (
+            <>
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+              </svg>
+              Show less
+            </>
+          ) : (
+            <>
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+              Show all {tracks.length} tracks
+            </>
+          )}
         </button>
       )}
     </div>
@@ -203,18 +231,20 @@ export function TrackList({ albumId, albumTitle, initialTracks, initialProgress 
 }
 
 // Individual track row component
-function TrackRow({ 
-  track, 
-  isLoggedIn, 
-  isRating, 
-  onRate, 
-  formatDuration 
-}: { 
+function TrackRow({
+  track,
+  isLoggedIn,
+  isRating,
+  onRate,
+  formatDuration,
+  animationDelay = 0
+}: {
   track: Track
   isLoggedIn: boolean
   isRating: boolean
   onRate: (rating: number) => void
   formatDuration: (ms: number) => string
+  animationDelay?: number
 }) {
   const [hoverRating, setHoverRating] = useState<number | null>(null)
   const [showRater, setShowRater] = useState(false)
@@ -222,26 +252,34 @@ function TrackRow({
   const displayRating = hoverRating ?? track.userRating
 
   return (
-    <div className="px-4 py-2.5 flex items-center gap-3 hover:bg-[--border]/10 transition-colors group">
+    <div
+      className="px-4 py-2.5 flex items-center gap-3 hover:bg-[--muted]/5 transition-colors group animate-fade-in"
+      style={{ animationDelay: `${animationDelay}ms` }}
+    >
       {/* Track number */}
-      <span className="w-6 text-center text-sm text-[--muted] tabular-nums">
+      <span className="w-6 text-center text-sm text-[--muted] tabular-nums font-medium">
         {track.trackNumber}
       </span>
 
       {/* Track info */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm truncate">{track.name}</p>
-        <div className="flex items-center gap-2 text-xs text-[--muted]">
-          <span>{formatDuration(track.durationMs)}</span>
+        <p className="text-sm truncate group-hover:text-[--foreground] transition-colors">{track.name}</p>
+        <div className="flex items-center gap-2 text-[10px] text-[--muted]/70">
+          <span className="tabular-nums">{formatDuration(track.durationMs)}</span>
           {track.averageRating !== null && (
             <>
-              <span>·</span>
-              <span>{track.averageRating.toFixed(1)} avg</span>
+              <span className="opacity-50">·</span>
+              <span className="flex items-center gap-0.5">
+                <svg className="w-2.5 h-2.5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clipRule="evenodd" />
+                </svg>
+                {track.averageRating.toFixed(1)}
+              </span>
             </>
           )}
           {track.totalReviews > 0 && (
             <>
-              <span>·</span>
+              <span className="opacity-50">·</span>
               <span>{track.totalReviews} ratings</span>
             </>
           )}
@@ -252,7 +290,7 @@ function TrackRow({
       {isLoggedIn && (
         <div className="flex items-center gap-1">
           {showRater || track.userRating !== null ? (
-            <div 
+            <div
               className="flex items-center gap-0.5"
               onMouseLeave={() => {
                 setHoverRating(null)
@@ -272,11 +310,15 @@ function TrackRow({
                   }`}
                   title={`Rate ${rating}/10`}
                 >
-                  {rating === 10 ? "★" : ""}
+                  {rating === 10 && (
+                    <svg className="w-3 h-3 mx-auto" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clipRule="evenodd" />
+                    </svg>
+                  )}
                 </button>
               ))}
               {displayRating !== null && (
-                <span className="ml-1 text-xs font-bold tabular-nums text-[#ffd700] w-5 text-center">
+                <span className="ml-1.5 text-xs font-bold tabular-nums text-[#ffd700] w-5 text-center">
                   {displayRating}
                 </span>
               )}
@@ -284,7 +326,7 @@ function TrackRow({
           ) : (
             <button
               onClick={() => setShowRater(true)}
-              className="opacity-0 group-hover:opacity-100 px-2 py-1 text-xs text-[--muted] hover:text-[#ffd700] border border-transparent hover:border-[#ffd700]/30 transition-all"
+              className="opacity-0 group-hover:opacity-100 px-2 py-1 text-[10px] tracking-wide uppercase text-[--muted] hover:text-[#ffd700] border border-transparent hover:border-[#ffd700]/30 transition-all"
             >
               Rate
             </button>
@@ -294,7 +336,7 @@ function TrackRow({
 
       {/* Show user's rating if not in edit mode */}
       {!isLoggedIn && track.averageRating !== null && (
-        <span className="text-sm font-bold text-[#ffd700]">
+        <span className="text-sm font-bold text-[#ffd700] tabular-nums">
           {track.averageRating.toFixed(1)}
         </span>
       )}
