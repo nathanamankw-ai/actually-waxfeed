@@ -31,10 +31,6 @@ export function WaxfeedLogo({ className = "", size = "md", spinning = true }: Pr
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
           }
-          .spinning-disc {
-            transform-origin: 250px 250px;
-            animation: spin-disc 8s linear infinite;
-          }
         `}
       </style>
       <defs>

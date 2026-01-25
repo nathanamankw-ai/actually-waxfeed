@@ -1,11 +1,13 @@
 "use client"
 
+export const dynamic = "force-dynamic"
+
 import { useSession } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import Link from "next/link"
 
-export default function PricingPage() {
+function PricingContent() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -515,5 +517,13 @@ export default function PricingPage() {
         </div>
       </footer>
     </div>
+  )
+}
+
+export default function PricingPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }} />}>
+      <PricingContent />
+    </Suspense>
   )
 }

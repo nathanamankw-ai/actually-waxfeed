@@ -189,6 +189,9 @@ model User {
   roomMessagesSent     RoomMessage[]   @relation("roomMessageSender")
   circleMessagesSent   CircleMessage[] @relation("circleMessageSender")
 
+  // First Spin badges
+  firstSpinBadges FirstSpinBadge[]
+
   @@index([username])
   @@index([email])
   @@index([createdAt])
@@ -283,13 +286,14 @@ model Album {
   lastSyncedAt DateTime @default(now())
 
   // Relations
-  reviews        Review[]
-  listItems      ListItem[]
-  tracks         Track[]
-  userTags       AlbumTag[]
-  hotTakes       HotTake[]
-  albumRoom      AlbumRoom?
-  messageContext Message[] @relation("messageAlbumContext")
+  reviews         Review[]
+  listItems       ListItem[]
+  tracks          Track[]
+  userTags        AlbumTag[]
+  hotTakes        HotTake[]
+  albumRoom       AlbumRoom?
+  messageContext  Message[]        @relation("messageAlbumContext")
+  firstSpinBadges FirstSpinBadge[]
 
   @@index([spotifyId])
   @@index([artistName])
@@ -327,14 +331,14 @@ model Track {
 // ============================================
 
 model TrackReview {
-  id        String   @id @default(cuid())
-  userId    String
-  trackId   String
-  rating    Float    // 0-10 scale (half-point precision)
-  text      String?  @db.VarChar(1000) // Optional short note (shorter than album reviews)
-  isFavorite Boolean @default(false) // Mark as standout track
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  userId     String
+  trackId    String
+  rating     Float // 0-10 scale (half-point precision)
+  text       String?  @db.VarChar(1000) // Optional short note (shorter than album reviews)
+  isFavorite Boolean  @default(false) // Mark as standout track
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
@@ -947,10 +951,14 @@ model TasteMatch {
   user2Id String
 
   // Compatibility scores
-  overallScore    Float // 0-100 compatibility percentage
-  genreOverlap    Float // How much genres overlap
-  artistOverlap   Float // Shared artist preferences
-  ratingAlignment Float // How similarly they rate albums
+  overallScore        Float // 0-100 compatibility percentage
+  genreOverlap        Float // How much genres overlap
+  artistOverlap       Float // Shared artist preferences
+  ratingAlignment     Float // How similarly they rate albums
+  signatureSimilarity Float? // Polarity 1.2 signature similarity
+  networkResonance    Json?  // How well networks align (Record<string, number>)
+  networkContrast     Json?  // Complementary network differences (Record<string, number>)
+  matchStrength       Float? // Overall match strength 0-1
 
   // Shared elements for display
   sharedGenres  String[]
@@ -959,6 +967,11 @@ model TasteMatch {
 
   // Relationship descriptor
   matchType String // "taste_twin" | "complementary" | "explorer_guide" | "genre_buddy"
+
+  // Connection status
+  status          String?   @default("potential") // "potential" | "connected" | "dismissed"
+  connectedAt     DateTime?
+  lastInteraction DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -971,6 +984,7 @@ model TasteMatch {
   @@index([user2Id])
   @@index([overallScore])
   @@index([matchType])
+  @@index([status])
 }
 
 // ============================================
@@ -1104,19 +1118,22 @@ model FlashSale {
 // ============================================
 
 enum SpinBadgeType {
-  GOLD   // First 10 reviewers
+  GOLD // First 10 reviewers
   SILVER // First 50 reviewers
   BRONZE // First 100 reviewers
 }
 
 model FirstSpinBadge {
-  id        String        @id @default(cuid())
-  userId    String
-  albumId   String
-  badgeType SpinBadgeType
-  position  Int // What position they were (1-100)
+  id         String        @id @default(cuid())
+  userId     String
+  albumId    String
+  badgeType  SpinBadgeType
+  position   Int // What position they were (1-100)
   waxAwarded Int // How much wax they received
-  createdAt DateTime @default(now())
+  createdAt  DateTime      @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  album Album @relation(fields: [albumId], references: [id], onDelete: Cascade)
 
   @@unique([userId, albumId]) // One badge per user per album
   @@index([userId])
@@ -1130,28 +1147,28 @@ model FirstSpinBadge {
 // ============================================
 
 model Station {
-  id           String   @id @default(cuid())
-  name         String   @unique // e.g. "WRVU Nashville"
-  slug         String   @unique // e.g. "wrvu"
-  university   String? // e.g. "Vanderbilt University"
-  conference   String? // e.g. "SEC", "Big Ten"
-  logoUrl      String?
-  websiteUrl   String?
-  email        String? // Contact email for the station
-  
+  id         String  @id @default(cuid())
+  name       String  @unique // e.g. "WRVU Nashville"
+  slug       String  @unique // e.g. "wrvu"
+  university String? // e.g. "Vanderbilt University"
+  conference String? // e.g. "SEC", "Big Ten"
+  logoUrl    String?
+  websiteUrl String?
+  email      String? // Contact email for the station
+
   // Founding Station Program
   isFoundingStation Boolean @default(false) // First 50 stations get permanent premium
-  
+
   // Aggregate stats
   totalReviews    Int @default(0)
   tastemakeScore  Int @default(0) // Sum of all member tastemaker scores
   goldSpinCount   Int @default(0)
   silverSpinCount Int @default(0)
   bronzeSpinCount Int @default(0)
-  
+
   // Subscription
-  isPremium     Boolean   @default(false)
-  premiumUntil  DateTime?
+  isPremium    Boolean   @default(false)
+  premiumUntil DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1185,9 +1202,9 @@ model StationMember {
 // Direct Messages - Taste-Gated (60%+ match required)
 model Conversation {
   id              String    @id @default(cuid())
-  user1Id         String    // Sorted: always lower ID first
+  user1Id         String // Sorted: always lower ID first
   user2Id         String
-  tasteMatchScore Float     // Cached at creation (must be >= 60)
+  tasteMatchScore Float // Cached at creation (must be >= 60)
   lastMessageAt   DateTime?
   createdAt       DateTime  @default(now())
 
@@ -1205,7 +1222,7 @@ model Message {
   conversationId String
   senderId       String
   content        String   @db.Text
-  albumContextId String?  // Optional: "Let's talk about this album"
+  albumContextId String? // Optional: "Let's talk about this album"
   isRead         Boolean  @default(false)
   createdAt      DateTime @default(now())
 
@@ -1237,8 +1254,8 @@ model RoomMessage {
   roomId             String
   userId             String
   content            String   @db.Text
-  userFirstSpinBadge String?  // "gold" | "silver" | "bronze" | null (denormalized)
-  userReviewPosition Int?     // Denormalized for display
+  userFirstSpinBadge String? // "gold" | "silver" | "bronze" | null (denormalized)
+  userReviewPosition Int? // Denormalized for display
   createdAt          DateTime @default(now())
 
   room AlbumRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
@@ -1252,7 +1269,7 @@ model RoomMessage {
 model TasteCircle {
   id          String   @id @default(cuid())
   archetype   String   @unique // Matches TasteID.primaryArchetype slug
-  displayName String   // "Hip-Hop Heads"
+  displayName String // "Hip-Hop Heads"
   description String?  @db.Text
   memberCount Int      @default(0) // Cached count of users with this archetype
   createdAt   DateTime @default(now())
@@ -1269,8 +1286,8 @@ model CircleMessage {
   circleId       String
   userId         String
   content        String   @db.Text
-  userArchetype  String   // Primary archetype at time of posting
-  userTasteScore Int      // Tastemaker score at time of posting
+  userArchetype  String // Primary archetype at time of posting
+  userTasteScore Int // Tastemaker score at time of posting
   createdAt      DateTime @default(now())
 
   circle TasteCircle @relation(fields: [circleId], references: [id], onDelete: Cascade)

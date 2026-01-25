@@ -321,6 +321,20 @@ export interface TasteIDComputation {
   memorableMoments: MemorableMoment[]
   futureSelvesMusic: MusicalFutureSelf[]
   polarityScore2: number
+
+  // Track-level data
+  trackDepthData: TrackDepthData
+}
+
+interface TrackDepthData {
+  totalTracksRated: number
+  albumsWithTracks: number
+  averageTrackCompletion: number
+  completedAlbums: number
+  deepDiveScore: number
+  favoriteTracksCount: number
+  trackRatingVariance: number
+  highlightGenres: string[]
 }
 
 interface ReviewWithAlbum {
@@ -522,17 +536,6 @@ function applyRecencyWeighting(reviews: ReviewWithAlbum[]): Array<ReviewWithAlbu
  * Compute track depth - how thoroughly users explore albums they review
  * This reveals engagement style: surface listener vs deep diver
  */
-interface TrackDepthData {
-  totalTracksRated: number
-  albumsWithTracks: number
-  averageTrackCompletion: number // 0-1, avg % of tracks rated per album
-  completedAlbums: number // Albums with 100% tracks rated
-  deepDiveScore: number // 0-1, overall track engagement
-  favoriteTracksCount: number
-  trackRatingVariance: number // How much track ratings vary within albums
-  highlightGenres: string[] // Genres where user rates most tracks
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function computeTrackDepth(reviews: any[], trackReviews: any[]): TrackDepthData {
   if (trackReviews.length === 0) {
@@ -2490,8 +2493,8 @@ export async function saveTasteMatch(
       artistOverlap: match.artistOverlap,
       ratingAlignment: match.ratingAlignment,
       signatureSimilarity: match.signatureSimilarity,
-      networkResonance: match.networkResonance,
-      networkContrast: match.networkContrast,
+      networkResonance: Object.values(match.networkResonance).reduce((a, b) => a + b, 0) / Math.max(Object.keys(match.networkResonance).length, 1),
+      networkContrast: Object.values(match.networkContrast).reduce((a, b) => a + b, 0) / Math.max(Object.keys(match.networkContrast).length, 1),
       matchStrength: match.matchStrength,
       sharedGenres: match.sharedGenres,
       sharedArtists: match.sharedArtists,
@@ -2507,8 +2510,8 @@ export async function saveTasteMatch(
       artistOverlap: match.artistOverlap,
       ratingAlignment: match.ratingAlignment,
       signatureSimilarity: match.signatureSimilarity,
-      networkResonance: match.networkResonance,
-      networkContrast: match.networkContrast,
+      networkResonance: Object.values(match.networkResonance).reduce((a, b) => a + b, 0) / Math.max(Object.keys(match.networkResonance).length, 1),
+      networkContrast: Object.values(match.networkContrast).reduce((a, b) => a + b, 0) / Math.max(Object.keys(match.networkContrast).length, 1),
       matchStrength: match.matchStrength,
       sharedGenres: match.sharedGenres,
       sharedArtists: match.sharedArtists,

@@ -179,19 +179,24 @@ export default async function UserStatsPage({ params }: Props) {
       <section className="mb-8">
         <h2 className="text-lg font-bold mb-4">{stats.currentYear} Activity</h2>
         <div className="border border-[--border] p-4">
-          <div className="flex items-end gap-1 h-32">
-            {months.map((month, i) => (
-              <div key={month} className="flex-1 flex flex-col items-center gap-1">
-                <div
-                  className="w-full bg-[--accent] transition-all"
-                  style={{
-                    height: `${(stats.monthlyActivity[i + 1] / maxMonthlyActivity) * 100}%`,
-                    minHeight: stats.monthlyActivity[i + 1] > 0 ? "4px" : "0",
-                  }}
-                />
-                <span className="text-[10px] text-[--muted-dim]">{month}</span>
-              </div>
-            ))}
+          <div className="flex items-end gap-1" style={{ height: "128px" }}>
+            {months.map((month, i) => {
+              const count = stats.monthlyActivity[i + 1]
+              const heightPercent = (count / maxMonthlyActivity) * 100
+              return (
+                <div key={month} className="flex-1 flex flex-col items-center h-full">
+                  <div className="flex-1 flex items-end w-full">
+                    <div
+                      className="w-full bg-[--accent] transition-all"
+                      style={{
+                        height: count > 0 ? `${Math.max(heightPercent, 3)}%` : "0",
+                      }}
+                    />
+                  </div>
+                  <span className="text-[10px] text-[--muted-dim] mt-1">{month}</span>
+                </div>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -200,19 +205,24 @@ export default async function UserStatsPage({ params }: Props) {
       <section className="mb-8">
         <h2 className="text-lg font-bold mb-4">Rating Distribution</h2>
         <div className="border border-[--border] p-4">
-          <div className="flex items-end gap-1 h-24">
-            {Array.from({ length: 11 }, (_, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                <div
-                  className="w-full bg-[--accent] transition-all"
-                  style={{
-                    height: `${(stats.ratingDistribution[i] / maxRatingCount) * 100}%`,
-                    minHeight: stats.ratingDistribution[i] > 0 ? "4px" : "0",
-                  }}
-                />
-                <span className="text-[10px] text-[--muted-dim]">{i}</span>
-              </div>
-            ))}
+          <div className="flex items-end gap-1" style={{ height: "96px" }}>
+            {Array.from({ length: 11 }, (_, i) => {
+              const count = stats.ratingDistribution[i]
+              const heightPercent = (count / maxRatingCount) * 100
+              return (
+                <div key={i} className="flex-1 flex flex-col items-center h-full">
+                  <div className="flex-1 flex items-end w-full">
+                    <div
+                      className="w-full bg-[--accent] transition-all"
+                      style={{
+                        height: count > 0 ? `${Math.max(heightPercent, 4)}%` : "0",
+                      }}
+                    />
+                  </div>
+                  <span className="text-[10px] text-[--muted-dim] mt-1">{i}</span>
+                </div>
+              )
+            })}
           </div>
         </div>
       </section>
