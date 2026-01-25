@@ -106,6 +106,11 @@ export async function updateAlbumStats(albumId: string) {
       ratingDistribution: distribution,
     }
   })
+
+  // First Spin: Check if album should be marked trending
+  // Import dynamically to avoid circular dependencies
+  const { checkAlbumTrending } = await import('./first-spin')
+  await checkAlbumTrending(albumId)
 }
 
 // Create notification helper

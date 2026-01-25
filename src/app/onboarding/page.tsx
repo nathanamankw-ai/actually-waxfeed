@@ -113,13 +113,14 @@ export default function OnboardingPage() {
 
   const handleComplete = async () => {
     await update()
-    router.push("/")
+    // Redirect to TasteID setup - hook them with their first reviews
+    router.push("/taste-setup")
   }
 
   if (status === "loading") {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
-        <p className="text-[--muted]">Loading...</p>
+        <p className="text-[#888]">Loading...</p>
       </div>
     )
   }
@@ -129,22 +130,26 @@ export default function OnboardingPage() {
       <div className="max-w-md w-full">
         {/* Progress indicator */}
         <div className="flex gap-2 mb-8">
-          <div className={`h-1 flex-1 ${step >= 1 ? "bg-white" : "bg-[--border-dim]"}`} />
-          <div className={`h-1 flex-1 ${step >= 2 ? "bg-white" : "bg-[--border-dim]"}`} />
+          <div className={`h-1 flex-1 ${step >= 1 ? "bg-white" : "bg-[#333]"}`} />
+          <div className={`h-1 flex-1 ${step >= 2 ? "bg-white" : "bg-[#333]"}`} />
         </div>
 
         {step === 1 && (
           <>
-            <h1 className="text-4xl font-bold tracking-tighter mb-4">Welcome to Waxfeed</h1>
-            <p className="text-[--muted] mb-8">
-              First, choose your username. This is how you&apos;ll be known on Waxfeed.
+            <p className="text-[10px] tracking-[0.3em] uppercase text-[#ffd700] mb-4">
+              Step 1 of 2
+            </p>
+            <h1 className="text-4xl font-bold tracking-tighter mb-4">Claim Your Identity</h1>
+            <p className="text-[#888] mb-8">
+              Your username is your handle for earning badges and climbing the leaderboard. 
+              Choose wisely—this is how people will remember you.
             </p>
 
             <form onSubmit={handleUsernameSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm text-[--muted] mb-2">Username</label>
+                <label className="block text-sm text-[#888] mb-2">Username</label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[--muted-dim]">@</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#666]">@</span>
                   <input
                     type="text"
                     value={username}
@@ -164,12 +169,12 @@ export default function OnboardingPage() {
                   />
                 </div>
                 {checking && (
-                  <p className="text-xs text-[--muted] mt-1">Checking availability...</p>
+                  <p className="text-xs text-[#888] mt-1">Checking availability...</p>
                 )}
                 {error && (
                   <p className="text-xs text-red-500 mt-1">{error}</p>
                 )}
-                <p className="text-xs text-[--muted-dim] mt-2">
+                <p className="text-xs text-[#666] mt-2">
                   3-30 characters, letters, numbers, and underscores only
                 </p>
               </div>
@@ -187,9 +192,13 @@ export default function OnboardingPage() {
 
         {step === 2 && (
           <>
-            <h1 className="text-4xl font-bold tracking-tighter mb-4">Add a Profile Picture</h1>
-            <p className="text-[--muted] mb-8">
-              Help your friends recognize you. You can always change this later.
+            <p className="text-[10px] tracking-[0.3em] uppercase text-[#ffd700] mb-4">
+              Step 2 of 2
+            </p>
+            <h1 className="text-4xl font-bold tracking-tighter mb-4">Show Your Face</h1>
+            <p className="text-[#888] mb-8">
+              When you earn badges and climb the leaderboard, people will see this. 
+              Make it memorable.
             </p>
 
             <div className="flex flex-col items-center gap-6 mb-8">
@@ -201,7 +210,7 @@ export default function OnboardingPage() {
                   <img
                     src={image}
                     alt=""
-                    className="w-full h-full object-cover border border-[--border-dim]"
+                    className="w-full h-full object-cover border border-[#333]"
                   />
                 ) : (
                   <DefaultAvatar size="lg" className="w-full h-full" />
@@ -235,7 +244,7 @@ export default function OnboardingPage() {
                 onChange={handleImageUpload}
                 className="hidden"
               />
-              <p className="text-sm text-[--muted]">
+              <p className="text-sm text-[#888]">
                 Click to upload • Max 5MB
               </p>
               {error && (
@@ -246,7 +255,7 @@ export default function OnboardingPage() {
             <div className="flex gap-3">
               <button
                 onClick={handleComplete}
-                className="flex-1 border border-[--border-dim] py-4 px-6 font-bold text-lg hover:bg-[#111] transition-colors"
+                className="flex-1 border border-[#333] py-4 px-6 font-bold text-lg hover:bg-[#111] transition-colors"
               >
                 Skip for now
               </button>

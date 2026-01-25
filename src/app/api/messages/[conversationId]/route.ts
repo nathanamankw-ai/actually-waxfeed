@@ -1,183 +1,223 @@
+import { NextRequest } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { 
+  successResponse, 
+  errorResponse, 
+  getAuthenticatedUser,
+  getPagination,
+} from '@/lib/api-utils'
+import { MESSAGE_MAX_LENGTH } from '@/lib/messaging'
+
+interface RouteParams {
+  params: Promise<{ conversationId: string }>
+}
+
 /**
- * API: /api/messages/[conversationId]
- * Individual conversation operations
+ * GET /api/messages/[conversationId]
+ * Get messages in a conversation.
  */
-
-import { NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
-
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ conversationId: string }> }
-) {
+export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const session = await auth()
-    const { conversationId } = await params
-
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    const user = await getAuthenticatedUser()
+    if (!user) {
+      return errorResponse('Unauthorized', 401)
     }
 
+    const { conversationId } = await params
+    const { searchParams } = new URL(request.url)
+    const { limit, skip } = getPagination(searchParams)
+
+    // Verify user is part of conversation
     const conversation = await prisma.conversation.findUnique({
       where: { id: conversationId },
+      include: {
+        user1: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            image: true,
+            tastemakeScore: true,
+          },
+        },
+        user2: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            image: true,
+            tastemakeScore: true,
+          },
+        },
+      },
     })
 
     if (!conversation) {
-      return NextResponse.json({ error: "Conversation not found" }, { status: 404 })
+      return errorResponse('Conversation not found', 404)
     }
 
-    // Check if user is participant
-    const isParticipant1 = conversation.participant1Id === session.user.id
-    const isParticipant2 = conversation.participant2Id === session.user.id
-
-    if (!isParticipant1 && !isParticipant2) {
-      return NextResponse.json({ error: "Not authorized" }, { status: 403 })
+    if (conversation.user1Id !== user.id && conversation.user2Id !== user.id) {
+      return errorResponse('Not authorized to view this conversation', 403)
     }
 
-    // Get messages
-    const { searchParams } = new URL(request.url)
-    const cursor = searchParams.get("cursor")
-    const limit = Math.min(parseInt(searchParams.get("limit") || "50"), 100)
-
-    const messages = await prisma.directMessage.findMany({
+    // Get messages (newest first for pagination, then reverse for display)
+    const messages = await prisma.message.findMany({
       where: { conversationId },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
       take: limit,
-      ...(cursor && {
-        cursor: { id: cursor },
-        skip: 1,
-      }),
+      skip,
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            image: true,
+          },
+        },
+        albumContext: {
+          select: {
+            id: true,
+            title: true,
+            artistName: true,
+            coverArtUrlSmall: true,
+          },
+        },
+      },
     })
 
-    // Get sender info
-    const senderIds = [...new Set(messages.map(m => m.senderId))]
-    const senders = await prisma.user.findMany({
-      where: { id: { in: senderIds } },
-      select: { id: true, username: true, image: true },
+    // Get total count
+    const totalMessages = await prisma.message.count({
+      where: { conversationId },
     })
-    const senderMap = Object.fromEntries(senders.map(s => [s.id, s]))
-
-    const enrichedMessages = messages.map(m => ({
-      ...m,
-      sender: senderMap[m.senderId],
-      isMine: m.senderId === session.user.id,
-    }))
 
     // Get other user
-    const otherId = isParticipant1 ? conversation.participant2Id : conversation.participant1Id
-    const otherUser = await prisma.user.findUnique({
-      where: { id: otherId },
-      select: { id: true, username: true, image: true },
-    })
+    const otherUser = conversation.user1Id === user.id 
+      ? conversation.user2 
+      : conversation.user1
 
-    // Mark messages as read
-    const unreadField = isParticipant1 ? "participant1Unread" : "participant2Unread"
-    await prisma.conversation.update({
-      where: { id: conversationId },
-      data: { [unreadField]: 0 },
-    })
-
-    // Mark individual messages as read
-    await prisma.directMessage.updateMany({
-      where: {
-        conversationId,
-        senderId: { not: session.user.id },
-        isRead: false,
-      },
-      data: {
-        isRead: true,
-        readAt: new Date(),
-      },
-    })
-
-    return NextResponse.json({
+    return successResponse({
       conversation: {
         id: conversation.id,
+        tasteMatchScore: conversation.tasteMatchScore,
         otherUser,
+        createdAt: conversation.createdAt,
       },
-      messages: enrichedMessages.reverse(), // Oldest first for display
-      hasMore: messages.length === limit,
-      nextCursor: messages.length === limit ? messages[messages.length - 1].id : null,
+      messages: messages.reverse(), // Oldest first for display
+      pagination: {
+        total: totalMessages,
+        hasMore: skip + messages.length < totalMessages,
+      },
     })
   } catch (error) {
-    console.error("Error fetching conversation:", error)
-    return NextResponse.json({ error: "Failed to fetch conversation" }, { status: 500 })
+    console.error('Failed to get messages:', error)
+    return errorResponse('Failed to load messages', 500)
   }
 }
 
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ conversationId: string }> }
-) {
+/**
+ * POST /api/messages/[conversationId]
+ * Send a message in an existing conversation.
+ * Body: { content: string, albumContextId?: string }
+ */
+export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
-    const session = await auth()
-    const { conversationId } = await params
-
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    const user = await getAuthenticatedUser()
+    if (!user) {
+      return errorResponse('Unauthorized', 401)
     }
 
+    const { conversationId } = await params
+    const body = await request.json()
+    const { content, albumContextId } = body
+
+    if (!content || typeof content !== 'string') {
+      return errorResponse('Message content is required', 400)
+    }
+
+    if (content.length > MESSAGE_MAX_LENGTH) {
+      return errorResponse(`Message must be ${MESSAGE_MAX_LENGTH} characters or less`, 400)
+    }
+
+    // Verify user is part of conversation
     const conversation = await prisma.conversation.findUnique({
       where: { id: conversationId },
     })
 
     if (!conversation) {
-      return NextResponse.json({ error: "Conversation not found" }, { status: 404 })
+      return errorResponse('Conversation not found', 404)
     }
 
-    const isParticipant1 = conversation.participant1Id === session.user.id
-    const isParticipant2 = conversation.participant2Id === session.user.id
-
-    if (!isParticipant1 && !isParticipant2) {
-      return NextResponse.json({ error: "Not authorized" }, { status: 403 })
+    if (conversation.user1Id !== user.id && conversation.user2Id !== user.id) {
+      return errorResponse('Not authorized to send messages here', 403)
     }
 
-    const body = await request.json()
-    const { content, type = "text", metadata } = body
-
-    if (!content) {
-      return NextResponse.json({ error: "Message content required" }, { status: 400 })
+    // If albumContextId provided, verify album exists
+    if (albumContextId) {
+      const album = await prisma.album.findUnique({
+        where: { id: albumContextId },
+      })
+      if (!album) {
+        return errorResponse('Album not found', 404)
+      }
     }
 
     // Create message
-    const message = await prisma.directMessage.create({
+    const message = await prisma.message.create({
       data: {
         conversationId,
-        senderId: session.user.id,
-        content,
-        type,
-        metadata,
+        senderId: user.id,
+        content: content.trim(),
+        albumContextId: albumContextId || null,
+      },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            image: true,
+          },
+        },
+        albumContext: {
+          select: {
+            id: true,
+            title: true,
+            artistName: true,
+            coverArtUrlSmall: true,
+          },
+        },
       },
     })
 
-    // Update conversation
-    const unreadField = isParticipant1 ? "participant2Unread" : "participant1Unread"
-
+    // Update conversation's lastMessageAt
     await prisma.conversation.update({
       where: { id: conversationId },
+      data: { lastMessageAt: message.createdAt },
+    })
+
+    // Create notification for other user
+    const otherUserId = conversation.user1Id === user.id 
+      ? conversation.user2Id 
+      : conversation.user1Id
+
+    await prisma.notification.create({
       data: {
-        lastMessageAt: new Date(),
-        lastMessageText: content.slice(0, 100),
-        [unreadField]: { increment: 1 },
+        userId: otherUserId,
+        type: 'message',
+        content: {
+          conversationId,
+          senderId: user.id,
+          senderName: user.username || user.name,
+          senderImage: user.image,
+          preview: content.substring(0, 100),
+        },
       },
     })
 
-    // Get sender info
-    const sender = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { id: true, username: true, image: true },
-    })
-
-    return NextResponse.json({
-      message: {
-        ...message,
-        sender,
-        isMine: true,
-      },
-    })
+    return successResponse({ message }, 201)
   } catch (error) {
-    console.error("Error sending message:", error)
-    return NextResponse.json({ error: "Failed to send message" }, { status: 500 })
+    console.error('Failed to send message:', error)
+    return errorResponse('Failed to send message', 500)
   }
 }

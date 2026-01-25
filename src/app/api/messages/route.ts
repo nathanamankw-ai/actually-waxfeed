@@ -1,169 +1,218 @@
+import { NextRequest } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { 
+  successResponse, 
+  errorResponse, 
+  getAuthenticatedUser,
+  getPagination,
+} from '@/lib/api-utils'
+import { 
+  canMessage, 
+  getOrCreateConversation,
+  TASTE_MATCH_THRESHOLD,
+  MESSAGE_MAX_LENGTH,
+} from '@/lib/messaging'
+
 /**
- * API: /api/messages
- * Direct Messages / Conversations
+ * GET /api/messages
+ * List user's conversations with last message and unread count.
  */
-
-import { NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
-
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const session = await auth()
-
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    const user = await getAuthenticatedUser()
+    if (!user) {
+      return errorResponse('Unauthorized', 401)
     }
 
-    // Get all conversations for user
+    const { searchParams } = new URL(request.url)
+    const { limit, skip } = getPagination(searchParams)
+
+    // Get conversations
     const conversations = await prisma.conversation.findMany({
       where: {
         OR: [
-          { participant1Id: session.user.id },
-          { participant2Id: session.user.id },
+          { user1Id: user.id },
+          { user2Id: user.id },
         ],
       },
-      orderBy: { lastMessageAt: "desc" },
-      take: 50,
+      orderBy: { lastMessageAt: 'desc' },
+      take: limit,
+      skip,
+      include: {
+        user1: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            image: true,
+            tastemakeScore: true,
+          },
+        },
+        user2: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            image: true,
+            tastemakeScore: true,
+          },
+        },
+        messages: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          select: {
+            id: true,
+            content: true,
+            senderId: true,
+            createdAt: true,
+            isRead: true,
+          },
+        },
+      },
     })
 
-    // Get other participants
-    const otherUserIds = conversations.map(c =>
-      c.participant1Id === session.user.id ? c.participant2Id : c.participant1Id
+    // Get unread counts per conversation
+    const conversationData = await Promise.all(
+      conversations.map(async (conv) => {
+        const unreadCount = await prisma.message.count({
+          where: {
+            conversationId: conv.id,
+            senderId: { not: user.id },
+            isRead: false,
+          },
+        })
+
+        // Get the other user
+        const otherUser = conv.user1Id === user.id ? conv.user2 : conv.user1
+        const lastMessage = conv.messages[0] || null
+
+        return {
+          id: conv.id,
+          otherUser,
+          tasteMatchScore: conv.tasteMatchScore,
+          lastMessage,
+          unreadCount,
+          lastMessageAt: conv.lastMessageAt,
+          createdAt: conv.createdAt,
+        }
+      })
     )
 
-    const users = await prisma.user.findMany({
-      where: { id: { in: otherUserIds } },
-      select: { id: true, username: true, image: true },
-    })
-    const userMap = Object.fromEntries(users.map(u => [u.id, u]))
+    // Get total unread
+    const totalUnread = conversationData.reduce((sum, c) => sum + c.unreadCount, 0)
 
-    const enrichedConversations = conversations.map(c => {
-      const isParticipant1 = c.participant1Id === session.user.id
-      const otherId = isParticipant1 ? c.participant2Id : c.participant1Id
-      const unreadCount = isParticipant1 ? c.participant1Unread : c.participant2Unread
-
-      return {
-        id: c.id,
-        otherUser: userMap[otherId],
-        lastMessageText: c.lastMessageText,
-        lastMessageAt: c.lastMessageAt,
-        unreadCount,
-      }
-    })
-
-    // Count total unread
-    const totalUnread = enrichedConversations.reduce((sum, c) => sum + c.unreadCount, 0)
-
-    return NextResponse.json({
-      conversations: enrichedConversations,
+    return successResponse({
+      conversations: conversationData,
       totalUnread,
     })
   } catch (error) {
-    console.error("Error fetching conversations:", error)
-    return NextResponse.json({ error: "Failed to fetch conversations" }, { status: 500 })
+    console.error('Failed to list conversations:', error)
+    return errorResponse('Failed to load conversations', 500)
   }
 }
 
-export async function POST(request: Request) {
+/**
+ * POST /api/messages
+ * Start a new conversation with a user (requires 60%+ taste match).
+ * Body: { targetUserId: string, message: string }
+ */
+export async function POST(request: NextRequest) {
   try {
-    const session = await auth()
-
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    const user = await getAuthenticatedUser()
+    if (!user) {
+      return errorResponse('Unauthorized', 401)
     }
 
     const body = await request.json()
-    const { recipientId, content, type = "text", metadata } = body
+    const { targetUserId, message } = body
 
-    // Input validation
-    const MAX_MESSAGE_LENGTH = 10000
-    const ALLOWED_TYPES = ["text", "album_share", "review_share"]
-
-    if (!recipientId || !content) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+    if (!targetUserId) {
+      return errorResponse('Target user ID is required', 400)
     }
 
-    if (typeof content !== "string" || content.length > MAX_MESSAGE_LENGTH) {
-      return NextResponse.json({ error: "Message too long" }, { status: 400 })
+    if (!message || typeof message !== 'string') {
+      return errorResponse('Message is required', 400)
     }
 
-    if (!ALLOWED_TYPES.includes(type)) {
-      return NextResponse.json({ error: "Invalid message type" }, { status: 400 })
+    if (message.length > MESSAGE_MAX_LENGTH) {
+      return errorResponse(`Message must be ${MESSAGE_MAX_LENGTH} characters or less`, 400)
     }
 
-    if (recipientId === session.user.id) {
-      return NextResponse.json({ error: "Cannot message yourself" }, { status: 400 })
+    if (targetUserId === user.id) {
+      return errorResponse('Cannot message yourself', 400)
     }
 
-    // Check if conversation exists
-    const [p1, p2] = [session.user.id, recipientId].sort()
-
-    let conversation = await prisma.conversation.findUnique({
-      where: {
-        participant1Id_participant2Id: {
-          participant1Id: p1,
-          participant2Id: p2,
-        },
+    // Check if target user exists
+    const targetUser = await prisma.user.findUnique({
+      where: { id: targetUserId },
+      select: { 
+        id: true, 
+        username: true, 
+        name: true, 
+        image: true,
+        tastemakeScore: true,
       },
     })
 
-    if (!conversation) {
-      // Create new conversation
-      conversation = await prisma.conversation.create({
-        data: {
-          participant1Id: p1,
-          participant2Id: p2,
-        },
-      })
+    if (!targetUser) {
+      return errorResponse('User not found', 404)
     }
+
+    // Check if they can message (taste match gate)
+    const canMsg = await canMessage(user.id, targetUserId)
+    if (!canMsg.allowed) {
+      return errorResponse(canMsg.reason || `Taste match must be ${TASTE_MATCH_THRESHOLD}% or higher`, 403)
+    }
+
+    // Get or create conversation
+    const conversation = await getOrCreateConversation(user.id, targetUserId)
 
     // Create message
-    const message = await prisma.directMessage.create({
+    const newMessage = await prisma.message.create({
       data: {
         conversationId: conversation.id,
-        senderId: session.user.id,
-        content,
-        type,
-        metadata,
+        senderId: user.id,
+        content: message.trim(),
       },
     })
 
-    // Update conversation
-    const isParticipant1 = conversation.participant1Id === session.user.id
-    const unreadField = isParticipant1 ? "participant2Unread" : "participant1Unread"
-
+    // Update conversation's lastMessageAt
     await prisma.conversation.update({
       where: { id: conversation.id },
-      data: {
-        lastMessageAt: new Date(),
-        lastMessageText: content.slice(0, 100),
-        [unreadField]: { increment: 1 },
-      },
+      data: { lastMessageAt: newMessage.createdAt },
     })
 
     // Create notification for recipient
-    const sender = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { username: true },
-    })
-
     await prisma.notification.create({
       data: {
-        userId: recipientId,
-        type: "direct_message",
+        userId: targetUserId,
+        type: 'message',
         content: {
           conversationId: conversation.id,
-          actorId: session.user.id,
-          actorName: sender?.username || "Someone",
-          preview: content.slice(0, 50),
+          senderId: user.id,
+          senderName: user.username || user.name,
+          senderImage: user.image,
+          preview: message.substring(0, 100),
         },
       },
     })
 
-    return NextResponse.json({ message, conversationId: conversation.id })
+    return successResponse({
+      conversation: {
+        id: conversation.id,
+        otherUser: targetUser,
+        tasteMatchScore: conversation.tasteMatchScore,
+      },
+      message: {
+        id: newMessage.id,
+        content: newMessage.content,
+        senderId: newMessage.senderId,
+        createdAt: newMessage.createdAt,
+      },
+    }, 201)
   } catch (error) {
-    console.error("Error sending message:", error)
-    return NextResponse.json({ error: "Failed to send message" }, { status: 500 })
+    console.error('Failed to start conversation:', error)
+    const message = error instanceof Error ? error.message : 'Failed to start conversation'
+    return errorResponse(message, 500)
   }
 }

@@ -31,6 +31,10 @@ interface ReviewCardProps {
   insightfulCount?: number
   funnyCount?: number
   controversialCount?: number
+  waxCount?: number
+  premiumWaxCount?: number
+  goldWaxCount?: number
+  reviewPosition?: number | null // First Spin position
   user: {
     id: string
     username?: string | null
@@ -43,6 +47,7 @@ interface ReviewCardProps {
     title: string
     artistName: string
     coverArtUrl?: string | null
+    totalReviews?: number
   }
   showAlbum?: boolean
   compact?: boolean
@@ -67,6 +72,10 @@ export const ReviewCard = memo(function ReviewCard({
   insightfulCount: initialInsightfulCount = 0,
   funnyCount: initialFunnyCount = 0,
   controversialCount: initialControversialCount = 0,
+  waxCount: initialWaxCount = 0,
+  premiumWaxCount: initialPremiumWaxCount = 0,
+  goldWaxCount: initialGoldWaxCount = 0,
+  reviewPosition,
   user,
   album,
   showAlbum = true,
@@ -78,6 +87,14 @@ export const ReviewCard = memo(function ReviewCard({
   const [likeCount, setLikeCount] = useState(initialLikeCount)
   const [liked, setLiked] = useState(false)
   const [showReactions, setShowReactions] = useState(false)
+  const [showWaxMenu, setShowWaxMenu] = useState(false)
+  const [waxCounts, setWaxCounts] = useState({
+    standard: initialWaxCount,
+    premium: initialPremiumWaxCount,
+    gold: initialGoldWaxCount,
+  })
+  const [hasAwardedWax, setHasAwardedWax] = useState(false)
+  const [awardingWax, setAwardingWax] = useState<string | null>(null)
   const [reactionCounts, setReactionCounts] = useState({
     fire: initialFireCount,
     insightful: initialInsightfulCount,
@@ -85,6 +102,31 @@ export const ReviewCard = memo(function ReviewCard({
     controversial: initialControversialCount,
   })
   const [userReactions, setUserReactions] = useState<string[]>([])
+
+  const totalWax = waxCounts.standard + waxCounts.premium + waxCounts.gold
+
+  const handleAwardWax = useCallback(async (waxType: "standard" | "premium" | "gold") => {
+    if (!session || hasAwardedWax) return
+    setAwardingWax(waxType)
+
+    try {
+      const res = await fetch(`/api/reviews/${id}/wax`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ waxType }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setWaxCounts(prev => ({ ...prev, [waxType]: prev[waxType] + 1 }))
+        setHasAwardedWax(true)
+        setShowWaxMenu(false)
+      }
+    } catch (error) {
+      console.error("Failed to award wax:", error)
+    } finally {
+      setAwardingWax(null)
+    }
+  }, [session, id, hasAwardedWax])
 
   const handleShare = useCallback(async () => {
     const shareUrl = typeof window !== 'undefined'
@@ -221,9 +263,26 @@ export const ReviewCard = memo(function ReviewCard({
               </div>
             </div>
 
-            {/* Rating */}
-            <div className="flex-shrink-0 bg-white text-black px-2 sm:px-3 py-0.5 sm:py-1 font-bold text-base sm:text-lg">
-              {rating.toFixed(1)}
+            {/* Rating + First Spin Badge */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {/* First Spin Position Badge */}
+              {reviewPosition && reviewPosition <= 100 && (
+                <div
+                  className={`px-1.5 py-0.5 text-[10px] font-bold ${
+                    reviewPosition <= 10
+                      ? "border border-[#ffd700] text-[#ffd700]"
+                      : reviewPosition <= 50
+                        ? "border border-gray-400 text-gray-400"
+                        : "border border-amber-700 text-amber-700"
+                  }`}
+                  title={`Reviewer #${reviewPosition}`}
+                >
+                  #{reviewPosition}
+                </div>
+              )}
+              <div className="bg-white text-black px-2 sm:px-3 py-0.5 sm:py-1 font-bold text-base sm:text-lg">
+                {rating.toFixed(1)}
+              </div>
             </div>
           </div>
 
@@ -236,6 +295,63 @@ export const ReviewCard = memo(function ReviewCard({
 
           {/* Actions */}
           <div className="flex items-center gap-3 sm:gap-4 text-xs flex-wrap" style={{ color: 'var(--muted)' }}>
+            {/* Wax Award - Primary Action */}
+            <div className="relative">
+              <button
+                onClick={() => session ? setShowWaxMenu(!showWaxMenu) : null}
+                disabled={hasAwardedWax}
+                className={`flex items-center gap-1.5 transition-colors ${
+                  hasAwardedWax 
+                    ? "text-[#ffd700]" 
+                    : totalWax > 0 
+                      ? "hover:text-[#ffd700]" 
+                      : "hover:text-white"
+                }`}
+                title={hasAwardedWax ? "You awarded Wax" : "Award Wax"}
+              >
+                <span className="text-[10px] font-bold tracking-wider">WAX</span>
+                <span className="font-bold tabular-nums">{totalWax}</span>
+                {hasAwardedWax && (
+                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </button>
+
+              {showWaxMenu && !hasAwardedWax && session && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setShowWaxMenu(false)} />
+                  <div className="absolute bottom-full left-0 mb-1 z-50 border border-[--border] p-2 min-w-[140px]" style={{ backgroundColor: 'var(--background)' }}>
+                    <p className="text-[9px] tracking-[0.15em] uppercase mb-2 px-1" style={{ color: 'var(--muted)' }}>Award Wax</p>
+                    <button
+                      onClick={() => handleAwardWax("standard")}
+                      disabled={awardingWax === "standard"}
+                      className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-[--border]/30 transition text-left disabled:opacity-50"
+                    >
+                      <span>Standard</span>
+                      <span className="text-[10px]" style={{ color: 'var(--muted)' }}>5</span>
+                    </button>
+                    <button
+                      onClick={() => handleAwardWax("premium")}
+                      disabled={awardingWax === "premium"}
+                      className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-[--border]/30 transition text-left text-purple-400 disabled:opacity-50"
+                    >
+                      <span>Premium</span>
+                      <span className="text-[10px]">20</span>
+                    </button>
+                    <button
+                      onClick={() => handleAwardWax("gold")}
+                      disabled={awardingWax === "gold"}
+                      className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-[--border]/30 transition text-left text-[#ffd700] disabled:opacity-50"
+                    >
+                      <span>GOLD</span>
+                      <span className="text-[10px]">100</span>
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+
             <button
               onClick={handleLike}
               className={`hover:text-white transition-colors flex items-center gap-1.5 ${liked ? "text-red-500" : ""}`}
@@ -272,14 +388,11 @@ export const ReviewCard = memo(function ReviewCard({
               )}
             </div>
 
-            {/* Show top reactions if any */}
-            {totalReactions > 0 && !compact && (
-              <div className="flex items-center gap-1">
-                {REACTIONS.filter(r => reactionCounts[r.type as keyof typeof reactionCounts] > 0)
-                  .slice(0, 3)
-                  .map(({ type, Icon }) => (
-                    <Icon key={type} size={14} className="opacity-60" title={`${reactionCounts[type as keyof typeof reactionCounts]}`} />
-                  ))}
+            {/* Show Wax breakdown if any premium/gold */}
+            {(waxCounts.premium > 0 || waxCounts.gold > 0) && !compact && (
+              <div className="flex items-center gap-1.5 text-[10px]">
+                {waxCounts.gold > 0 && <span className="text-[#ffd700]">G:{waxCounts.gold}</span>}
+                {waxCounts.premium > 0 && <span className="text-purple-400">P:{waxCounts.premium}</span>}
               </div>
             )}
 

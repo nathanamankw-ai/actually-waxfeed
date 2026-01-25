@@ -129,13 +129,35 @@ export async function POST(request: NextRequest) {
       return errorResponse('You have already reviewed this album', 409)
     }
 
-    // Create review
+    // Calculate review position (First Spin tracking)
+    const currentReviewCount = await prisma.review.count({
+      where: { albumId }
+    })
+    const reviewPosition = currentReviewCount + 1
+
+    // ANTI-GAMING: First 100 reviews MUST have written text
+    // This prevents people from spamming empty reviews just to get Gold/Silver/Bronze Spins
+    const MIN_REVIEW_LENGTH = 20 // At least 20 characters
+    const FIRST_SPIN_THRESHOLD = 100
+
+    if (reviewPosition <= FIRST_SPIN_THRESHOLD) {
+      if (!text || text.trim().length < MIN_REVIEW_LENGTH) {
+        return errorResponse(
+          `The first ${FIRST_SPIN_THRESHOLD} reviews must include a written review (at least ${MIN_REVIEW_LENGTH} characters). ` +
+          `You're position #${reviewPosition} - share your thoughts to earn your spot!`,
+          400
+        )
+      }
+    }
+
+    // Create review with position
     const review = await prisma.review.create({
       data: {
         userId: user.id,
         albumId,
         rating,
         text,
+        reviewPosition,
       },
       include: {
         user: {
@@ -152,6 +174,7 @@ export async function POST(request: NextRequest) {
             title: true,
             artistName: true,
             coverArtUrl: true,
+            totalReviews: true,
           }
         }
       }
@@ -201,6 +224,29 @@ export async function POST(request: NextRequest) {
       where: { userId: user.id, albumId }
     })
 
+    // First Spin: Simple +5 Wax for any review (no complex rules)
+    try {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          waxBalance: { increment: 5 },
+          lifetimeWaxEarned: { increment: 5 },
+        }
+      })
+      
+      await prisma.waxTransaction.create({
+        data: {
+          userId: user.id,
+          amount: 5,
+          type: 'REVIEW_REWARD',
+          description: `Review: ${album.title}`,
+          metadata: { albumId, reviewId: review.id, position: reviewPosition }
+        }
+      })
+    } catch (error) {
+      console.error('Error granting wax:', error)
+    }
+
     // Notify friends about new review
     const friendships = await prisma.friendship.findMany({
       where: {
@@ -222,7 +268,18 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    return successResponse(review, 201)
+    return successResponse({ 
+      ...review, 
+      reviewPosition,
+      waxEarned: 5,
+      firstSpinMessage: reviewPosition <= 10 
+        ? `You're reviewer #${reviewPosition}! If this album trends, you'll earn a Gold Spin.`
+        : reviewPosition <= 50
+          ? `You're reviewer #${reviewPosition}! If this album trends, you'll earn a Silver Spin.`
+          : reviewPosition <= 100
+            ? `You're reviewer #${reviewPosition}! If this album trends, you'll earn a Bronze Spin.`
+            : null
+    }, 201)
   } catch (error) {
     if (error instanceof Error && error.message === 'UNAUTHORIZED') {
       return errorResponse('Authentication required', 401)

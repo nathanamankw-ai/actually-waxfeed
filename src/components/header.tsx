@@ -6,6 +6,16 @@ import { useState, useEffect, useRef } from "react"
 import { DefaultAvatar } from "./default-avatar"
 import { WaxfeedLogo } from "./waxfeed-logo"
 import { useTheme } from "./theme-provider"
+import { Tooltip } from "./ui/tooltip"
+
+type WaxStats = {
+  balance: number
+  tastemakeScore: number
+  goldSpinCount: number
+  silverSpinCount: number
+  bronzeSpinCount: number
+  tier: string
+}
 
 export function Header() {
   const { data: session, status } = useSession()
@@ -13,7 +23,53 @@ export function Header() {
   const [searchQuery, setSearchQuery] = useState("")
   const [showDropdown, setShowDropdown] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [waxStats, setWaxStats] = useState<WaxStats | null>(null)
+  const [unreadMessages, setUnreadMessages] = useState(0)
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Fetch Wax stats
+  useEffect(() => {
+    const fetchWax = async () => {
+      if (!session?.user) return
+      try {
+        const res = await fetch("/api/wax/balance")
+        const data = await res.json()
+        if (data.success) {
+          setWaxStats({
+            balance: data.data.balance || 0,
+            tastemakeScore: data.data.tastemakeScore || 0,
+            goldSpinCount: data.data.goldSpinCount || 0,
+            silverSpinCount: data.data.silverSpinCount || 0,
+            bronzeSpinCount: data.data.bronzeSpinCount || 0,
+            tier: data.data.tier || 'FREE',
+          })
+        }
+      } catch (error) {
+        console.error("Failed to fetch wax:", error)
+      }
+    }
+    fetchWax()
+  }, [session])
+
+  // Fetch unread messages
+  useEffect(() => {
+    const fetchUnread = async () => {
+      if (!session?.user) return
+      try {
+        const res = await fetch("/api/messages/unread")
+        const data = await res.json()
+        if (data.success) {
+          setUnreadMessages(data.data.unreadCount || 0)
+        }
+      } catch (error) {
+        console.error("Failed to fetch unread:", error)
+      }
+    }
+    fetchUnread()
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchUnread, 30000)
+    return () => clearInterval(interval)
+  }, [session])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -72,22 +128,85 @@ export function Header() {
         </form>
 
         {/* Desktop Navigation - only show on large screens */}
-        <nav className="hidden lg:flex items-center gap-6 text-[11px] tracking-[0.1em]">
-          <Link href="/" className="no-underline hover:opacity-60 transition-opacity">
-            HOME
-          </Link>
-          <Link href="/discover" className="no-underline hover:opacity-60 transition-opacity">
-            DISCOVER
+        <nav className="hidden lg:flex items-center gap-5 text-[11px] tracking-[0.1em]">
+          {/* Primary CTA - Review */}
+          <Link 
+            href="/discover" 
+            className="px-3 py-1.5 no-underline transition-colors"
+            style={{ backgroundColor: 'var(--header-text)', color: 'var(--header-bg)' }}
+          >
+            REVIEW
           </Link>
           <Link href="/trending" className="no-underline hover:opacity-60 transition-opacity">
             TRENDING
           </Link>
+          <Link href="/radar" className="no-underline hover:opacity-60 transition-opacity flex items-center gap-1">
+            <svg className="w-3 h-3 text-[#ffd700]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            RADAR
+          </Link>
+          <Link href="/leaderboard" className="no-underline hover:opacity-60 transition-opacity">
+            RANKS
+          </Link>
           <Link href="/lists" className="no-underline hover:opacity-60 transition-opacity">
             LISTS
           </Link>
-          <Link href="/hot-takes" className="no-underline hover:opacity-60 transition-opacity">
-            HOT TAKES
-          </Link>
+
+          {/* Messages - Social Hub */}
+          {session && (
+            <Tooltip content="Messages, Album Rooms, and Taste Circles">
+              <Link
+                href="/messages"
+                className="relative no-underline hover:opacity-60 transition-opacity flex items-center gap-1"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                {unreadMessages > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[14px] h-[14px] bg-[#ffd700] text-black text-[9px] font-bold flex items-center justify-center rounded-full px-0.5">
+                    {unreadMessages > 9 ? '9+' : unreadMessages}
+                  </span>
+                )}
+              </Link>
+            </Tooltip>
+          )}
+
+          {/* Wax Balance - Links to Shop */}
+          {session && waxStats && (
+            <Tooltip content="Your Wax balance. Use Wax to tip great reviews and support tastemakers.">
+              <Link
+                href="/shop"
+                className="flex items-center gap-1.5 px-2 py-1.5 no-underline hover:opacity-70 transition-opacity text-[#ffd700]"
+              >
+                <span className="text-[10px] tracking-[0.1em] uppercase opacity-80">Wax</span>
+                <span className="font-bold tabular-nums">{waxStats.balance.toLocaleString()}</span>
+              </Link>
+            </Tooltip>
+          )}
+
+          {/* Tastemaker Score - Links to Wallet */}
+          {session && waxStats && (
+            <Tooltip content="Your discovery score. Earn badges by reviewing albums before they trend: Gold (top 10), Silver (top 50), Bronze (top 100).">
+              <Link
+                href="/wallet"
+                className="flex items-center gap-3 px-3 py-1.5 no-underline hover:opacity-70 transition-opacity"
+                style={{ border: '1px solid var(--header-border)' }}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] tracking-[0.1em] uppercase opacity-60">Score</span>
+                  <span className="font-bold tabular-nums">{waxStats.tastemakeScore}</span>
+                </div>
+                {(waxStats.goldSpinCount > 0 || waxStats.silverSpinCount > 0 || waxStats.bronzeSpinCount > 0) && (
+                  <div className="flex items-center gap-1 text-[10px]">
+                    {waxStats.goldSpinCount > 0 && <span className="text-[#ffd700]">G:{waxStats.goldSpinCount}</span>}
+                    {waxStats.silverSpinCount > 0 && <span className="text-gray-400">S:{waxStats.silverSpinCount}</span>}
+                    {waxStats.bronzeSpinCount > 0 && <span className="text-amber-700">B:{waxStats.bronzeSpinCount}</span>}
+                  </div>
+                )}
+              </Link>
+            </Tooltip>
+          )}
 
           {/* Theme toggle */}
           <button
@@ -133,6 +252,7 @@ export function Header() {
                     <p className="font-bold">{session.user?.username || session.user?.name}</p>
                     <p className="text-xs" style={{ opacity: 0.6 }}>{session.user?.email}</p>
                   </div>
+
                   <Link
                     href={`/u/${session.user?.username || session.user?.id}`}
                     className="block px-4 py-2 no-underline hover:opacity-70"
@@ -141,16 +261,56 @@ export function Header() {
                     Profile
                   </Link>
                   <Link
+                    href="/wallet"
+                    className="block px-4 py-2 no-underline hover:opacity-70"
+                    onClick={() => setShowDropdown(false)}
+                  >
+                    Wallet & Badges
+                  </Link>
+                  <Link
                     href="/friends"
                     className="block px-4 py-2 no-underline hover:opacity-70"
                     onClick={() => setShowDropdown(false)}
                   >
                     Friends
                   </Link>
+                  
+                  {/* Social Messaging Section */}
+                  <div style={{ borderTop: '1px solid var(--header-border)', marginTop: '8px', paddingTop: '8px' }}>
+                    <p className="px-4 py-1 text-[10px] uppercase tracking-wider" style={{ opacity: 0.5 }}>Social</p>
+                    <Link
+                      href="/messages"
+                      className="flex items-center justify-between px-4 py-2 no-underline hover:opacity-70"
+                      onClick={() => setShowDropdown(false)}
+                    >
+                      <span>Messages</span>
+                      {unreadMessages > 0 && (
+                        <span className="px-1.5 py-0.5 bg-[#ffd700] text-black text-[10px] font-bold">
+                          {unreadMessages}
+                        </span>
+                      )}
+                    </Link>
+                    <Link
+                      href="/rooms"
+                      className="block px-4 py-2 no-underline hover:opacity-70"
+                      onClick={() => setShowDropdown(false)}
+                    >
+                      Album Rooms
+                    </Link>
+                    <Link
+                      href="/circles"
+                      className="block px-4 py-2 no-underline hover:opacity-70"
+                      onClick={() => setShowDropdown(false)}
+                    >
+                      Taste Circles
+                    </Link>
+                  </div>
+                  
                   <Link
                     href="/notifications"
                     className="block px-4 py-2 no-underline hover:opacity-70"
                     onClick={() => setShowDropdown(false)}
+                    style={{ borderTop: '1px solid var(--header-border)', marginTop: '8px' }}
                   >
                     Notifications
                   </Link>
@@ -161,9 +321,22 @@ export function Header() {
                   >
                     Settings
                   </Link>
+                  
+                  {/* Upgrade CTA for free users - the subtle offer */}
+                  {waxStats && waxStats.tier === 'FREE' && (
+                    <Link
+                      href="/pricing"
+                      className="block px-4 py-2 no-underline text-[#ffd700] hover:opacity-70"
+                      onClick={() => setShowDropdown(false)}
+                      style={{ borderTop: '1px solid var(--header-border)' }}
+                    >
+                      ⚡ Upgrade to Wax+
+                    </Link>
+                  )}
+                  
                   <button
                     onClick={() => signOut()}
-                    className="w-full text-left px-4 py-2 hover:opacity-70 mt-2"
+                    className="w-full text-left px-4 py-2 hover:opacity-70"
                     style={{ borderTop: '1px solid var(--header-border)' }}
                   >
                     Sign Out
@@ -182,8 +355,31 @@ export function Header() {
           )}
         </nav>
 
-        {/* Mobile/Tablet: Search icon + Menu button */}
+        {/* Mobile/Tablet: Wax + Score + Search + Menu */}
         <div className="flex lg:hidden items-center gap-2">
+          {/* Wax Balance - Mobile - Links to Shop */}
+          {session && waxStats && (
+            <Link
+              href="/shop"
+              className="flex items-center gap-1 px-2 py-1 no-underline text-[#ffd700]"
+            >
+              <span className="text-[9px] uppercase opacity-80">Wax</span>
+              <span className="font-bold tabular-nums text-sm">{waxStats.balance.toLocaleString()}</span>
+            </Link>
+          )}
+          
+          {/* Tastemaker Score - Mobile */}
+          {session && waxStats && (
+            <Link
+              href="/wallet"
+              className="flex items-center gap-1.5 px-2 py-1 no-underline"
+              style={{ border: '1px solid var(--header-border)' }}
+            >
+              <span className="text-[9px] uppercase opacity-60">Score</span>
+              <span className="font-bold tabular-nums text-sm">{waxStats.tastemakeScore}</span>
+            </Link>
+          )}
+
           {/* Search icon - links to search page */}
           <Link
             href="/search"
@@ -325,6 +521,70 @@ export function Header() {
             {status !== "loading" && (
               session ? (
                 <div className="mt-4" style={{ borderTop: '1px solid var(--header-border)' }}>
+                  {/* First Spin Stats - Mobile */}
+                  {waxStats && (
+                    <div style={{ borderBottom: '1px solid var(--header-border)' }}>
+                      <Link
+                        href="/wallet"
+                        className="flex items-center justify-between px-4 py-4 no-underline"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <div>
+                          <span className="text-[10px] tracking-[0.15em] uppercase" style={{ opacity: 0.6 }}>Tastemaker</span>
+                          <p className="text-2xl font-bold tabular-nums">{waxStats.tastemakeScore}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {waxStats.goldSpinCount > 0 && (
+                            <div className="text-center">
+                              <span className="text-[10px] text-[#ffd700]">GOLD</span>
+                              <p className="text-lg font-bold text-[#ffd700]">{waxStats.goldSpinCount}</p>
+                            </div>
+                          )}
+                          {waxStats.silverSpinCount > 0 && (
+                            <div className="text-center">
+                              <span className="text-[10px] text-gray-400">SILVER</span>
+                              <p className="text-lg font-bold text-gray-400">{waxStats.silverSpinCount}</p>
+                            </div>
+                          )}
+                          {waxStats.bronzeSpinCount > 0 && (
+                            <div className="text-center">
+                              <span className="text-[10px] text-amber-700">BRONZE</span>
+                              <p className="text-lg font-bold text-amber-700">{waxStats.bronzeSpinCount}</p>
+                            </div>
+                          )}
+                        </div>
+                      </Link>
+                      <Link
+                        href="/wallet"
+                        className="flex items-center justify-between px-4 py-3 no-underline"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <span>Wax Balance</span>
+                        <span className="font-bold tabular-nums">{waxStats.balance.toLocaleString()}</span>
+                      </Link>
+                      <Link
+                        href="/shop"
+                        className="flex items-center justify-between px-4 py-4 text-base no-underline hover:opacity-70"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <span>Get Wax</span>
+                        <svg className="w-5 h-5" style={{ opacity: 0.5 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </Link>
+                      <Link
+                        href="/pricing"
+                        className="flex items-center justify-between px-4 py-4 text-base no-underline hover:opacity-70"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <span>Upgrade</span>
+                        <svg className="w-5 h-5" style={{ opacity: 0.5 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </Link>
+                    </div>
+                  )}
+
                   {/* User info header */}
                   <div className="px-4 py-4 flex items-center gap-3" style={{ opacity: 0.9 }}>
                     {session.user?.image ? (
