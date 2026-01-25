@@ -410,3 +410,124 @@ img[src=""] {
     transform: translateY(0);
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   POLARITY 1.2 SYSTEM AESTHETIC
+   ═══════════════════════════════════════════════════════════════ */
+
+/* System monospace font */
+.font-system {
+  font-family: "SF Mono", "Fira Code", "JetBrains Mono", Monaco, Consolas, monospace;
+  font-feature-settings: "tnum" 1, "ss01" 1;
+}
+
+/* Technical data display */
+.data-readout {
+  font-family: "SF Mono", Monaco, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+}
+
+/* Glitch effect for special moments */
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+.animate-glitch {
+  animation: glitch 0.3s ease infinite;
+}
+
+/* Flicker effect */
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  41% { opacity: 1; }
+  42% { opacity: 0.8; }
+  43% { opacity: 1; }
+  45% { opacity: 0.3; }
+  46% { opacity: 1; }
+}
+
+.animate-flicker {
+  animation: flicker 3s linear infinite;
+}
+
+/* Technical border frame */
+.tech-frame {
+  position: relative;
+}
+
+.tech-frame::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 12px;
+  height: 12px;
+  border-left: 1px solid var(--foreground);
+  border-top: 1px solid var(--foreground);
+  opacity: 0.3;
+}
+
+.tech-frame::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 12px;
+  height: 12px;
+  border-right: 1px solid var(--foreground);
+  border-bottom: 1px solid var(--foreground);
+  opacity: 0.3;
+}
+
+/* Status indicator pulse */
+@keyframes status-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 currentColor; }
+  50% { box-shadow: 0 0 0 4px transparent; }
+}
+
+.status-indicator {
+  animation: status-pulse 2s ease-in-out infinite;
+}
+
+/* Typing cursor blink */
+@keyframes cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.cursor-blink::after {
+  content: "▋";
+  animation: cursor-blink 1s step-end infinite;
+  margin-left: 2px;
+  color: var(--foreground);
+  opacity: 0.5;
+}
+
+/* Neon glow for accent elements */
+.neon-gold {
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.neon-border-gold {
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3), inset 0 0 10px rgba(255, 215, 0, 0.1);
+}
+
+/* System status colors */
+.status-nominal { color: #22c55e; }
+.status-active { color: #ffd700; }
+.status-warning { color: #f59e0b; }
+.status-error { color: #ef4444; }
+
+/* Coordinates display */
+.coords {
+  font-family: "SF Mono", Monaco, monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  opacity: 0.3;
+}

@@ -4,6 +4,7 @@ import { SessionProvider } from "@/components/session-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
 import { CustomCursor } from "@/components/custom-cursor";
+import { PolaritySystem } from "@/components/polarity-system";
 import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
@@ -37,14 +38,10 @@ export default function RootLayout({
           <ThemeProvider>
             <CustomCursor />
             <Header />
-            <main className="pt-16">
+            <main className="pt-16 pb-12">
               {children}
             </main>
-            <footer className="fixed bottom-3 right-4 z-40">
-              <span className="text-[10px] tracking-[0.2em] uppercase text-foreground/30 font-medium">
-                powered by polarity 1.2
-              </span>
-            </footer>
+            <PolaritySystem />
             <Analytics />
           </ThemeProvider>
         </SessionProvider>
