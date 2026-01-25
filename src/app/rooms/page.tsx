@@ -18,7 +18,7 @@ export default function RoomsPage() {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
+      <div className="min-h-screen flex items-center justify-center bg-[--background]">
         <div className="flex flex-col items-center gap-3 animate-fade-in">
           <div className="w-8 h-8 border-2 border-[--muted] border-t-[#ffd700] animate-spin" />
           <span className="text-xs tracking-[0.2em] uppercase text-[--muted]">Loading rooms</span>
@@ -32,7 +32,7 @@ export default function RoomsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-[--background]">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="px-6 pt-10 pb-8 border-b border-[--border] animate-fade-in">

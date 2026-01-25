@@ -165,7 +165,7 @@ export function HotTakeCard({ hotTake, onVote, compact = false }: HotTakeCardPro
   }
 
   return (
-    <article className="border border-[#222] bg-[#0a0a0a]">
+    <article className="border border-[--border] bg-[--background]">
       {/* Header bar */}
       <div className="flex items-center justify-between px-6 py-3 border-b border-[#222]">
         <div className="flex items-center gap-4">

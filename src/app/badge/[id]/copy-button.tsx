@@ -18,10 +18,10 @@ export function CopyButton({ url }: { url: string }) {
   return (
     <button
       onClick={handleCopy}
-      className={`px-4 py-3.5 text-white border text-[11px] tracking-[0.1em] uppercase font-bold transition-all flex items-center gap-2 ${
+      className={`px-4 py-3.5 text-[--foreground] border text-[11px] tracking-[0.1em] uppercase font-bold transition-all flex items-center gap-2 ${
         copied
           ? 'bg-green-500/10 border-green-500/50 text-green-400'
-          : 'bg-[#0a0a0a] border-[--border] hover:border-[#ffd700]/50 hover:bg-[#ffd700]/5'
+          : 'bg-[--background] border-[--border] hover:border-[#ffd700]/50 hover:bg-[#ffd700]/5'
       }`}
     >
       {copied ? (

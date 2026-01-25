@@ -168,7 +168,7 @@ export function TrackPlayer({ tracks, albumId, albumTitle, artistName, coverArtU
   const tracksWithPreviews = tracks.filter(t => t.previewUrl)
 
   return (
-    <div className="border border-[--border] bg-[#0a0a0a] animate-fade-in">
+    <div className="border border-[--border] bg-[--background] animate-fade-in">
       <audio ref={audioRef} className="hidden" />
 
       {/* Header with Progress */}

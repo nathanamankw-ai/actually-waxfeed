@@ -104,7 +104,7 @@ export default async function BadgePage({ params }: Props) {
   const threadsUrl = `https://threads.net/intent/post?text=${encodeURIComponent(shareText + " " + badgeUrl)}`
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-[--background]">
       <div className="max-w-2xl mx-auto px-4 py-12">
         {/* Back navigation */}
         <div className="mb-8 animate-fade-in">
@@ -213,7 +213,7 @@ export default async function BadgePage({ params }: Props) {
                 href={twitterUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3.5 bg-[#0a0a0a] text-white border border-[--border] hover:border-[#ffd700]/50 hover:bg-[#ffd700]/5 transition-all text-[11px] tracking-[0.1em] uppercase font-bold"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3.5 bg-[--background] text-[--foreground] border border-[--border] hover:border-[#ffd700]/50 hover:bg-[#ffd700]/5 transition-all text-[11px] tracking-[0.1em] uppercase font-bold"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -224,7 +224,7 @@ export default async function BadgePage({ params }: Props) {
                 href={threadsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3.5 bg-[#0a0a0a] text-white border border-[--border] hover:border-[#ffd700]/50 hover:bg-[#ffd700]/5 transition-all text-[11px] tracking-[0.1em] uppercase font-bold"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3.5 bg-[--background] text-[--foreground] border border-[--border] hover:border-[#ffd700]/50 hover:bg-[#ffd700]/5 transition-all text-[11px] tracking-[0.1em] uppercase font-bold"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.5 12.068V12c.012-6.627 4.668-11.478 10.792-11.493h.028c3.186.008 6.063 1.252 8.102 3.499 1.945 2.146 3.005 5.065 3.078 8.067l-2.186.053c-.062-2.535-.936-4.93-2.533-6.691-1.673-1.847-3.975-2.858-6.48-2.865-4.931.013-8.578 3.985-8.588 9.362v.062c0 2.96.693 5.335 2.064 7.067 1.493 1.884 3.76 2.893 6.732 2.933h.007c2.487 0 4.613-.887 6.173-2.581.79-.858 1.368-1.94 1.769-3.315l2.127.523c-.51 1.742-1.269 3.141-2.313 4.274-2.024 2.195-4.82 3.327-8.105 3.327z"/>

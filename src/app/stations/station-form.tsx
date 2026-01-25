@@ -67,7 +67,7 @@ export function StationApplicationForm() {
           placeholder="e.g., WRVU"
           required
           disabled={loading}
-          className="w-full px-4 py-3.5 text-base bg-[#0a0a0a] border border-[--border] text-[--foreground] placeholder:text-[--muted]/50 focus:outline-none focus:border-[#ffd700] focus:bg-[#ffd700]/5 transition-all disabled:opacity-50"
+          className="w-full px-4 py-3.5 text-base bg-[--background] border border-[--border] text-[--foreground] placeholder:text-[--muted]/50 focus:outline-none focus:border-[#ffd700] focus:bg-[#ffd700]/5 transition-all disabled:opacity-50"
         />
       </div>
       <div className="animate-fade-in" style={{ animationDelay: '50ms' }}>
@@ -78,7 +78,7 @@ export function StationApplicationForm() {
           onChange={(e) => setUniversity(e.target.value)}
           placeholder="e.g., Vanderbilt University"
           disabled={loading}
-          className="w-full px-4 py-3.5 text-base bg-[#0a0a0a] border border-[--border] text-[--foreground] placeholder:text-[--muted]/50 focus:outline-none focus:border-[#ffd700] focus:bg-[#ffd700]/5 transition-all disabled:opacity-50"
+          className="w-full px-4 py-3.5 text-base bg-[--background] border border-[--border] text-[--foreground] placeholder:text-[--muted]/50 focus:outline-none focus:border-[#ffd700] focus:bg-[#ffd700]/5 transition-all disabled:opacity-50"
         />
       </div>
       <div className="animate-fade-in" style={{ animationDelay: '100ms' }}>
@@ -92,7 +92,7 @@ export function StationApplicationForm() {
           placeholder="md@station.edu"
           required
           disabled={loading}
-          className="w-full px-4 py-3.5 text-base bg-[#0a0a0a] border border-[--border] text-[--foreground] placeholder:text-[--muted]/50 focus:outline-none focus:border-[#ffd700] focus:bg-[#ffd700]/5 transition-all disabled:opacity-50"
+          className="w-full px-4 py-3.5 text-base bg-[--background] border border-[--border] text-[--foreground] placeholder:text-[--muted]/50 focus:outline-none focus:border-[#ffd700] focus:bg-[#ffd700]/5 transition-all disabled:opacity-50"
         />
       </div>
 

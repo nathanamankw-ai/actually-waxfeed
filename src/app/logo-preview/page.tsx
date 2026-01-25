@@ -15,7 +15,7 @@ const RecordPlayer3D = dynamic(
 
 export default function LogoPreviewPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] p-8">
+    <div className="min-h-screen bg-[--background] p-8">
       <h1 className="text-3xl font-bold mb-8">Logo Versions</h1>
 
       {/* Official Logo */}

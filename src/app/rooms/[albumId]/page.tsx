@@ -20,7 +20,7 @@ export default function AlbumRoomPage() {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
+      <div className="min-h-screen flex items-center justify-center bg-[--background]">
         <div className="flex flex-col items-center gap-3 animate-fade-in">
           <div className="w-8 h-8 border-2 border-[--muted] border-t-[#ffd700] animate-spin" />
           <span className="text-xs tracking-[0.2em] uppercase text-[--muted]">Loading room</span>
@@ -34,7 +34,7 @@ export default function AlbumRoomPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0a0a0a]">
+    <div className="min-h-screen flex flex-col bg-[--background]">
       {/* Back navigation */}
       <div className="px-6 py-4 border-b border-[--border] animate-fade-in">
         <Link

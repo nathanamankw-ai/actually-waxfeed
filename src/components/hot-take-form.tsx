@@ -197,7 +197,7 @@ export function HotTakeForm({ album, onSubmit, onCancel }: HotTakeFormProps) {
 
               {/* Search results dropdown */}
               {(searchResults.length > 0 || isSearching) && (
-                <div className="absolute top-full left-0 right-0 mt-1 border border-[#333] bg-[#0a0a0a] z-10 max-h-64 overflow-y-auto">
+                <div className="absolute top-full left-0 right-0 mt-1 border border-[--border] bg-[--background] z-10 max-h-64 overflow-y-auto">
                   {isSearching ? (
                     <div className="p-4 text-center text-[#666] text-sm">Searching...</div>
                   ) : (

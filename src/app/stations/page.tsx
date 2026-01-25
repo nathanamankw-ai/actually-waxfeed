@@ -31,7 +31,7 @@ export default async function StationsPage() {
   const stats = await getStationStats()
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]" style={{ color: 'var(--foreground)' }}>
+    <div className="min-h-screen bg-[--background] text-[--foreground]">
       {/* Hero */}
       <section className="border-b border-[--border] animate-fade-in">
         <div className="max-w-4xl mx-auto px-6 py-20 lg:py-28">
