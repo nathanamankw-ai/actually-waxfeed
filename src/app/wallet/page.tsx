@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { formatDistanceToNow } from "date-fns"
 import Link from "next/link"
 
@@ -34,7 +34,25 @@ type Transaction = {
   createdAt: string
 }
 
+function WalletLoading() {
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <p className="text-[--muted]">Loading...</p>
+      </div>
+    </div>
+  )
+}
+
 export default function WalletPage() {
+  return (
+    <Suspense fallback={<WalletLoading />}>
+      <WalletContent />
+    </Suspense>
+  )
+}
+
+function WalletContent() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
