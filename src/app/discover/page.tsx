@@ -194,10 +194,21 @@ export default async function DiscoverPage() {
             </div>
             <div className="lg:col-span-4 lg:text-right">
               {session ? (
-                <div className="inline-block border border-[--border] p-4">
-                  <p className="text-[10px] tracking-[0.2em] uppercase text-[--muted] mb-2">Your Stats</p>
-                  <p className="text-2xl font-bold tabular-nums">{userReviewCount}</p>
-                  <p className="text-xs text-[--muted]">reviews logged</p>
+                <div className="inline-flex flex-col gap-3 items-end">
+                  <div className="inline-block border border-[--border] p-4">
+                    <p className="text-[10px] tracking-[0.2em] uppercase text-[--muted] mb-2">Your Stats</p>
+                    <p className="text-2xl font-bold tabular-nums">{userReviewCount}</p>
+                    <p className="text-xs text-[--muted]">reviews logged</p>
+                  </div>
+                  <Link
+                    href="/discover/swipe"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#ffd700] text-black text-[10px] tracking-[0.15em] uppercase font-bold hover:bg-[#ffed4a] transition group"
+                  >
+                    <span>Quick Rate</span>
+                    <svg className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  </Link>
                 </div>
               ) : (
                 <Link 

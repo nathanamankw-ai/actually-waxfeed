@@ -129,19 +129,22 @@ export default async function ConnectionsPage({
   })
 
   // Need 20 reviews for taste matching
+  const reviewsNeeded = Math.max(0, 20 - reviewCount)
   if (reviewCount < 20) {
     return (
       <div className="min-h-screen" style={{ backgroundColor: "var(--background)" }}>
         <div className="max-w-4xl mx-auto px-6 py-12">
           <div className="border-2 border-dashed border-[--border] p-12 text-center">
             <div className="text-6xl mb-6">🎵</div>
-            <h1 className="text-3xl font-bold mb-4">Need More Reviews</h1>
+            <h1 className="text-3xl font-bold mb-4">
+              {reviewsNeeded} More Review{reviewsNeeded !== 1 ? 's' : ''} Needed
+            </h1>
             <p className="text-[--muted] mb-6 max-w-md mx-auto">
-              You need at least 20 reviews to find taste connections. You currently have{" "}
-              <span className="font-bold text-white">{reviewCount}</span> reviews.
+              Rate at least <span className="font-bold text-[#ffd700]">20 albums</span> to unlock Taste Connections.
+              The more you review, the better your matches.
             </p>
             <div className="mb-8">
-              <div className="w-full max-w-xs mx-auto h-2 bg-[--border] rounded-full overflow-hidden">
+              <div className="w-full max-w-xs mx-auto h-2 bg-[--border] overflow-hidden">
                 <div
                   className="h-full bg-[#ffd700] transition-all duration-500"
                   style={{ width: `${Math.min((reviewCount / 20) * 100, 100)}%` }}
@@ -151,15 +154,26 @@ export default async function ConnectionsPage({
                 {reviewCount} / 20 reviews
               </p>
             </div>
-            <Link
-              href="/search"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black text-[11px] tracking-[0.15em] uppercase font-medium hover:bg-[#e5e5e5] transition-colors"
-            >
-              Find Albums to Review
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link
+                href="/discover/swipe"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#ffd700] text-black text-[11px] tracking-[0.15em] uppercase font-medium hover:bg-[#ffed4a] transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                Quick Rate Mode
+              </Link>
+              <Link
+                href="/search"
+                className="inline-flex items-center gap-2 px-6 py-3 border border-[--border] text-[11px] tracking-[0.15em] uppercase font-medium hover:border-white hover:text-white transition-colors"
+              >
+                Search Albums
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

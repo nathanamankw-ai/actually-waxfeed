@@ -14,6 +14,7 @@ const createReviewSchema = z.object({
   albumId: z.string().min(1),
   rating: z.number().min(0).max(10),
   text: z.string().max(5000).optional(),
+  isQuickRate: z.boolean().optional(), // Quick rate mode (swipe) - no text required, no First Spin
 })
 
 // GET /api/reviews - List reviews (trending, recent, etc.)
@@ -112,7 +113,7 @@ export async function POST(request: NextRequest) {
       return errorResponse(validation.error.errors[0].message, 400)
     }
 
-    const { albumId, rating, text } = validation.data
+    const { albumId, rating, text, isQuickRate } = validation.data
 
     // Check album exists
     const album = await prisma.album.findUnique({ where: { id: albumId } })
@@ -137,10 +138,11 @@ export async function POST(request: NextRequest) {
 
     // ANTI-GAMING: First 100 reviews MUST have written text
     // This prevents people from spamming empty reviews just to get Gold/Silver/Bronze Spins
+    // Exception: Quick rate mode (swipe) bypasses this but doesn't qualify for First Spin badges
     const MIN_REVIEW_LENGTH = 20 // At least 20 characters
     const FIRST_SPIN_THRESHOLD = 100
 
-    if (reviewPosition <= FIRST_SPIN_THRESHOLD) {
+    if (reviewPosition <= FIRST_SPIN_THRESHOLD && !isQuickRate) {
       if (!text || text.trim().length < MIN_REVIEW_LENGTH) {
         return errorResponse(
           `The first ${FIRST_SPIN_THRESHOLD} reviews must include a written review (at least ${MIN_REVIEW_LENGTH} characters). ` +
@@ -268,17 +270,23 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    return successResponse({ 
-      ...review, 
-      reviewPosition,
-      waxEarned: 5,
-      firstSpinMessage: reviewPosition <= 10 
+    // Quick rates don't qualify for First Spin badges
+    const firstSpinMessage = isQuickRate ? null : (
+      reviewPosition <= 10
         ? `You're reviewer #${reviewPosition}! If this album trends, you'll earn a Gold Spin.`
         : reviewPosition <= 50
           ? `You're reviewer #${reviewPosition}! If this album trends, you'll earn a Silver Spin.`
           : reviewPosition <= 100
             ? `You're reviewer #${reviewPosition}! If this album trends, you'll earn a Bronze Spin.`
             : null
+    )
+
+    return successResponse({
+      ...review,
+      reviewPosition,
+      waxEarned: 5,
+      isQuickRate: !!isQuickRate,
+      firstSpinMessage,
     }, 201)
   } catch (error) {
     if (error instanceof Error && error.message === 'UNAUTHORIZED') {
