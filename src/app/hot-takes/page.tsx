@@ -184,9 +184,6 @@ export default async function HotTakesPage() {
             <HotTakeCard
               key={hotTake.id}
               hotTake={hotTake}
-              onVote={async () => {
-                // Client-side voting handled by component
-              }}
             />
           ))}
         </div>

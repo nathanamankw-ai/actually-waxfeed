@@ -85,10 +85,12 @@ export function HotTakeCard({ hotTake, onVote, compact = false }: HotTakeCardPro
   const stanceConfig = STANCE_LABELS[hotTake.stance]
 
   const handleVote = async (vote: "agree" | "disagree") => {
-    if (isVoting || !onVote) return
+    if (isVoting) return
 
     setIsVoting(true)
     const previousVote = localVote
+    const previousAgree = localAgree
+    const previousDisagree = localDisagree
 
     // Optimistic update
     if (localVote === vote) {
@@ -109,12 +111,24 @@ export function HotTakeCard({ hotTake, onVote, compact = false }: HotTakeCardPro
     }
 
     try {
-      await onVote(hotTake.id, vote)
+      // Call onVote callback if provided, otherwise call API directly
+      if (onVote) {
+        await onVote(hotTake.id, vote)
+      } else {
+        const res = await fetch(`/api/hot-takes/${hotTake.id}/vote`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ vote }),
+        })
+        if (!res.ok) {
+          throw new Error("Failed to vote")
+        }
+      }
     } catch {
       // Revert on error
       setLocalVote(previousVote)
-      setLocalAgree(hotTake.agreeCount)
-      setLocalDisagree(hotTake.disagreeCount)
+      setLocalAgree(previousAgree)
+      setLocalDisagree(previousDisagree)
     } finally {
       setIsVoting(false)
     }
