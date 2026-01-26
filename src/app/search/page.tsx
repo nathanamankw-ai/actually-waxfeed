@@ -98,15 +98,25 @@ function SearchContent() {
   const importAlbum = async (spotifyId: string) => {
     setImporting(spotifyId)
     try {
-      await fetch("/api/albums/import", {
+      const res = await fetch("/api/albums/import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ spotifyIds: [spotifyId] }),
       })
+      const data = await res.json()
+
+      if (!res.ok || !data.success) {
+        console.error("Import failed:", data.error || data)
+        alert(data.error || "Failed to import album")
+        setImporting(null)
+        return
+      }
+
       // Refresh search to show imported album
       await search(query)
     } catch (error) {
       console.error("Import error:", error)
+      alert("Failed to import album. Please try again.")
     }
     setImporting(null)
   }
@@ -224,9 +234,9 @@ function SearchContent() {
                             <button
                               onClick={() => importAlbum(album.id)}
                               disabled={importing === album.id}
-                              className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-sm font-bold"
+                              className="absolute bottom-0 left-0 right-0 bg-[#ffd700] text-black py-2 text-xs font-bold uppercase tracking-wider hover:bg-[#ffed4a] transition-colors disabled:opacity-50"
                             >
-                              {importing === album.id ? "Importing..." : "Import to Waxfeed"}
+                              {importing === album.id ? "Importing..." : "+ Import"}
                             </button>
                           )}
                         </div>
