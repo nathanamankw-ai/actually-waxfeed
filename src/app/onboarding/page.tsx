@@ -47,9 +47,8 @@ export default function OnboardingPage() {
     if (status === "unauthenticated") {
       router.push("/login")
     }
-    if (session?.user?.username) {
-      router.push("/")
-    }
+    // Don't auto-redirect during onboarding - let user complete all steps
+    // The FirstTimeWelcome modal and header CTAs will guide them here if needed
   }, [session, status, router])
 
   // Fetch albums when reaching step 4
