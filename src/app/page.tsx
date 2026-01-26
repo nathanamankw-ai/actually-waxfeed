@@ -4,6 +4,7 @@ import Link from "next/link"
 import { auth } from "@/lib/auth"
 import { format, formatDistanceToNow } from "date-fns"
 import { FirstSpinWidget } from "@/components/wax/FirstSpinWidget"
+import { TasteIDCompletionBanner } from "@/components/tasteid-completion-banner"
 
 export const dynamic = "force-dynamic"
 
@@ -138,15 +139,36 @@ async function getActiveUsers(excludeUserId?: string) {
   })
 }
 
+// Get current user's TasteID completion status
+async function getUserTasteIDStatus(userId: string) {
+  const [user, reviewCount] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        tasteId: {
+          select: { id: true }
+        }
+      }
+    }),
+    prisma.review.count({ where: { userId } })
+  ])
+
+  return {
+    reviewCount,
+    hasTasteID: !!user?.tasteId
+  }
+}
+
 export default async function Home() {
   const session = await auth()
-  const [billboardAlbums, recentReviews, stats, activeUsers, recentlyTrended, approachingTrend] = await Promise.all([
+  const [billboardAlbums, recentReviews, stats, activeUsers, recentlyTrended, approachingTrend, tasteIDStatus] = await Promise.all([
     getBillboardAlbums(),
     getRecentReviews(),
     getStats(),
     getActiveUsers(session?.user?.id),
     getRecentlyTrended(),
     getApproachingTrend(),
+    session?.user?.id ? getUserTasteIDStatus(session.user.id) : Promise.resolve({ reviewCount: 0, hasTasteID: false }),
   ])
   const weekOf = format(new Date(), "MMM d, yyyy")
 
@@ -221,6 +243,14 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* TasteID Completion Banner - only for logged in users */}
+      {session?.user && (
+        <TasteIDCompletionBanner
+          reviewCount={tasteIDStatus.reviewCount}
+          hasTasteID={tasteIDStatus.hasTasteID}
+        />
+      )}
 
       {/* How It Works - 3 Steps */}
       <section className="border-b border-[--border] bg-white/[0.02]">
