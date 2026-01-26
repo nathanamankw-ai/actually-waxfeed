@@ -78,6 +78,7 @@ model User {
   name                String?
   image               String?
   bio                 String?   @db.VarChar(150)
+  country             String?   // ISO 3166-1 alpha-2 code (e.g., "US", "GB", "DE")
   socialLinks         Json? // { instagram, twitter, spotify, etc. }
   role                UserRole  @default(USER)
   waxScore            Int       @default(0)
