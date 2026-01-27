@@ -347,59 +347,149 @@ export default async function Home() {
             ) : (
               /* Default hero for logged out users - FIRST IMPRESSION */
               <>
-                <p className="text-sm tracking-widest uppercase text-[#ffd700] mb-6 font-medium">
-                  The World's First Music Taste Platform
-                </p>
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-                  Prove You Found It First.
-                </h1>
-                <p className="text-xl md:text-2xl text-[var(--muted)] mb-4 leading-relaxed">
-                  Rate albums. Get <span className="text-[#ffd700] font-semibold">timestamped proof</span> of your discovery.
-                  <br />
-                  Connect with people who <span className="text-[var(--foreground)]">actually get your music</span>.
-                </p>
-                
-                {/* Key Value Props */}
-                <div className="flex flex-wrap gap-x-6 gap-y-2 mb-8 text-sm">
-                  <span className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-[#ffd700]" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    First-ever music connection platform
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-[#ffd700]" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    Build your unique TasteID
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-[#ffd700]" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    Earn WAX rewards
-                  </span>
-                </div>
+                {/* Left Column - Main Content */}
+                <div>
+                  <p className="text-xs tracking-[0.3em] uppercase text-[#ffd700] mb-3 font-medium">
+                    The World's First Music Taste Platform
+                  </p>
+                  <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mb-4">
+                    Prove You Found It First.
+                  </h1>
+                  <p className="text-base md:text-lg text-[var(--muted)] mb-6 leading-relaxed">
+                    Rate albums. Get <span className="text-[#ffd700] font-semibold">timestamped proof</span> of your discovery.
+                    Connect with people who <span className="text-[var(--foreground)]">actually get your music</span>.
+                  </p>
+                  
+                  {/* TasteID Progress Preview - Engagement hook for logged out users */}
+                  <div className="mb-6 p-4 border border-[var(--border)] bg-[var(--surface)] rounded-sm">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 bg-gradient-to-br from-[#ff6b6b] to-[#ffd700] rounded-sm flex items-center justify-center">
+                          <svg className="w-3.5 h-3.5 text-black" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 2L3 7l7 5 7-5-7-5zM3 17l7 5 7-5M3 12l7 5 7-5" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                          </svg>
+                        </div>
+                        <span className="text-xs font-bold uppercase tracking-wider">Your TasteID Journey</span>
+                      </div>
+                      <span className="text-xs font-bold text-[var(--muted)]">0%</span>
+                    </div>
+                    
+                    {/* Progress Bar - Empty to show potential */}
+                    <div className="h-2.5 bg-[var(--border)] overflow-hidden rounded-full mb-3">
+                      <div 
+                        className="h-full bg-gradient-to-r from-[#ff6b6b] via-[#ffd700] to-[#00ff88] transition-all duration-700 ease-out rounded-full"
+                        style={{ width: '0%' }}
+                      />
+                    </div>
+                    
+                    {/* Progress Milestones */}
+                    <div className="flex justify-between text-[10px] text-[var(--muted)] mb-2">
+                      <span>5 ratings</span>
+                      <span>10 ratings</span>
+                      <span>25 ratings</span>
+                    </div>
+                    
+                    {/* Status Message */}
+                    <p className="text-xs text-[var(--muted)]">
+                      Sign up to start building your unique musical identity. Rate 25 albums to unlock your <span className="text-[#ffd700] font-medium">TasteID</span>.
+                    </p>
+                  </div>
+                  
+                  {/* 4 Action Buttons - Same as logged in */}
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    <Link
+                      href="/discover"
+                      className="px-4 py-2.5 bg-[#00bfff] text-black text-xs font-bold uppercase tracking-wider hover:bg-[#33ccff] transition-all hover:scale-105"
+                    >
+                      Discover
+                    </Link>
+                    <Link
+                      href="/signup"
+                      className="px-4 py-2.5 bg-[#00ff88] text-black text-xs font-bold uppercase tracking-wider hover:bg-[#33ff9f] transition-all hover:scale-105"
+                    >
+                      Connect
+                    </Link>
+                    <Link
+                      href="/signup"
+                      className="px-4 py-2.5 bg-[#ffd700] text-black text-xs font-bold uppercase tracking-wider hover:bg-[#ffed4a] transition-all hover:scale-105"
+                    >
+                      Rate
+                    </Link>
+                    <Link
+                      href="/signup"
+                      className="px-4 py-2.5 bg-[#ff6b6b] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#ff8585] transition-all hover:scale-105"
+                    >
+                      TasteID
+                    </Link>
+                  </div>
 
-                <div className="flex flex-col sm:flex-row gap-4">
+                  {/* Social Proof */}
+                  <p className="text-xs text-[var(--muted-dim)]">
+                    Join <span className="text-[var(--foreground)] font-medium">{stats.userCount.toLocaleString()}+</span> music lovers · <span className="text-[var(--foreground)] font-medium">{stats.reviewCount.toLocaleString()}</span> ratings logged
+                  </p>
+                </div>
+                
+                {/* Right Column - Feature Highlights */}
+                <div className="border border-[var(--border)] p-4">
+                  <h3 className="text-xs tracking-[0.2em] uppercase text-[var(--muted)] mb-4">What You'll Unlock</h3>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3 p-3 border-b border-[var(--border)]">
+                      <div className="w-8 h-8 bg-[#00bfff] rounded-sm flex items-center justify-center flex-shrink-0">
+                        <svg className="w-4 h-4 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-[#00bfff]">Discover</p>
+                        <p className="text-xs text-[var(--muted)]">AI-powered recommendations that actually match your taste</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start gap-3 p-3 border-b border-[var(--border)]">
+                      <div className="w-8 h-8 bg-[#00ff88] rounded-sm flex items-center justify-center flex-shrink-0">
+                        <svg className="w-4 h-4 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-[#00ff88]">Connect</p>
+                        <p className="text-xs text-[var(--muted)]">Find people who truly understand your music taste</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start gap-3 p-3 border-b border-[var(--border)]">
+                      <div className="w-8 h-8 bg-[#ffd700] rounded-sm flex items-center justify-center flex-shrink-0">
+                        <svg className="w-4 h-4 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-[#ffd700]">Rate</p>
+                        <p className="text-xs text-[var(--muted)]">Timestamped proof you discovered artists first</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start gap-3 p-3">
+                      <div className="w-8 h-8 bg-[#ff6b6b] rounded-sm flex items-center justify-center flex-shrink-0">
+                        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M10 2L3 7l7 5 7-5-7-5zM3 17l7 5 7-5M3 12l7 5 7-5" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-[#ff6b6b]">TasteID</p>
+                        <p className="text-xs text-[var(--muted)]">Your unique musical DNA and archetype revealed</p>
+                      </div>
+                    </div>
+                  </div>
+                  
                   <Link
                     href="/signup"
-                    className="px-8 py-4 bg-[#ffd700] text-black text-sm font-bold uppercase tracking-wider hover:bg-[#ffed4a] transition-colors text-center"
+                    className="block w-full mt-4 px-4 py-3 bg-[#ffd700] text-black text-xs font-bold uppercase tracking-wider hover:bg-[#ffed4a] transition-all text-center"
                   >
-                    Start Building Your TasteID
-                  </Link>
-                  <Link
-                    href="/discover"
-                    className="px-8 py-4 border-2 border-[var(--border-dim)] text-sm font-bold uppercase tracking-wider hover:border-[var(--foreground)] transition-colors text-center"
-                  >
-                    Explore First
+                    Get Started Free →
                   </Link>
                 </div>
-
-                {/* Social Proof */}
-                <p className="mt-8 text-sm text-[var(--muted-dim)]">
-                  Join <span className="text-[var(--foreground)] font-medium">{stats.userCount.toLocaleString()}+</span> music lovers · <span className="text-[var(--foreground)] font-medium">{stats.reviewCount.toLocaleString()}</span> ratings logged
-                </p>
               </>
             )}
           </div>
