@@ -175,24 +175,40 @@ function WalletContent() {
         </div>
       </section>
 
-      {/* CTA Banner */}
+      {/* Dual CTA Banner - Earn OR Buy */}
       <section className="border-b border-[var(--border)] bg-[var(--surface)]">
         <div className="max-w-6xl mx-auto px-6 py-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <p className="text-lg font-bold">
-                Earn <span className="text-[#ffd700]">+1 WAX</span> for every album you rate
-              </p>
-              <p className="text-sm text-[var(--muted)]">
-                Build your TasteID and earn rewards at the same time
-              </p>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Earn WAX */}
+            <div className="flex items-center justify-between gap-4 p-4 border border-[var(--border)]">
+              <div>
+                <p className="font-bold">
+                  Earn <span className="text-[#ffd700]">+1 WAX</span> per rating
+                </p>
+                <p className="text-sm text-[var(--muted)]">Free, unlimited</p>
+              </div>
+              <Link
+                href="/quick-rate"
+                className="px-5 py-2 border border-[var(--foreground)] text-sm font-bold uppercase tracking-wider hover:bg-[var(--foreground)] hover:text-[var(--background)] transition-colors"
+              >
+                Rate
+              </Link>
             </div>
-            <Link
-              href="/quick-rate"
-              className="px-6 py-3 bg-[#ffd700] text-black text-sm font-bold uppercase tracking-wider hover:bg-[#ffed4a] transition-colors text-center"
-            >
-              Start Rating
-            </Link>
+            {/* Buy WAX */}
+            <div className="flex items-center justify-between gap-4 p-4 border border-[#ffd700]">
+              <div>
+                <p className="font-bold text-[#ffd700]">
+                  Get WAX Packs
+                </p>
+                <p className="text-sm text-[var(--muted)]">Starting at $0.99</p>
+              </div>
+              <Link
+                href="/shop"
+                className="px-5 py-2 bg-[#ffd700] text-black text-sm font-bold uppercase tracking-wider hover:bg-[#ffed4a] transition-colors"
+              >
+                Shop
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -307,26 +323,60 @@ function WalletContent() {
             </div>
           </div>
 
-          {/* Spending */}
-          <div>
+          {/* What WAX Can Do - Value Proposition */}
+          <div className="mb-12">
             <p className="text-[10px] tracking-[0.3em] uppercase text-[var(--muted)] mb-6">
-              How to Spend
+              What WAX Can Do
             </p>
-            <p className="text-sm text-[var(--muted)] mb-4">
-              Tip reviews you appreciate. Support great tastemakers.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <div className="px-4 py-2 border border-[var(--border)]">
-                <span className="text-sm">Standard</span>
-                <span className="ml-2 text-[var(--muted)]">5 WAX</span>
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="p-5 border border-[var(--border)]">
+                <p className="text-2xl font-bold mb-2">Tip Reviews</p>
+                <p className="text-sm text-[var(--muted)] mb-3">
+                  Support tastemakers who help you discover music. Tipped reviews get more visibility.
+                </p>
+                <div className="flex gap-2 text-xs">
+                  <span className="px-2 py-1 border border-[var(--border)]">5 WAX</span>
+                  <span className="px-2 py-1 border border-purple-500/30 text-purple-500">20 WAX</span>
+                  <span className="px-2 py-1 border border-[#ffd700]/30 text-[#ffd700]">100 WAX</span>
+                </div>
               </div>
-              <div className="px-4 py-2 border border-purple-500/30">
-                <span className="text-sm text-purple-500">Premium</span>
-                <span className="ml-2 text-[var(--muted)]">20 WAX</span>
+              <div className="p-5 border border-[var(--border)]">
+                <p className="text-2xl font-bold mb-2">Custom Cursor</p>
+                <p className="text-sm text-[var(--muted)] mb-3">
+                  Unlock custom cursor colors and styles. Show off your personality.
+                </p>
+                <p className="text-xs text-[#ffd700]">Coming Soon</p>
               </div>
-              <div className="px-4 py-2 border border-[#ffd700]/30">
-                <span className="text-sm text-[#ffd700]">GOLD</span>
-                <span className="ml-2 text-[var(--muted)]">100 WAX</span>
+              <div className="p-5 border border-[var(--border)]">
+                <p className="text-2xl font-bold mb-2">Profile Flair</p>
+                <p className="text-sm text-[var(--muted)] mb-3">
+                  Special badges, profile borders, and customization options.
+                </p>
+                <p className="text-xs text-[#ffd700]">Coming Soon</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Get More WAX - Purchase CTA */}
+          <div className="p-6 border border-[#ffd700] bg-[#ffd700]/5">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+              <div>
+                <p className="text-[10px] tracking-[0.3em] uppercase text-[#ffd700] mb-2">
+                  Need More WAX?
+                </p>
+                <p className="text-xl font-bold mb-2">Get WAX Packs</p>
+                <p className="text-sm text-[var(--muted)]">
+                  Instant delivery. Bonus WAX on larger packs. Support the platform.
+                </p>
+              </div>
+              <div className="flex flex-col gap-2">
+                <Link
+                  href="/shop"
+                  className="px-8 py-3 bg-[#ffd700] text-black text-sm font-bold uppercase tracking-wider hover:bg-[#ffed4a] transition-colors text-center"
+                >
+                  View WAX Packs
+                </Link>
+                <p className="text-xs text-center text-[var(--muted)]">From $0.99 · Up to 50% bonus</p>
               </div>
             </div>
           </div>
@@ -453,25 +503,43 @@ function WalletContent() {
         </section>
       )}
 
-      {/* Bottom CTA */}
+      {/* Bottom CTAs */}
       <section className="border-t border-[var(--border)]">
         <div className="max-w-6xl mx-auto px-6 py-8">
-          <Link 
-            href="/discover"
-            className="group flex items-center justify-between p-5 border border-[var(--border)] hover:border-[var(--foreground)] transition-colors"
-          >
-            <div>
-              <p className="font-bold group-hover:text-[var(--muted)] transition-colors">
-                Find Your Next Call
-              </p>
-              <p className="text-sm text-[var(--muted)]">
-                Discover new releases and review them before they trend.
-              </p>
-            </div>
-            <svg className="w-5 h-5 text-[var(--muted)] group-hover:text-[var(--foreground)] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </Link>
+          <div className="grid md:grid-cols-2 gap-4">
+            <Link 
+              href="/discover"
+              className="group flex items-center justify-between p-5 border border-[var(--border)] hover:border-[var(--foreground)] transition-colors"
+            >
+              <div>
+                <p className="font-bold group-hover:text-[var(--muted)] transition-colors">
+                  Discover Albums
+                </p>
+                <p className="text-sm text-[var(--muted)]">
+                  Review early, earn badges
+                </p>
+              </div>
+              <svg className="w-5 h-5 text-[var(--muted)] group-hover:text-[var(--foreground)] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
+            <Link 
+              href="/shop"
+              className="group flex items-center justify-between p-5 border border-[#ffd700]/50 hover:border-[#ffd700] transition-colors"
+            >
+              <div>
+                <p className="font-bold text-[#ffd700] group-hover:text-[#ffed4a] transition-colors">
+                  Get WAX Packs
+                </p>
+                <p className="text-sm text-[var(--muted)]">
+                  Instant WAX, bonus included
+                </p>
+              </div>
+              <svg className="w-5 h-5 text-[#ffd700]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
+          </div>
         </div>
       </section>
     </div>
