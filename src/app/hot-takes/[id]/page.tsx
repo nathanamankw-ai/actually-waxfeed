@@ -127,7 +127,7 @@ export default function HotTakePage() {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-12">
+      <div className="w-full px-4 lg:px-12 xl:px-20 py-12">
         <div className="animate-pulse">
           <div className="h-8 bg-[#222] w-32 mb-4" />
           <div className="h-12 bg-[#222] w-3/4 mb-8" />
@@ -139,7 +139,7 @@ export default function HotTakePage() {
 
   if (error || !hotTake) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-12 text-center">
+      <div className="w-full px-4 lg:px-12 xl:px-20 py-12 text-center">
         <h1 className="text-4xl font-bold mb-4">404</h1>
         <p className="text-[#666] mb-8">{error || "Hot take not found"}</p>
         <Link
@@ -160,7 +160,7 @@ export default function HotTakePage() {
   const agreeRatio = total > 0 ? localAgree / total : 0.5
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 lg:py-12">
+    <div className="w-full px-4 lg:px-12 xl:px-20 py-6 lg:py-12">
       {/* Back link */}
       <Link
         href="/hot-takes"

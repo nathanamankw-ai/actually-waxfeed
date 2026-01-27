@@ -34,7 +34,7 @@ export default function CirclesPage() {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-4xl mx-auto">
+      <div className="w-full px-4 lg:px-12 xl:px-20">
         {/* Header */}
         <div className="px-6 pt-10 pb-8 border-b border-[--border] animate-fade-in">
           <div className="flex items-center gap-3 mb-3">

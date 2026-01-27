@@ -34,7 +34,7 @@ export default async function TasteSetupResultPage() {
 
   return (
     <div className="min-h-screen bg-black text-white p-8">
-      <div className="max-w-xl mx-auto space-y-8">
+      <div className="w-full px-4 lg:px-12 xl:px-20 space-y-8">
         {/* Progress */}
         <div className="flex justify-center gap-2">
           <div className="w-3 h-3 bg-neutral-700" />

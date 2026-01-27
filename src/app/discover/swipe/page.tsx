@@ -146,7 +146,7 @@ export default function QuickRatePage() {
     <div className="min-h-screen" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
       {/* Header */}
       <header className="border-b border-[--border]">
-        <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-4 flex items-center justify-between">
           <Link
             href="/discover"
             className="text-[--muted] hover:text-white transition-colors flex items-center gap-2"
@@ -168,7 +168,7 @@ export default function QuickRatePage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-2xl mx-auto px-6 py-8">
+      <main className="w-full px-6 lg:px-12 xl:px-20 py-8">
         {isFinished ? (
           <div className="text-center py-12">
             <div className="w-20 h-20 mx-auto mb-6 flex items-center justify-center border-2 border-[#ffd700]">

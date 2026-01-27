@@ -169,7 +169,7 @@ export default function ChallengesPage() {
     <div className="min-h-screen" style={{ backgroundColor: "var(--background)" }}>
       {/* Header */}
       <header className="border-b border-[--border]">
-        <div className="max-w-5xl mx-auto px-6 py-8 lg:py-12">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-8 lg:py-12">
           <Link
             href="/discover"
             className="inline-flex items-center gap-2 text-xs text-[--muted] hover:text-white transition-colors mb-6"
@@ -201,7 +201,7 @@ export default function ChallengesPage() {
       {/* Pending invites banner */}
       {pendingForMe.length > 0 && (
         <div className="bg-yellow-500/10 border-b border-yellow-500/30">
-          <div className="max-w-5xl mx-auto px-6 py-4">
+          <div className="w-full px-6 lg:px-12 xl:px-20 py-4">
             <p className="text-sm">
               <span className="font-bold text-yellow-400">{pendingForMe.length} challenge{pendingForMe.length > 1 ? "s" : ""}</span>
               {" "}waiting for your response
@@ -212,7 +212,7 @@ export default function ChallengesPage() {
 
       {/* Tabs */}
       <div className="border-b border-[--border] sticky top-0 bg-[--background] z-10">
-        <div className="max-w-5xl mx-auto px-6">
+        <div className="w-full px-6 lg:px-12 xl:px-20">
           <div className="flex gap-6 py-4">
             {(["active", "pending", "completed"] as TabType[]).map((t) => (
               <button
@@ -246,7 +246,7 @@ export default function ChallengesPage() {
       </div>
 
       {/* Content */}
-      <div className="max-w-5xl mx-auto px-6 py-8">
+      <div className="w-full px-6 lg:px-12 xl:px-20 py-8">
         {loading ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (

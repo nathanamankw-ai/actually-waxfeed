@@ -97,7 +97,7 @@ export default async function BadgePage({ params }: BadgePageProps) {
     <div className="min-h-screen bg-[--background] text-[--foreground]">
       {/* Header */}
       <div className="border-b border-[--border]">
-        <div className="max-w-4xl mx-auto px-6 py-4">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-4">
           <Link
             href="/wallet"
             className="inline-flex items-center gap-2 text-sm text-[--muted] hover:text-[#ffd700] transition-colors group"
@@ -111,7 +111,7 @@ export default async function BadgePage({ params }: BadgePageProps) {
       </div>
 
       {/* Badge Display */}
-      <div className="max-w-4xl mx-auto px-6 py-16">
+      <div className="w-full px-6 lg:px-12 xl:px-20 py-16">
         <div className="text-center mb-12 animate-fade-in">
           {/* Badge Icon */}
           <div

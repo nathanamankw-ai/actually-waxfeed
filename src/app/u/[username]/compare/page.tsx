@@ -125,7 +125,7 @@ export default async function ComparePage({ params }: Props) {
   if (!("currentUser" in data)) {
     return (
       <div className="min-h-screen bg-black text-white p-8">
-        <div className="max-w-2xl mx-auto">
+        <div className="w-full px-4 lg:px-12 xl:px-20">
           <Link
             href={`/u/${username}`}
             className="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-white mb-8"
@@ -151,7 +151,7 @@ export default async function ComparePage({ params }: Props) {
   if ("needsOwnTasteId" in data && data.needsOwnTasteId) {
     return (
       <div className="min-h-screen bg-black text-white p-8">
-        <div className="max-w-2xl mx-auto">
+        <div className="w-full px-4 lg:px-12 xl:px-20">
           <Link
             href={`/u/${username}`}
             className="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-white mb-8"
@@ -183,7 +183,7 @@ export default async function ComparePage({ params }: Props) {
   if (!match || !me || !them) {
     return (
       <div className="min-h-screen bg-black text-white p-8">
-        <div className="max-w-2xl mx-auto text-center">
+        <div className="w-full px-4 lg:px-12 xl:px-20 text-center">
           <p>Could not compute taste match. Please try again.</p>
         </div>
       </div>
@@ -202,7 +202,7 @@ export default async function ComparePage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <div className="max-w-4xl mx-auto p-8">
+      <div className="w-full px-4 lg:px-12 xl:px-20 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <Link

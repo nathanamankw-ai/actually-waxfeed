@@ -51,7 +51,7 @@ export default function AlbumRoomPage() {
       </div>
 
       {/* Room Chat */}
-      <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full animate-fade-in" style={{ animationDelay: '100ms' }}>
+      <div className="flex-1 flex flex-col w-full px-4 lg:px-12 xl:px-20 animate-fade-in" style={{ animationDelay: '100ms' }}>
         <RoomChat albumId={albumId} />
       </div>
     </div>

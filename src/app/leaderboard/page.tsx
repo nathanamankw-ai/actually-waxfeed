@@ -59,7 +59,7 @@ export default async function LeaderboardPage() {
     <div className="min-h-screen" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
       {/* Header */}
       <section style={{ borderBottom: '1px solid var(--border)' }}>
-        <div className="max-w-7xl mx-auto px-6 py-12 lg:py-16">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-12 lg:py-16">
           <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-3">
             Community
           </p>
@@ -249,7 +249,7 @@ export default async function LeaderboardPage() {
 
       {/* Footer CTA */}
       <section className="border-t border-[--border]">
-        <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <p className="text-lg font-medium">Want to climb the leaderboard?</p>
             <p className="text-sm text-[--muted]">

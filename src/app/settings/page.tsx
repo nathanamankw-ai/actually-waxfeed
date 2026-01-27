@@ -139,14 +139,14 @@ export default function SettingsPage() {
 
   if (status === "loading") {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-8">
+      <div className="w-full px-4 lg:px-12 xl:px-20 max-w-4xl py-8">
         <p className="text-[--muted]">Loading...</p>
       </div>
     )
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="w-full px-4 lg:px-12 xl:px-20 max-w-4xl py-8">
       <h1 className="text-4xl font-bold tracking-tighter mb-8">Settings</h1>
 
       {/* Profile Section */}

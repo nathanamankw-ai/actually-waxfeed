@@ -133,7 +133,7 @@ export default async function ConnectionsPage({
   if (reviewCount < 20) {
     return (
       <div className="min-h-screen" style={{ backgroundColor: "var(--background)" }}>
-        <div className="max-w-4xl mx-auto px-6 py-12">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-12">
           <div className="border-2 border-dashed border-[--border] p-12 text-center">
             <div className="text-6xl mb-6">🎵</div>
             <h1 className="text-3xl font-bold mb-4">
@@ -201,7 +201,7 @@ export default async function ConnectionsPage({
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "var(--background)" }}>
-      <div className="max-w-5xl mx-auto px-6 py-12">
+      <div className="w-full px-6 lg:px-12 xl:px-20 py-12">
         {/* Header */}
         <div className="mb-12 pb-6 border-b border-[--border]">
           <div className="flex items-center justify-between mb-6">

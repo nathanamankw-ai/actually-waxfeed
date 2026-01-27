@@ -332,7 +332,7 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
-      <div className="max-w-lg mx-auto px-4 py-8">
+      <div className="w-full px-4 lg:px-12 xl:px-20 max-w-xl mx-auto py-8">
         {/* Progress indicator */}
         <div className="flex gap-2 mb-8">
           {[1, 2, 3, 4].map((s) => (

@@ -153,7 +153,7 @@ export default async function FriendsPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="w-full px-6 lg:px-12 xl:px-20 py-12">
         {/* Header */}
         <div className="flex items-center justify-between mb-12 pb-6 border-b border-[--border]">
           <div>

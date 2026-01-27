@@ -144,7 +144,7 @@ export default async function TasteIDPage({ params }: Props) {
   if (!tasteId) {
     return (
       <div className="min-h-screen bg-background text-foreground p-4 sm:p-8">
-        <div className="max-w-2xl mx-auto">
+        <div className="w-full px-4 lg:px-12 xl:px-20">
           <Link
             href={`/u/${username}`}
             className="inline-flex items-center gap-2 text-sm text-muted hover:text-foreground mb-8"

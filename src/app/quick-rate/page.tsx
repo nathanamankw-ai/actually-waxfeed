@@ -395,7 +395,7 @@ export default function QuickRatePage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
-      <div className="max-w-5xl mx-auto px-4 py-6">
+      <div className="w-full px-4 lg:px-12 xl:px-20 py-6">
         {/* Header Row */}
         <div className="flex items-center justify-between mb-4">
           <div>

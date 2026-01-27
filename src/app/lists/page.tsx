@@ -74,7 +74,7 @@ export default async function ListsPage() {
     <div className="min-h-screen" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
       {/* Editorial masthead */}
       <header style={{ borderBottom: '1px solid var(--border)' }}>
-        <div className="max-w-7xl mx-auto px-6 py-12 lg:py-16">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-12 lg:py-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
             <div className="lg:col-span-8">
               <p className="text-[10px] tracking-[0.4em] uppercase mb-4" style={{ color: 'var(--muted)' }}>
@@ -103,7 +103,7 @@ export default async function ListsPage() {
       {/* Featured List - Large editorial spread */}
       {featuredList && (
         <section className="border-b border-[--border]">
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="w-full px-6 lg:px-12 xl:px-20">
             <div className="grid grid-cols-12 border-l border-r border-[--border]">
               <div className="col-span-12 lg:col-span-1 border-r border-[--border] py-8 lg:py-12 flex lg:flex-col items-center lg:items-start justify-between lg:justify-start gap-4">
                 <span className="text-[10px] tracking-[0.3em] uppercase text-[--muted] lg:writing-mode-vertical lg:rotate-180" style={{ writingMode: 'vertical-rl' as const }}>
@@ -197,7 +197,7 @@ export default async function ListsPage() {
       {/* Popular Lists Grid */}
       {otherPopularLists.length > 0 && (
         <section className="border-b border-[--border]">
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="w-full px-6 lg:px-12 xl:px-20">
             <div className="grid grid-cols-12 border-l border-r border-[--border]">
               <div className="col-span-12 lg:col-span-1 border-r border-[--border] py-8 flex lg:flex-col items-center lg:items-start justify-between lg:justify-start gap-4">
                 <span className="text-[10px] tracking-[0.3em] uppercase text-[--muted] lg:writing-mode-vertical lg:rotate-180" style={{ writingMode: 'vertical-rl' as const }}>
@@ -267,7 +267,7 @@ export default async function ListsPage() {
       {/* Recent Lists */}
       {recentLists.length > 0 && (
         <section className="border-b border-[--border]">
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="w-full px-6 lg:px-12 xl:px-20">
             <div className="grid grid-cols-12 border-l border-r border-[--border]">
               <div className="col-span-12 lg:col-span-1 border-r border-[--border] py-8 flex lg:flex-col items-center lg:items-start justify-between lg:justify-start gap-4">
                 <span className="text-[10px] tracking-[0.3em] uppercase text-[--muted] lg:writing-mode-vertical lg:rotate-180" style={{ writingMode: 'vertical-rl' as const }}>
@@ -329,7 +329,7 @@ export default async function ListsPage() {
 
       {/* Create CTA */}
       <section className="py-16 lg:py-24">
-        <div className="max-w-7xl mx-auto px-6 text-center">
+        <div className="w-full px-6 lg:px-12 xl:px-20 text-center">
           <p className="text-[10px] tracking-[0.4em] uppercase text-[--muted] mb-6">
             Your Turn
           </p>
@@ -365,7 +365,7 @@ export default async function ListsPage() {
 
       {/* Footer colophon */}
       <footer className="border-t border-[--border]">
-        <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-8">
           <p className="text-[10px] tracking-[0.2em] uppercase text-[--border]">
             WAXFEED · Lists · {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
           </p>

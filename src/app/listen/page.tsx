@@ -176,7 +176,7 @@ export default function ListenPage() {
     <div className="min-h-screen" style={{ backgroundColor: "var(--background)" }}>
       {/* Header */}
       <header className="border-b border-[--border]">
-        <div className="max-w-4xl mx-auto px-6 py-8 lg:py-12">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-8 lg:py-12">
           <Link
             href="/discover"
             className="inline-flex items-center gap-2 text-xs text-[--muted] hover:text-white transition-colors mb-6"
@@ -196,7 +196,7 @@ export default function ListenPage() {
 
       {/* Actions */}
       <div className="border-b border-[--border]">
-        <div className="max-w-4xl mx-auto px-6 py-6">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Create session */}
             <div className="border border-[--border] p-6">
@@ -247,7 +247,7 @@ export default function ListenPage() {
       </div>
 
       {/* Sessions */}
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="w-full px-6 lg:px-12 xl:px-20 py-8">
         {loading ? (
           <div className="space-y-4">
             {[1, 2].map((i) => (

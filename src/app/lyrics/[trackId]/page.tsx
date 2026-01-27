@@ -60,7 +60,7 @@ export default function LyricsPage() {
 
   if (loading) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="w-full px-4 lg:px-12 xl:px-20 py-8">
         <div className="animate-pulse">
           <div className="h-8 bg-[#222] w-1/3 mb-4"></div>
           <div className="h-4 bg-[#222] w-1/2 mb-8"></div>
@@ -76,7 +76,7 @@ export default function LyricsPage() {
 
   if (error || !data) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="w-full px-4 lg:px-12 xl:px-20 py-8">
         <div className="border border-[#222] p-8 text-center">
           <p className="text-[#888] mb-4">{error || "Track not found"}</p>
           <Link href="/" className="text-white hover:underline">
@@ -88,7 +88,7 @@ export default function LyricsPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
+    <div className="w-full px-4 lg:px-12 xl:px-20 py-8">
       {/* Header */}
       <div className="flex items-start gap-6 mb-8">
         {/* Album Art */}

@@ -55,7 +55,7 @@ export default async function ListPage({
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="w-full px-4 lg:px-12 xl:px-20 py-8">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold tracking-tighter mb-2">{list.title}</h1>

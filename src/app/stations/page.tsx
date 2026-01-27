@@ -72,7 +72,7 @@ export default async function StationsPage() {
 
       {/* The Pitch */}
       <section className="border-b border-[--border] animate-fade-in" style={{ animationDelay: '100ms' }}>
-        <div className="max-w-7xl mx-auto px-6 py-16">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-16">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-1.5 h-1.5 bg-[--muted]" />
             <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted]">
@@ -130,7 +130,7 @@ export default async function StationsPage() {
 
       {/* How It Works */}
       <section id="how-it-works" className="border-b border-[--border] animate-fade-in" style={{ animationDelay: '200ms' }}>
-        <div className="max-w-7xl mx-auto px-6 py-16">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-16">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-1.5 h-1.5 bg-[--muted]" />
             <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted]">
@@ -174,7 +174,7 @@ export default async function StationsPage() {
 
       {/* Station Leaderboard Preview */}
       <section className="border-b border-[--border] animate-fade-in" style={{ animationDelay: '300ms' }}>
-        <div className="max-w-7xl mx-auto px-6 py-16">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-16">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-1.5 h-1.5 bg-[--muted]" />
             <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted]">
@@ -384,7 +384,7 @@ export default async function StationsPage() {
 
       {/* Footer */}
       <footer className="border-t border-[--border] animate-fade-in" style={{ animationDelay: '700ms' }}>
-        <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-[--muted]">
             Questions?{" "}
             <a href="mailto:stations@waxfeed.com" className="text-[#ffd700] hover:underline">
