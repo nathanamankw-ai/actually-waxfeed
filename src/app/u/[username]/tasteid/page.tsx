@@ -139,12 +139,16 @@ export default async function TasteIDPage({ params }: Props) {
 
   const isOwnProfile = session?.user?.id === user.id
   const tasteId = user.tasteId
+  const reviewCount = user.reviews?.length || 0
+  const minReviews = 3
+  const progress = Math.min(100, Math.round((reviewCount / minReviews) * 100))
+  const canGenerate = reviewCount >= minReviews
 
-  // If no TasteID, show prompt
+  // If no TasteID, show prompt with progress
   if (!tasteId) {
     return (
       <div className="min-h-screen bg-background text-foreground p-4 sm:p-8">
-        <div className="w-full px-4 lg:px-12 xl:px-20">
+        <div className="max-w-2xl mx-auto">
           <Link
             href={`/u/${username}`}
             className="inline-flex items-center gap-2 text-sm text-muted hover:text-foreground mb-8"
@@ -152,17 +156,119 @@ export default async function TasteIDPage({ params }: Props) {
             ← Back to profile
           </Link>
 
-          <div className="border-2 border-foreground p-4 sm:p-8 text-center space-y-6">
-            <h1 className="text-2xl font-bold uppercase tracking-wider">
-              TASTEID NOT GENERATED
-            </h1>
-            <p className="text-muted-foreground">
-              {isOwnProfile
-                ? "Your TasteID hasn't been computed yet. Review at least 3 albums to generate your unique taste fingerprint."
-                : `@${username} hasn't generated their TasteID yet.`}
-            </p>
+          <div className="border-2 border-foreground p-6 sm:p-10">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="w-20 h-20 mx-auto mb-6 border-2 border-[#ffd700] flex items-center justify-center">
+                <svg className="w-10 h-10 text-[#ffd700]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+                </svg>
+              </div>
+              <h1 className="text-3xl font-bold uppercase tracking-wider mb-2">
+                {isOwnProfile ? "Build Your TasteID" : "TasteID Not Generated"}
+              </h1>
+              <p className="text-muted-foreground">
+                {isOwnProfile
+                  ? "Your unique musical fingerprint awaits. Rate albums to unlock it."
+                  : `@${username} hasn't generated their TasteID yet.`}
+              </p>
+            </div>
+
             {isOwnProfile && (
-              <GenerateTasteIDButton />
+              <>
+                {/* Progress Section */}
+                <div className="mb-8 p-4 border border-border bg-muted/20">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs uppercase tracking-wider text-muted-foreground font-bold">Progress</span>
+                    <span className="text-sm font-bold">
+                      <span className="text-[#ffd700]">{reviewCount}</span>
+                      <span className="text-muted-foreground"> / {minReviews} albums</span>
+                    </span>
+                  </div>
+                  
+                  {/* Progress Bar */}
+                  <div className="h-3 bg-border overflow-hidden mb-3">
+                    <div 
+                      className="h-full bg-gradient-to-r from-[#ff6b6b] via-[#ffd700] to-[#00ff88] transition-all duration-500"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                  
+                  {/* Milestones */}
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span className={reviewCount >= 1 ? 'text-[#ffd700]' : ''}>1 album</span>
+                    <span className={reviewCount >= 2 ? 'text-[#ffd700]' : ''}>2 albums</span>
+                    <span className={reviewCount >= 3 ? 'text-[#00ff88]' : ''}>3 albums ✓</span>
+                  </div>
+                </div>
+
+                {/* Status Message */}
+                <div className="text-center mb-8">
+                  {canGenerate ? (
+                    <p className="text-[#00ff88] font-medium">
+                      You're ready! Generate your TasteID now.
+                    </p>
+                  ) : (
+                    <p className="text-muted-foreground">
+                      Rate <span className="text-[#ffd700] font-bold">{minReviews - reviewCount}</span> more album{minReviews - reviewCount !== 1 ? 's' : ''} to unlock your TasteID.
+                    </p>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  {canGenerate ? (
+                    <GenerateTasteIDButton />
+                  ) : (
+                    <Link
+                      href="/quick-rate"
+                      className="px-8 py-4 bg-[#ffd700] text-black text-sm font-bold uppercase tracking-wider hover:bg-[#ffed4a] transition-colors text-center"
+                    >
+                      Rate Albums Now
+                    </Link>
+                  )}
+                  
+                  <Link
+                    href="/discover"
+                    className="px-8 py-4 border-2 border-border text-sm font-bold uppercase tracking-wider hover:border-foreground transition-colors text-center"
+                  >
+                    Discover Music
+                  </Link>
+                </div>
+
+                {/* What is TasteID */}
+                <div className="mt-10 pt-8 border-t border-border">
+                  <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-bold mb-4 text-center">What You'll Unlock</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                    <div className="p-3">
+                      <div className="text-2xl mb-2">🎭</div>
+                      <div className="text-sm font-bold mb-1">Your Archetype</div>
+                      <div className="text-xs text-muted-foreground">Discover your listener personality</div>
+                    </div>
+                    <div className="p-3">
+                      <div className="text-2xl mb-2">📊</div>
+                      <div className="text-sm font-bold mb-1">Taste Analysis</div>
+                      <div className="text-xs text-muted-foreground">Genres, decades, and patterns</div>
+                    </div>
+                    <div className="p-3">
+                      <div className="text-2xl mb-2">🤝</div>
+                      <div className="text-sm font-bold mb-1">Find Your People</div>
+                      <div className="text-xs text-muted-foreground">Connect with similar tasters</div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {!isOwnProfile && (
+              <div className="text-center">
+                <Link
+                  href={`/u/${username}`}
+                  className="px-6 py-3 border-2 border-border text-sm font-bold uppercase tracking-wider hover:border-foreground transition-colors"
+                >
+                  View Profile
+                </Link>
+              </div>
             )}
           </div>
         </div>
