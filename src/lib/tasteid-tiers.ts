@@ -8,11 +8,11 @@
 export interface TasteIDTier {
   id: string
   name: string
+  shortName: string
   minRatings: number
   maxConfidence: number
   color: string
   bgColor: string
-  icon: string
   description: string
   perks: string[]
 }
@@ -21,66 +21,66 @@ export const TASTEID_TIERS: TasteIDTier[] = [
   {
     id: 'locked',
     name: 'LOCKED',
+    shortName: 'L',
     minRatings: 0,
     maxConfidence: 0,
-    color: '#666',
+    color: '#666666',
     bgColor: '#1a1a1a',
-    icon: '🔒',
     description: 'Rate 20 albums to unlock your TasteID',
     perks: [],
   },
   {
     id: 'emerging',
     name: 'EMERGING',
+    shortName: '1',
     minRatings: 20,
     maxConfidence: 65,
     color: '#ffd700',
-    bgColor: '#ffd700/10',
-    icon: '⚡',
+    bgColor: '#ffd700',
     description: 'Your taste profile is taking shape',
     perks: ['Basic archetype', 'Top 5 genres', 'Adventureness score'],
   },
   {
     id: 'developing',
     name: 'DEVELOPING',
+    shortName: '2',
     minRatings: 50,
     maxConfidence: 75,
     color: '#00ff88',
-    bgColor: '#00ff88/10',
-    icon: '🌱',
+    bgColor: '#00ff88',
     description: 'Your musical DNA is becoming clearer',
     perks: ['Secondary archetype', '7 Music Networks', 'Listening Signature'],
   },
   {
     id: 'established',
     name: 'ESTABLISHED',
+    shortName: '3',
     minRatings: 100,
     maxConfidence: 85,
     color: '#00bfff',
-    bgColor: '#00bfff/10',
-    icon: '💎',
+    bgColor: '#00bfff',
     description: 'A well-defined taste profile',
     perks: ['Pattern badges', 'Musical futures', 'Taste evolution tracking'],
   },
   {
     id: 'expert',
     name: 'EXPERT',
+    shortName: '4',
     minRatings: 200,
     maxConfidence: 92,
     color: '#ff6b6b',
-    bgColor: '#ff6b6b/10',
-    icon: '🔥',
+    bgColor: '#ff6b6b',
     description: 'Deep musical understanding',
     perks: ['Taste consolidation', 'Influence score', 'Curator potential'],
   },
   {
     id: 'master',
     name: 'MASTER',
+    shortName: '5',
     minRatings: 500,
     maxConfidence: 98,
     color: '#bf00ff',
-    bgColor: '#bf00ff/10',
-    icon: '👑',
+    bgColor: '#bf00ff',
     description: 'Elite-level taste authority',
     perks: ['Full confidence', 'Taste oracle status', 'Community influence'],
   },

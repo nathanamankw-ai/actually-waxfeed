@@ -145,59 +145,81 @@ function MetricBlock({ label, value }: { label: string; value: string }) {
 
 function TierProgressBar({ reviewCount }: { reviewCount: number }) {
   const { progress, ratingsToNext, currentTier, nextTier } = getProgressToNextTier(reviewCount)
+  const tiers = TASTEID_TIERS.slice(1) // Skip 'locked'
   
   return (
     <div className="pt-3 border-t border-border space-y-2">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span style={{ color: currentTier.color }}>{currentTier.icon}</span>
+          <div 
+            className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-black"
+            style={{ backgroundColor: currentTier.color }}
+          >
+            {currentTier.shortName}
+          </div>
           <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: currentTier.color }}>
             {currentTier.name}
           </span>
         </div>
         {nextTier && (
           <span className="text-[10px] text-muted-foreground">
-            {ratingsToNext} to {nextTier.icon} {nextTier.name}
+            {ratingsToNext} to {nextTier.name}
           </span>
         )}
       </div>
       
-      {/* Progress bar */}
-      <div className="relative h-2 bg-muted rounded-full overflow-hidden">
-        <div 
-          className="absolute inset-y-0 left-0 transition-all duration-500 rounded-full"
-          style={{ 
-            width: `${progress}%`,
-            background: `linear-gradient(90deg, ${currentTier.color}, ${nextTier?.color || currentTier.color})`
-          }}
-        />
-        {/* Tier markers */}
-        {TASTEID_TIERS.slice(1, -1).map((tier, i) => {
-          const position = ((tier.minRatings - currentTier.minRatings) / (nextTier ? nextTier.minRatings - currentTier.minRatings : 100)) * 100
-          if (position <= 0 || position >= 100) return null
+      {/* Segmented progress bar */}
+      <div className="flex gap-0.5 h-2">
+        {tiers.map((tier) => {
+          const isCompleted = reviewCount >= tier.minRatings
+          const isCurrent = tier.id === currentTier.id
+          
+          let fillPercent = 0
+          if (isCompleted && !isCurrent) fillPercent = 100
+          else if (isCurrent) fillPercent = progress
+          
           return (
             <div 
               key={tier.id}
-              className="absolute top-0 bottom-0 w-0.5 bg-border"
-              style={{ left: `${position}%` }}
-            />
+              className="flex-1 bg-muted rounded-sm overflow-hidden"
+              title={`${tier.name}: ${tier.minRatings}+ ratings`}
+            >
+              <div 
+                className="h-full transition-all duration-500"
+                style={{ 
+                  width: `${fillPercent}%`,
+                  backgroundColor: tier.color
+                }}
+              />
+            </div>
           )
         })}
       </div>
       
-      {/* Mini tier icons */}
+      {/* Tier indicators */}
       <div className="flex justify-between">
-        {TASTEID_TIERS.slice(1).map((tier) => {
-          const isActive = tier.id === currentTier.id
-          const isPast = tier.minRatings < currentTier.minRatings
+        {tiers.map((tier) => {
+          const isCompleted = reviewCount >= tier.minRatings
+          const isCurrent = tier.id === currentTier.id
           return (
             <div
               key={tier.id}
               className="text-center"
-              style={{ opacity: isPast || isActive ? 1 : 0.3 }}
+              style={{ width: `${100 / tiers.length}%` }}
               title={`${tier.name}: ${tier.minRatings}+ ratings`}
             >
-              <span className="text-[10px]">{tier.icon}</span>
+              <div 
+                className={`w-3 h-3 mx-auto rounded-full flex items-center justify-center text-[7px] font-bold border ${
+                  isCompleted ? 'text-black' : 'text-muted-foreground'
+                }`}
+                style={{ 
+                  backgroundColor: isCompleted ? tier.color : 'transparent',
+                  borderColor: isCompleted || isCurrent ? tier.color : 'var(--border)'
+                }}
+              >
+                {isCompleted ? '✓' : tier.shortName}
+              </div>
             </div>
           )
         })}

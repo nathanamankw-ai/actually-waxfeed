@@ -50,40 +50,23 @@ export function TasteIDCompletionBanner({ reviewCount, hasTasteID }: TasteIDComp
 
   const isUnlocked = reviewCount >= 20
   const { progress, ratingsToNext, currentTier, nextTier } = getProgressToNextTier(reviewCount)
-  const unlockProgress = Math.min(100, (reviewCount / 20) * 100)
+  const tiers = TASTEID_TIERS.slice(1) // Skip 'locked'
 
   return (
-    <div className="border-b border-[--border] bg-gradient-to-r from-[#ffd700]/10 to-transparent">
+    <div className="border-b border-[--border] bg-gradient-to-r from-[#ffd700]/5 to-transparent">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center gap-4">
-          {/* Icon with progress ring */}
-          <div className="relative flex-shrink-0">
-            <svg width="48" height="48" className="-rotate-90">
-              <circle
-                cx="24" cy="24" r="20"
-                fill="none"
-                stroke="#333"
-                strokeWidth="4"
-              />
-              <circle
-                cx="24" cy="24" r="20"
-                fill="none"
-                stroke={currentTier.color}
-                strokeWidth="4"
-                strokeDasharray={125.6}
-                strokeDashoffset={125.6 - (progress / 100) * 125.6}
-                strokeLinecap="round"
-                className="transition-all duration-500"
-              />
-            </svg>
-            <span className="absolute inset-0 flex items-center justify-center text-lg">
-              {currentTier.icon}
-            </span>
+          {/* Level badge */}
+          <div 
+            className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-lg font-black text-black"
+            style={{ backgroundColor: currentTier.color }}
+          >
+            {currentTier.shortName}
           </div>
 
           {/* Content */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-3 mb-1">
+            <div className="flex items-center gap-3 mb-2">
               <h3 className="text-sm font-bold">Your TasteID</h3>
               <span 
                 className="text-[10px] px-2 py-0.5 font-bold uppercase tracking-wider"
@@ -96,34 +79,63 @@ export function TasteIDCompletionBanner({ reviewCount, hasTasteID }: TasteIDComp
               </span>
             </div>
             
-            <p className="text-xs text-[--muted]">
+            {/* Segmented progress bar */}
+            <div className="flex gap-0.5 h-2 max-w-md">
+              {tiers.map((tier) => {
+                const isCompleted = reviewCount >= tier.minRatings
+                const isCurrent = tier.id === currentTier.id
+                
+                let fillPercent = 0
+                if (isCompleted && !isCurrent) fillPercent = 100
+                else if (isCurrent) fillPercent = progress
+                
+                return (
+                  <div 
+                    key={tier.id}
+                    className="flex-1 bg-[#222] rounded-sm overflow-hidden"
+                    title={`${tier.name}: ${tier.minRatings}+ ratings`}
+                  >
+                    <div 
+                      className="h-full transition-all duration-500"
+                      style={{ 
+                        width: `${fillPercent}%`,
+                        backgroundColor: tier.color
+                      }}
+                    />
+                  </div>
+                )
+              })}
+            </div>
+            
+            <p className="text-[10px] text-[--muted] mt-1">
               {!isUnlocked ? (
                 <>Rate {20 - reviewCount} more to unlock your TasteID</>
               ) : nextTier ? (
-                <>Rate {ratingsToNext} more albums to reach <strong style={{ color: nextTier.color }}>{nextTier.name}</strong> tier ({nextTier.maxConfidence}% accuracy). Your taste profile evolves with every rating.</>
+                <>{ratingsToNext} more ratings to reach {nextTier.name} ({nextTier.maxConfidence}% accuracy)</>
               ) : (
-                <>Maximum accuracy achieved. Your taste profile is elite.</>
+                <>Maximum accuracy achieved</>
               )}
             </p>
           </div>
 
-          {/* Mini tier progress */}
+          {/* Tier step indicators */}
           <div className="hidden md:flex items-center gap-1">
-            {TASTEID_TIERS.slice(1).map((tier) => {
+            {tiers.map((tier) => {
               const isActive = tier.id === currentTier.id
-              const isPast = tier.minRatings < currentTier.minRatings
+              const isCompleted = reviewCount >= tier.minRatings
               return (
                 <div
                   key={tier.id}
-                  className="w-8 h-8 flex items-center justify-center transition-all"
+                  className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold border-2 transition-all ${
+                    isCompleted ? 'text-black' : 'text-[#666]'
+                  }`}
                   style={{
-                    backgroundColor: isActive ? `${tier.color}30` : 'transparent',
-                    border: isActive ? `2px solid ${tier.color}` : '1px solid #333',
-                    opacity: isPast || isActive ? 1 : 0.3
+                    backgroundColor: isCompleted ? tier.color : 'transparent',
+                    borderColor: isCompleted || isActive ? tier.color : '#333'
                   }}
                   title={`${tier.name}: ${tier.minRatings}+ ratings`}
                 >
-                  <span className="text-xs">{tier.icon}</span>
+                  {isCompleted ? '✓' : tier.shortName}
                 </div>
               )
             })}

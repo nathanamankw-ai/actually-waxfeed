@@ -29,6 +29,7 @@ export { TasteIDCard, TasteIDCardSkeleton } from "./TasteIDCard"
 export { TasteComparison, TasteComparisonSkeleton } from "./TasteComparison"
 export { ArtistDNAStrip, ArtistDNAStripSkeleton } from "./ArtistDNAStrip"
 export { TasteCardShare } from "./TasteCardShare"
+export { TierProgress, TierProgressRing } from "./TierProgress"
 
 // Polarity 1.2 Music Networks
 export {

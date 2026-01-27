@@ -492,34 +492,51 @@ export default function QuickRatePage() {
           </div>
         )}
 
-        {/* Tier Milestone Celebration */}
+        {/* Tier Milestone Celebration - Clean design */}
         {milestoneReached && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 animate-in fade-in duration-300">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 animate-in fade-in duration-300">
             <div 
-              className="text-center p-8 border-4 max-w-md animate-in zoom-in duration-500"
-              style={{ borderColor: milestoneReached.color, backgroundColor: `${milestoneReached.color}10` }}
+              className="text-center p-8 border-2 max-w-md animate-in zoom-in duration-500 bg-[#111]"
+              style={{ borderColor: milestoneReached.color }}
             >
-              <div className="text-6xl mb-4 animate-bounce">{milestoneReached.icon}</div>
-              <h2 className="text-2xl font-black mb-2" style={{ color: milestoneReached.color }}>
-                TIER UNLOCKED!
+              {/* Level badge */}
+              <div 
+                className="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center text-2xl font-black text-black"
+                style={{ backgroundColor: milestoneReached.color }}
+              >
+                {milestoneReached.shortName}
+              </div>
+              
+              <p className="text-xs uppercase tracking-widest text-[#666] mb-2">Tier Unlocked</p>
+              <h2 className="text-3xl font-black mb-2" style={{ color: milestoneReached.color }}>
+                {milestoneReached.name}
               </h2>
-              <h3 className="text-3xl font-bold mb-4">{milestoneReached.name}</h3>
-              <p className="text-[#888] mb-4">{milestoneReached.description}</p>
-              <div className="space-y-2 text-sm">
-                <p className="text-[#666] uppercase tracking-wider text-xs">New perks unlocked:</p>
+              <p className="text-[#888] mb-6">{milestoneReached.description}</p>
+              
+              {/* Accuracy badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 border border-[#333] mb-6">
+                <span className="text-[#666] text-xs uppercase">Max Accuracy:</span>
+                <span className="font-bold" style={{ color: milestoneReached.color }}>
+                  {milestoneReached.maxConfidence}%
+                </span>
+              </div>
+              
+              {/* Perks list */}
+              <div className="space-y-2 text-sm mb-6">
+                <p className="text-[#555] uppercase tracking-wider text-[10px]">New Features Unlocked</p>
                 {milestoneReached.perks.map((perk, i) => (
-                  <div key={i} className="flex items-center justify-center gap-2" style={{ color: milestoneReached.color }}>
-                    <span>✓</span>
-                    <span>{perk}</span>
+                  <div key={i} className="flex items-center justify-center gap-2">
+                    <svg className="w-4 h-4" style={{ color: milestoneReached.color }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-[#888]">{perk}</span>
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-[#666] mt-4">
-                Max accuracy: {milestoneReached.maxConfidence}%
-              </p>
+              
               <button
                 onClick={() => setMilestoneReached(null)}
-                className="mt-6 px-6 py-2 font-bold uppercase tracking-wider transition-colors"
+                className="px-8 py-3 font-bold uppercase tracking-wider transition-colors"
                 style={{ 
                   backgroundColor: milestoneReached.color, 
                   color: '#000',
@@ -742,52 +759,90 @@ export default function QuickRatePage() {
   )
 }
 
-// Inline Tier Progress Bar for Quick Rate
+// Inline Tier Progress Bar for Quick Rate - Clean design without emojis
 function TierProgressBar({ ratingCount }: { ratingCount: number }) {
   const { progress, ratingsToNext, currentTier, nextTier } = getProgressToNextTier(ratingCount)
+  const tiers = TASTEID_TIERS.slice(1) // Skip 'locked'
   
   return (
-    <div className="space-y-1">
-      {/* Tier info */}
-      <div className="flex items-center justify-between text-[10px]">
+    <div className="space-y-2">
+      {/* Header info */}
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span style={{ color: currentTier.color }}>{currentTier.icon}</span>
-          <span className="font-bold uppercase tracking-wider" style={{ color: currentTier.color }}>
+          <div 
+            className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-black"
+            style={{ backgroundColor: currentTier.color }}
+          >
+            {currentTier.shortName}
+          </div>
+          <span className="text-xs font-bold uppercase tracking-wider" style={{ color: currentTier.color }}>
             {currentTier.name}
           </span>
-          <span className="text-[#666]">{currentTier.maxConfidence}% accuracy</span>
+          <span className="text-[10px] text-[#666]">{currentTier.maxConfidence}% accuracy</span>
         </div>
         {nextTier && (
-          <span className="text-[#888]">
-            {ratingsToNext} to {nextTier.icon}
+          <span className="text-[10px] text-[#888]">
+            {ratingsToNext} to {nextTier.name}
           </span>
         )}
       </div>
       
-      {/* Progress bar */}
-      <div className="relative h-2 bg-[#222] rounded-full overflow-hidden">
-        <div 
-          className="absolute inset-y-0 left-0 transition-all duration-500 rounded-full"
-          style={{ 
-            width: `${progress}%`,
-            background: `linear-gradient(90deg, ${currentTier.color}, ${nextTier?.color || currentTier.color})`
-          }}
-        />
-      </div>
-      
-      {/* Tier markers */}
-      <div className="flex justify-between px-1">
-        {TASTEID_TIERS.slice(1).map((tier) => {
-          const isActive = tier.id === currentTier.id
-          const isPast = tier.minRatings < currentTier.minRatings
+      {/* Segmented progress bar */}
+      <div className="flex gap-0.5 h-2">
+        {tiers.map((tier) => {
+          const isCompleted = ratingCount >= tier.minRatings
+          const isCurrent = tier.id === currentTier.id
+          
+          let fillPercent = 0
+          if (isCompleted && !isCurrent) fillPercent = 100
+          else if (isCurrent) fillPercent = progress
+          
           return (
-            <div
+            <div 
               key={tier.id}
-              className="text-center transition-opacity"
-              style={{ opacity: isPast || isActive ? 1 : 0.3 }}
+              className="flex-1 bg-[#222] rounded-sm overflow-hidden"
               title={`${tier.name}: ${tier.minRatings}+ ratings`}
             >
-              <span className="text-[10px]">{tier.icon}</span>
+              <div 
+                className="h-full transition-all duration-500"
+                style={{ 
+                  width: `${fillPercent}%`,
+                  backgroundColor: tier.color
+                }}
+              />
+            </div>
+          )
+        })}
+      </div>
+      
+      {/* Tier labels */}
+      <div className="flex justify-between">
+        {tiers.map((tier) => {
+          const isCompleted = ratingCount >= tier.minRatings
+          const isCurrent = tier.id === currentTier.id
+          return (
+            <div 
+              key={tier.id}
+              className="flex flex-col items-center"
+              style={{ width: `${100 / tiers.length}%` }}
+            >
+              <div 
+                className={`w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold border transition-all ${
+                  isCompleted ? 'text-black' : 'text-[#666]'
+                }`}
+                style={{ 
+                  backgroundColor: isCompleted ? tier.color : 'transparent',
+                  borderColor: isCompleted || isCurrent ? tier.color : '#333'
+                }}
+              >
+                {isCompleted ? '✓' : tier.shortName}
+              </div>
+              <span 
+                className={`text-[8px] mt-0.5 uppercase tracking-wider ${isCurrent ? 'font-bold' : ''}`}
+                style={{ color: isCompleted || isCurrent ? tier.color : '#444' }}
+              >
+                {tier.shortName}
+              </span>
             </div>
           )
         })}

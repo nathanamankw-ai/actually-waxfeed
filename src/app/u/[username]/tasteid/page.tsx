@@ -12,6 +12,7 @@ import {
   GenreRadarChart,
   ArtistDNAStrip,
   TasteCardShare,
+  TierProgress,
 } from "@/components/tasteid"
 import {
   MusicNetworksVisualization,
@@ -364,17 +365,26 @@ export default async function TasteIDPage({ params }: Props) {
           <GenreRadarChart genres={genreVector} size={250} />
         </div>
 
-        {/* Stats Grid */}
+        {/* Tier Progress */}
+        <div className="mb-6 sm:mb-8">
+          <TierProgress ratingCount={tasteId.reviewCount} variant="steps" />
+        </div>
+
+        {/* Stats Grid - with progress bars */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-6 sm:mb-8">
           <StatCard
             label="POLARITY SCORE"
             value={tasteId.polarityScore.toFixed(2)}
             description="Taste distinctiveness"
+            progress={Math.min(100, tasteId.polarityScore * 100)}
+            color="#00bfff"
           />
           <StatCard
             label="ADVENTURENESS"
             value={`${Math.round(tasteId.adventurenessScore * 100)}%`}
             description="Genre diversity"
+            progress={Math.round(tasteId.adventurenessScore * 100)}
+            color="#00ff88"
           />
           <StatCard
             label="RATING STYLE"
@@ -391,6 +401,8 @@ export default async function TasteIDPage({ params }: Props) {
             label="AVG RATING"
             value={tasteId.averageRating.toFixed(1)}
             description={`±${tasteId.ratingStdDev.toFixed(1)} std dev`}
+            progress={(tasteId.averageRating / 10) * 100}
+            color="#ffd700"
           />
         </div>
 
@@ -1027,17 +1039,31 @@ function StatCard({
   label,
   value,
   description,
+  progress,
+  color = '#ffd700',
 }: {
   label: string
   value: string
   description: string
+  progress?: number // 0-100 for showing a progress bar
+  color?: string
 }) {
   return (
     <div className="border-2 border-foreground p-3 sm:p-4">
       <div className="text-[10px] sm:text-[10px] uppercase tracking-widest text-muted-foreground font-bold mb-1">
         {label}
       </div>
-      <div className="text-xl sm:text-2xl font-bold">{value}</div>
+      <div className="text-xl sm:text-2xl font-bold" style={progress !== undefined ? { color } : undefined}>
+        {value}
+      </div>
+      {progress !== undefined && (
+        <div className="h-1.5 bg-muted rounded-full overflow-hidden mt-2 mb-1">
+          <div 
+            className="h-full transition-all duration-500 rounded-full"
+            style={{ width: `${progress}%`, backgroundColor: color }}
+          />
+        </div>
+      )}
       <div className="text-[11px] sm:text-xs text-muted-foreground mt-1">{description}</div>
     </div>
   )
