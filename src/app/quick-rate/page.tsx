@@ -394,13 +394,13 @@ export default function QuickRatePage() {
   const remaining = Math.max(0, TASTEID_UNLOCK - actualRatedCount)
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
-      <div className="w-full px-4 lg:px-12 xl:px-20 py-6">
+    <div className="h-screen flex flex-col overflow-hidden" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
+      <div className="w-full px-4 lg:px-12 xl:px-20 py-4 flex flex-col flex-1 overflow-hidden">
         {/* Header Row */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3 flex-shrink-0">
           <div>
-            <h1 className="text-2xl font-bold tracking-tighter">Quick Rate</h1>
-            <p className="text-sm text-[#888]">
+            <h1 className="text-xl font-bold tracking-tighter">Quick Rate</h1>
+            <p className="text-xs text-[#888]">
               Build your TasteID by rating albums. Skip anything you haven't heard.
             </p>
           </div>
@@ -415,7 +415,7 @@ export default function QuickRatePage() {
         </div>
 
         {/* Stats Bar */}
-        <div className="mb-4 p-3 border border-[#333] bg-[#111]">
+        <div className="mb-3 p-2 border border-[#333] bg-[#111] flex-shrink-0">
           {!isStatsLoaded ? (
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 border-2 border-[#333] border-t-[#ffd700] rounded-full animate-spin" />
@@ -550,16 +550,16 @@ export default function QuickRatePage() {
 
         {/* Content */}
         {loadingAlbums && albums.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20">
+          <div className="flex-1 flex flex-col items-center justify-center">
             <div className="w-10 h-10 border-2 border-[#333] border-t-[#ffd700] animate-spin mb-4" />
             <span className="text-xs tracking-[0.2em] uppercase text-[#888]">Loading albums</span>
           </div>
         ) : currentAlbum ? (
-          <div className="border border-[#333] overflow-hidden">
-            <div className="flex flex-col md:flex-row">
+          <div className="border border-[#333] flex-1 overflow-hidden flex flex-col">
+            <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
               {/* Album Art - Left Side */}
-              <div className="md:w-[320px] lg:w-[380px] flex-shrink-0">
-                <div className="aspect-square relative">
+              <div className="md:w-[280px] lg:w-[320px] flex-shrink-0">
+                <div className="aspect-square relative max-h-[280px] lg:max-h-[320px]">
                   {currentAlbum.coverArtUrlLarge || currentAlbum.coverArtUrl ? (
                     <img
                       src={currentAlbum.coverArtUrlLarge || currentAlbum.coverArtUrl!}
@@ -577,10 +577,10 @@ export default function QuickRatePage() {
               </div>
 
               {/* Info & Rating - Right Side */}
-              <div className="flex-1 p-6 flex flex-col justify-between">
-                <div>
-                  <h2 className="text-2xl lg:text-3xl font-bold mb-1">{currentAlbum.title}</h2>
-                  <p className="text-[#888] text-lg mb-4">{currentAlbum.artistName}</p>
+              <div className="flex-1 p-4 flex flex-col overflow-hidden">
+                <div className="flex-1 overflow-y-auto">
+                  <h2 className="text-xl lg:text-2xl font-bold mb-1">{currentAlbum.title}</h2>
+                  <p className="text-[#888] text-base mb-3">{currentAlbum.artistName}</p>
                   {currentAlbum.genres && currentAlbum.genres.length > 0 && (
                     <div className="flex flex-wrap gap-2 mb-4">
                       {currentAlbum.genres.slice(0, 3).map((genre) => (
@@ -595,7 +595,7 @@ export default function QuickRatePage() {
                   )}
 
                   {/* Track Previews - 15 second samples */}
-                  <div className="mb-4 p-3 bg-[#111] border border-[#333]">
+                  <div className="mb-3 p-2 bg-[#111] border border-[#333]">
                     <p className="text-[10px] text-[#666] uppercase tracking-wider mb-2 flex items-center gap-2">
                       <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
@@ -649,7 +649,7 @@ export default function QuickRatePage() {
                   </div>
 
                   {/* Polarity Descriptors */}
-                  <div className="mb-4">
+                  <div className="mb-3">
                     <div className="flex items-center justify-between mb-2">
                       <p className="text-[10px] text-[#666] uppercase tracking-wider">
                         Describe this album{' '}
@@ -690,7 +690,7 @@ export default function QuickRatePage() {
                 </div>
 
                 {/* Rating Controls */}
-                <div className="space-y-4">
+                <div className="space-y-3 flex-shrink-0 pt-3 border-t border-[#333]">
                   <RatingSlider value={rating} onChange={setRating} disabled={submitting} />
 
                   {error && (
