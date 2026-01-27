@@ -173,7 +173,7 @@ export default async function Home() {
   const weekOf = format(new Date(), "MMM d, yyyy")
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }} suppressHydrationWarning>
+    <div className="min-h-screen bg-background text-foreground">
       {/* Hero - The Contrarian Truth */}
       <section style={{ borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-16 lg:py-24">
@@ -215,12 +215,21 @@ export default async function Home() {
                   >
                     Review an Album
                   </Link>
-                  <Link
-                    href="/wallet"
-                    className="px-6 py-4 border border-[--border] text-[12px] uppercase tracking-[0.15em] hover:border-white transition-colors text-center"
-                  >
-                    View Your Badges
-                  </Link>
+                  {tasteIDStatus.reviewCount >= 20 ? (
+                    <Link
+                      href="/tasteid/me"
+                      className="px-6 py-4 bg-[#ffd700] text-black text-[12px] uppercase tracking-[0.15em] font-bold hover:bg-[#ffed4a] transition-colors text-center"
+                    >
+                      Your TasteID
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/quick-rate"
+                      className="px-6 py-4 bg-[#ffd700] text-black text-[12px] uppercase tracking-[0.15em] font-bold hover:bg-[#ffed4a] transition-colors text-center"
+                    >
+                      Build TasteID
+                    </Link>
+                  )}
                 </>
               )}
             </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import {
   HeartIcon,
@@ -40,6 +40,12 @@ export function ReviewActions({
   const [isLoading, setIsLoading] = useState(false)
   const [showShareMenu, setShowShareMenu] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [shareUrl, setShareUrl] = useState(`/review/${reviewId}`)
+
+  // Set share URL only on client to prevent hydration mismatch
+  useEffect(() => {
+    setShareUrl(`${window.location.origin}/review/${reviewId}`)
+  }, [reviewId])
 
   const handleLike = async () => {
     if (!isLoggedIn) {
@@ -88,10 +94,6 @@ export function ReviewActions({
       setIsLoading(false)
     }
   }
-
-  const shareUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}/review/${reviewId}`
-    : `/review/${reviewId}`
 
   const handleShare = async () => {
     // Check if native share is available (mobile/iMessage friendly)

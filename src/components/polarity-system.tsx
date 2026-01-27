@@ -3,11 +3,14 @@
 import { useState, useEffect } from "react"
 
 export function PolaritySystem() {
-  const [time, setTime] = useState<string>("")
+  const [isMounted, setIsMounted] = useState(false)
+  const [time, setTime] = useState<string>("00:00:00")
   const [coords, setCoords] = useState({ x: 0, y: 0 })
   const [systemStatus, setSystemStatus] = useState("NOMINAL")
 
   useEffect(() => {
+    setIsMounted(true)
+    
     // Update time
     const updateTime = () => {
       const now = new Date()
@@ -39,6 +42,11 @@ export function PolaritySystem() {
       window.removeEventListener("mousemove", handleMouseMove)
     }
   }, [])
+
+  // Don't render until mounted to prevent hydration mismatch
+  if (!isMounted) {
+    return null
+  }
 
   return (
     <>

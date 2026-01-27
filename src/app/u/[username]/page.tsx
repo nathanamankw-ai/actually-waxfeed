@@ -6,6 +6,10 @@ import { auth } from "@/lib/auth"
 import { ProfileActions } from "./profile-actions"
 import Link from "next/link"
 import { format, formatDistanceToNow } from "date-fns"
+
+// Disable caching - always fetch fresh TasteID data
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 import {
   VerifiedIcon,
   FlameIcon,

@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { Metadata } from 'next'
+import { BadgeShareButtons } from './badge-share-buttons'
 
 interface BadgePageProps {
   params: Promise<{ id: string }>
@@ -229,26 +230,7 @@ export default async function BadgePage({ params }: BadgePageProps) {
         {/* Share Section */}
         <div className="mt-12 text-center animate-fade-in" style={{ animationDelay: '400ms' }}>
           <p className="text-[10px] tracking-[0.3em] uppercase text-[--muted] mb-4">Share This Badge</p>
-          <div className="flex justify-center gap-3">
-            <button
-              onClick={() => {
-                if (typeof navigator !== 'undefined' && navigator.clipboard) {
-                  navigator.clipboard.writeText(window.location.href)
-                }
-              }}
-              className="px-5 py-2.5 border border-[--border] text-sm hover:border-[#ffd700] hover:text-[#ffd700] transition-colors"
-            >
-              Copy Link
-            </button>
-            <a
-              href={`https://twitter.com/intent/tweet?text=I earned a ${label} badge for ${badge.album.title}!&url=${typeof window !== 'undefined' ? encodeURIComponent(window.location.href) : ''}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-5 py-2.5 bg-[#1DA1F2] text-white text-sm hover:bg-[#1a8cd8] transition-colors"
-            >
-              Share on X
-            </a>
-          </div>
+          <BadgeShareButtons badgeId={badgeId} albumTitle={badge.album.title} label={label} />
         </div>
       </div>
     </div>

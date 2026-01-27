@@ -22,12 +22,18 @@ type WaxStats = {
 export function Header() {
   const { data: session, status } = useSession()
   const { theme, toggleTheme } = useTheme()
+  const [isMounted, setIsMounted] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [showDropdown, setShowDropdown] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [waxStats, setWaxStats] = useState<WaxStats | null>(null)
   const [unreadMessages, setUnreadMessages] = useState(0)
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Handle hydration
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   // Fetch Wax stats and TasteID status
   useEffect(() => {
@@ -142,10 +148,10 @@ export function Header() {
             REVIEW
           </Link>
           {/* TasteID CTA - for logged in users without TasteID or incomplete onboarding */}
-          {session && ((!session.user?.username) || (waxStats && !waxStats.hasTasteID && (waxStats.reviewCount || 0) < 20)) && (
+          {isMounted && session && ((!session.user?.username) || (waxStats && !waxStats.hasTasteID && (waxStats.reviewCount || 0) < 20)) && (
             <Link
               href={session.user?.username ? "/quick-rate" : "/onboarding"}
-              className="px-3 py-1.5 no-underline transition-all border-2 border-[#ffd700] text-[#ffd700] hover:bg-[#ffd700] hover:text-black"
+              className="px-3 py-1.5 no-underline transition-all bg-[#ffd700] text-black font-bold hover:bg-[#ffec80]"
             >
               {session.user?.username ? "🎮 BUILD TASTEID" : "CREATE TASTEID"}
             </Link>
@@ -167,7 +173,7 @@ export function Header() {
           </Link>
 
           {/* Messages - Social Hub */}
-          {session && (
+          {isMounted && session && (
             <Tooltip content="Messages, Album Rooms, and Taste Circles">
               <Link
                 href="/messages"
@@ -186,7 +192,7 @@ export function Header() {
           )}
 
           {/* Wax Balance - Links to Shop */}
-          {session && waxStats && (
+          {isMounted && session && waxStats && (
             <Tooltip content="Your Wax balance. Use Wax to tip great reviews and support tastemakers.">
               <Link
                 href="/shop"
@@ -199,7 +205,7 @@ export function Header() {
           )}
 
           {/* Tastemaker Score - Links to Wallet */}
-          {session && waxStats && (
+          {isMounted && session && waxStats && (
             <Tooltip content="Your discovery score. Earn badges by reviewing albums before they trend: Gold (top 10), Silver (top 50), Bronze (top 100).">
               <Link
                 href="/wallet"
@@ -221,25 +227,27 @@ export function Header() {
             </Tooltip>
           )}
 
-          {/* Theme toggle */}
+          {/* Theme toggle - "dark" theme = white body, "light" theme = dark body */}
           <button
             onClick={toggleTheme}
             className="p-2 hover:opacity-70 transition-opacity"
             aria-label="Toggle theme"
-            title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+            title={theme === "dark" ? "Switch to dark mode" : "Switch to light mode"}
           >
-            {theme === "light" ? (
+            {theme === "dark" ? (
+              /* White body → show moon to switch to dark body */
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
               </svg>
             ) : (
+              /* Dark body → show sun to switch to white body */
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
             )}
           </button>
 
-          {status === "loading" ? (
+          {!isMounted || status === "loading" ? (
             <span style={{ opacity: 0.5 }}>...</span>
           ) : session ? (
             <div className="relative" ref={dropdownRef}>
@@ -371,7 +379,7 @@ export function Header() {
         {/* Mobile/Tablet: Wax + Score + Search + Menu */}
         <div className="flex lg:hidden items-center gap-2">
           {/* Wax Balance - Mobile - Links to Shop */}
-          {session && waxStats && (
+          {isMounted && session && waxStats && (
             <Link
               href="/shop"
               className="flex items-center gap-1 px-2 py-1 no-underline text-[#ffd700]"
@@ -382,7 +390,7 @@ export function Header() {
           )}
           
           {/* Tastemaker Score - Mobile */}
-          {session && waxStats && (
+          {isMounted && session && waxStats && (
             <Link
               href="/wallet"
               className="flex items-center gap-1.5 px-2 py-1 no-underline"
@@ -396,7 +404,7 @@ export function Header() {
           {/* Search icon - links to search page */}
           <Link
             href="/search"
-            className="p-2 hover:bg-gray-100 transition-colors"
+            className="p-2 hover:opacity-70 transition-opacity"
             aria-label="Search"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -407,7 +415,7 @@ export function Header() {
           {/* Menu button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 hover:bg-gray-100 transition-colors"
+            className="p-2 hover:opacity-70 transition-opacity"
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? (
@@ -455,11 +463,11 @@ export function Header() {
           </form>
 
           {/* TasteID CTA in mobile - prominent if user doesn't have TasteID or incomplete onboarding */}
-          {session && ((!session.user?.username) || (waxStats && !waxStats.hasTasteID && (waxStats.reviewCount || 0) < 20)) && (
+          {isMounted && session && ((!session.user?.username) || (waxStats && !waxStats.hasTasteID && (waxStats.reviewCount || 0) < 20)) && (
             <div className="px-4 pt-4 pb-2">
               <Link
                 href={session.user?.username ? "/quick-rate" : "/onboarding"}
-                className="block w-full px-4 py-4 text-center text-sm font-bold no-underline border-2 border-[#ffd700] text-[#ffd700] hover:bg-[#ffd700] hover:text-black transition-colors"
+                className="block w-full px-4 py-4 text-center text-sm font-bold no-underline bg-[#ffd700] text-black hover:bg-[#ffec80] transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {session.user?.username 
@@ -528,18 +536,20 @@ export function Header() {
               </svg>
             </Link>
 
-            {/* Theme toggle in mobile menu */}
+            {/* Theme toggle in mobile menu - "dark" theme = white body, "light" theme = dark body */}
             <button
               onClick={toggleTheme}
               className="flex items-center justify-between w-full px-4 py-4 text-[13px] tracking-[0.15em] font-medium hover:opacity-70"
               style={{ borderBottom: '1px solid var(--header-border)' }}
             >
-              <span>{theme === "light" ? "DARK MODE" : "LIGHT MODE"}</span>
-              {theme === "light" ? (
+              <span>{theme === "dark" ? "DARK MODE" : "LIGHT MODE"}</span>
+              {theme === "dark" ? (
+                /* White body → show moon to switch to dark body */
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                 </svg>
               ) : (
+                /* Dark body → show sun to switch to white body */
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>

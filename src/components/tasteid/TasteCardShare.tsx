@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 interface TasteCardShareProps {
   username: string
@@ -10,9 +10,17 @@ interface TasteCardShareProps {
 export function TasteCardShare({ username, archetype }: TasteCardShareProps) {
   const [copied, setCopied] = useState(false)
   const [downloading, setDownloading] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const tasteCardUrl = `/api/taste-card?username=${username}`
-  const profileUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/u/${username}/tasteid`
+  // Only use window.location after mount to prevent hydration mismatch
+  const profileUrl = isMounted 
+    ? `${window.location.origin}/u/${username}/tasteid`
+    : `https://waxfeed.com/u/${username}/tasteid` // Fallback for SSR
 
   const tweetText = encodeURIComponent(
     `I'm a ${archetype} on WaxFeed. Check out my music taste fingerprint! 🎵\n\n${profileUrl}`

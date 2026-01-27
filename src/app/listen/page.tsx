@@ -42,6 +42,14 @@ export default function ListenPage() {
   const [joinCode, setJoinCode] = useState("")
   const [joining, setJoining] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [now, setNow] = useState<Date | null>(null)
+
+  // Set "now" on mount to prevent hydration mismatch
+  useEffect(() => {
+    setNow(new Date())
+    const interval = setInterval(() => setNow(new Date()), 60000)
+    return () => clearInterval(interval)
+  }, [])
 
   useEffect(() => {
     if (status === "loading") return
@@ -119,7 +127,10 @@ export default function ListenPage() {
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString)
-    const now = new Date()
+    // Use static format until mounted to prevent hydration mismatch
+    if (!now) {
+      return date.toLocaleDateString()
+    }
     const diff = now.getTime() - date.getTime()
     const minutes = Math.floor(diff / 60000)
     const hours = Math.floor(diff / 3600000)

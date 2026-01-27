@@ -17,6 +17,22 @@ export async function GET(request: NextRequest) {
     })
     const reviewedIds = reviewedAlbumIds.map(r => r.albumId)
 
+    // Include tracks in selection for preview playback
+    const trackSelect = {
+      tracks: {
+        select: {
+          id: true,
+          name: true,
+          trackNumber: true,
+          previewUrl: true,
+          durationMs: true,
+        },
+        where: { previewUrl: { not: null } },
+        orderBy: { trackNumber: 'asc' as const },
+        take: 3,
+      },
+    }
+
     // For onboarding, return popular albums for broader appeal
     if (isOnboarding) {
       // First try: Get Billboard charting albums (most recognizable)
@@ -34,6 +50,7 @@ export async function GET(request: NextRequest) {
           coverArtUrlLarge: true,
           releaseDate: true,
           genres: true,
+          ...trackSelect,
         },
         take: limit * 2,
         orderBy: { billboardRank: 'asc' },
@@ -55,6 +72,7 @@ export async function GET(request: NextRequest) {
             coverArtUrlLarge: true,
             releaseDate: true,
             genres: true,
+            ...trackSelect,
           },
           take: (limit * 2) - popularAlbums.length,
           orderBy: [
@@ -117,6 +135,13 @@ export async function GET(request: NextRequest) {
       coverArtUrlLarge: string | null
       releaseDate: Date
       genres: string[]
+      tracks?: Array<{
+        id: string
+        name: string
+        trackNumber: number
+        previewUrl: string | null
+        durationMs: number
+      }>
     }> = []
 
     // Strategy 1: Albums by favorite artists (30% of results)
@@ -135,6 +160,7 @@ export async function GET(request: NextRequest) {
           coverArtUrlLarge: true,
           releaseDate: true,
           genres: true,
+          ...trackSelect,
         },
         take: Math.ceil(limit * 0.3),
         orderBy: { totalReviews: 'desc' },
@@ -159,6 +185,7 @@ export async function GET(request: NextRequest) {
           coverArtUrlLarge: true,
           releaseDate: true,
           genres: true,
+          ...trackSelect,
         },
         take: Math.ceil(limit * 0.5),
         orderBy: [
@@ -193,6 +220,7 @@ export async function GET(request: NextRequest) {
           coverArtUrlLarge: true,
           releaseDate: true,
           genres: true,
+          ...trackSelect,
         },
         take: discoveryCount,
         orderBy: { averageRating: 'desc' },
@@ -217,6 +245,7 @@ export async function GET(request: NextRequest) {
           coverArtUrlLarge: true,
           releaseDate: true,
           genres: true,
+          ...trackSelect,
         },
         take: remaining,
         orderBy: [

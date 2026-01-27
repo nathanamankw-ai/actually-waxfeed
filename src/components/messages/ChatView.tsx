@@ -79,9 +79,23 @@ export function ChatView({ conversationId, otherUser }: ChatViewProps) {
     }
   }
 
+  // Use state for "now" to prevent hydration mismatch
+  const [now, setNow] = useState<Date | null>(null)
+  
+  useEffect(() => {
+    setNow(new Date())
+    // Update "now" every minute for relative times
+    const interval = setInterval(() => setNow(new Date()), 60000)
+    return () => clearInterval(interval)
+  }, [])
+
   const formatTime = (dateString: string) => {
     const date = new Date(dateString)
-    const now = new Date()
+    // Use static formatting until mounted to prevent hydration mismatch
+    if (!now) {
+      return date.toLocaleDateString([], { month: "short", day: "numeric" })
+    }
+    
     const diff = now.getTime() - date.getTime()
     const days = Math.floor(diff / (1000 * 60 * 60 * 24))
 

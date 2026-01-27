@@ -5,6 +5,9 @@ import Link from "next/link"
 import { findSimilarTasters, getArchetypeInfo } from "@/lib/tasteid"
 import { DefaultAvatar } from "@/components/default-avatar"
 
+// Always fetch fresh TasteID data
+export const dynamic = "force-dynamic"
+
 export default async function SimilarTastersPage() {
   const session = await auth()
 

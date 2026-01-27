@@ -12,18 +12,17 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("light")
+  const [theme, setTheme] = useState<Theme>("dark")
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
-    // Check localStorage for saved preference
+    // Check localStorage for saved preference - default to "dark" (white body) if no preference
     const saved = localStorage.getItem("waxfeed-theme") as Theme | null
     if (saved) {
       setTheme(saved)
-    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      setTheme("dark")
     }
+    // No system preference check - always default to white body ("dark" theme)
   }, [])
 
   useEffect(() => {
@@ -41,11 +40,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setTheme(prev => prev === "light" ? "dark" : "light")
   }
 
-  // Prevent flash by not rendering until mounted
-  if (!mounted) {
-    return <>{children}</>
-  }
-
+  // Always render the provider to maintain consistent tree structure
+  // This prevents hydration mismatches
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}
@@ -57,7 +53,7 @@ export function useTheme() {
   const context = useContext(ThemeContext)
   // Return default values for SSR/static generation (e.g., /_not-found page)
   if (!context) {
-    return { theme: "light" as Theme, toggleTheme: () => {} }
+    return { theme: "dark" as Theme, toggleTheme: () => {} }
   }
   return context
 }

@@ -1,5 +1,7 @@
 "use client"
 
+import { useState, useEffect } from "react"
+
 type Props = {
   remaining: number | null
   total: number | null
@@ -8,34 +10,43 @@ type Props = {
 }
 
 export function ScarcityBadge({ remaining, total, expiresAt, className = "" }: Props) {
+  const [isMounted, setIsMounted] = useState(false)
+  const [timeData, setTimeData] = useState<{ timeRemaining: string; isExpiringSoon: boolean }>({
+    timeRemaining: "",
+    isExpiringSoon: false
+  })
+
+  useEffect(() => {
+    setIsMounted(true)
+    
+    // Calculate time remaining only on client
+    if (expiresAt) {
+      const expires = new Date(expiresAt)
+      const now = new Date()
+      const hoursLeft = Math.floor((expires.getTime() - now.getTime()) / (1000 * 60 * 60))
+      const daysLeft = Math.floor(hoursLeft / 24)
+
+      if (hoursLeft < 0) {
+        setTimeData({ timeRemaining: "expired", isExpiringSoon: false })
+      } else if (hoursLeft < 24) {
+        setTimeData({ timeRemaining: `${hoursLeft}h left`, isExpiringSoon: true })
+      } else if (daysLeft < 7) {
+        setTimeData({ timeRemaining: `${daysLeft}d left`, isExpiringSoon: daysLeft <= 2 })
+      } else {
+        setTimeData({ timeRemaining: `${daysLeft}d left`, isExpiringSoon: false })
+      }
+    }
+  }, [expiresAt])
+
+  // Don't render until mounted to prevent hydration mismatch
+  if (!isMounted) return null
   if (!remaining && !expiresAt) return null
+  if (timeData.timeRemaining === "expired") return null
 
   // Calculate urgency
   const isLowStock = remaining !== null && remaining <= 10
   const isVeryLowStock = remaining !== null && remaining <= 3
-
-  // Calculate time remaining
-  let timeRemaining = ""
-  let isExpiringSoon = false
-  if (expiresAt) {
-    const expires = new Date(expiresAt)
-    const now = new Date()
-    const hoursLeft = Math.floor((expires.getTime() - now.getTime()) / (1000 * 60 * 60))
-    const daysLeft = Math.floor(hoursLeft / 24)
-
-    if (hoursLeft < 0) {
-      return null // Already expired
-    } else if (hoursLeft < 24) {
-      timeRemaining = `${hoursLeft}h left`
-      isExpiringSoon = true
-    } else if (daysLeft < 7) {
-      timeRemaining = `${daysLeft}d left`
-      isExpiringSoon = daysLeft <= 2
-    } else {
-      timeRemaining = `${daysLeft}d left`
-    }
-  }
-
+  const { timeRemaining, isExpiringSoon } = timeData
   const isUrgent = isVeryLowStock || isExpiringSoon
 
   return (

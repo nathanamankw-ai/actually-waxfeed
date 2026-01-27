@@ -116,83 +116,207 @@ export interface MusicalFutureSelf {
 }
 
 // ============================================
-// ARCHETYPES
+// ARCHETYPES - CCX POLARITY Aligned
 // ============================================
+// Each archetype includes a POLARITY profile based on music psychology research:
+// - Russell's Circumplex Model (arousal, valence)
+// - Rentfrow's MUSIC Model (authenticity)
+// - Groove Theory (temporal)
+// - Berlyne's Arousal Theory (novelty)
+// See /docs/research/TASTEID-ARCHETYPES.md for full documentation
 
 export const ARCHETYPES = {
-  // Genre-based archetypes
+  // ═══════════════════════════════════════════════════════════════
+  // GENRE-BASED ARCHETYPES
+  // Derived from dominant genre preferences
+  // ═══════════════════════════════════════════════════════════════
+  
   HIP_HOP_HEAD: {
     id: 'hip-hop-head',
     name: 'Hip-Hop Head',
     description: 'Lives and breathes hip-hop culture',
-    genres: ['hip-hop', 'rap', 'trap', 'southern hip hop', 'east coast hip hop', 'west coast hip hop'],
+    genres: ['hip-hop', 'rap', 'trap', 'southern hip hop', 'east coast hip hop', 'west coast hip hop', 'drill', 'conscious rap', 'cloud rap'],
     icon: '🎤',
+    // POLARITY dimension profile (0-1 scale, 0.5 = neutral)
+    polarityProfile: {
+      arousal: 0.75,      // High energy, driving beats
+      valence: 0.5,       // Variable - both triumphant and dark
+      texture: 0.6,       // Often gritty production
+      temporal: 0.7,      // Groovy, pocket-focused
+      novelty: 0.6,       // Innovation valued
+      scale: 0.5,         // Variable scope
+      authenticity: 0.85, // "Keeping it real" central to culture
+      narrative: 0.7,     // Storytelling important
+    },
   },
+  
   JAZZ_EXPLORER: {
     id: 'jazz-explorer',
     name: 'Jazz Explorer',
     description: 'Drawn to improvisation and complexity',
-    genres: ['jazz', 'jazz fusion', 'bebop', 'modal jazz', 'free jazz', 'contemporary jazz'],
+    genres: ['jazz', 'jazz fusion', 'bebop', 'modal jazz', 'free jazz', 'contemporary jazz', 'nu jazz', 'acid jazz'],
     icon: '🎷',
+    polarityProfile: {
+      arousal: 0.5,       // Variable - cool to fiery
+      valence: 0.55,      // Generally positive, contemplative
+      texture: 0.7,       // Rich, lush arrangements
+      temporal: 0.65,     // Complex rhythms, swing
+      novelty: 0.75,      // Values innovation
+      scale: 0.55,        // Often intimate
+      authenticity: 0.7,  // Genuine expression valued
+      narrative: 0.6,     // Abstract storytelling
+    },
   },
+  
   ROCK_PURIST: {
     id: 'rock-purist',
     name: 'Rock Purist',
     description: 'Guitar-driven music runs through their veins',
-    genres: ['rock', 'classic rock', 'hard rock', 'alternative rock', 'indie rock', 'punk rock'],
+    genres: ['rock', 'classic rock', 'hard rock', 'alternative rock', 'indie rock', 'punk rock', 'grunge', 'post-punk', 'garage rock'],
     icon: '🎸',
+    polarityProfile: {
+      arousal: 0.7,       // Generally high energy
+      valence: 0.6,       // Often triumphant
+      texture: 0.7,       // Distorted, raw
+      temporal: 0.6,      // Driving rhythms
+      novelty: 0.45,      // Values tradition
+      scale: 0.6,         // Stadium to garage
+      authenticity: 0.85, // "Authentic" is paramount
+      narrative: 0.5,     // Variable
+    },
   },
+  
   ELECTRONIC_PIONEER: {
     id: 'electronic-pioneer',
     name: 'Electronic Pioneer',
     description: 'Synths, beats, and futuristic sounds',
-    genres: ['electronic', 'house', 'techno', 'ambient', 'edm', 'drum and bass', 'dubstep'],
+    genres: ['electronic', 'house', 'techno', 'ambient', 'edm', 'drum and bass', 'dubstep', 'synthwave', 'idm', 'trance'],
     icon: '🎹',
+    polarityProfile: {
+      arousal: 0.7,       // High for dance, low for ambient
+      valence: 0.6,       // Often euphoric
+      texture: 0.55,      // Crystalline production
+      temporal: 0.85,     // Rhythm-centric, hypnotic
+      novelty: 0.8,       // Innovation central
+      scale: 0.65,        // Often epic/immersive
+      authenticity: 0.4,  // Less focus on "realness"
+      narrative: 0.5,     // Abstract
+    },
   },
+  
   SOUL_SEARCHER: {
     id: 'soul-searcher',
     name: 'Soul Searcher',
     description: 'Connects with music on an emotional level',
-    genres: ['soul', 'r&b', 'neo soul', 'motown', 'funk', 'gospel'],
+    genres: ['soul', 'r&b', 'neo soul', 'motown', 'funk', 'gospel', 'quiet storm', 'contemporary r&b', 'alternative r&b'],
     icon: '💜',
+    polarityProfile: {
+      arousal: 0.55,      // Moderate, groovy
+      valence: 0.7,       // Generally warm, positive
+      texture: 0.75,      // Lush, warm
+      temporal: 0.7,      // Groovy, pocket
+      novelty: 0.4,       // Classic sounds valued
+      scale: 0.5,         // Intimate to church
+      authenticity: 0.9,  // Soulfulness = authenticity
+      narrative: 0.75,    // Confessional, emotional
+    },
   },
+  
   METAL_MAVEN: {
     id: 'metal-maven',
     name: 'Metal Maven',
     description: 'Heavy riffs and intense energy',
-    genres: ['metal', 'heavy metal', 'death metal', 'black metal', 'thrash metal', 'metalcore'],
+    genres: ['metal', 'heavy metal', 'death metal', 'black metal', 'thrash metal', 'metalcore', 'progressive metal', 'doom metal', 'power metal'],
     icon: '🤘',
+    polarityProfile: {
+      arousal: 0.95,      // Maximum intensity
+      valence: 0.25,      // Dark, aggressive
+      texture: 0.9,       // Heavy, distorted
+      temporal: 0.7,      // Complex, often chaotic
+      novelty: 0.6,       // Subgenre innovation
+      scale: 0.8,         // Epic, visceral
+      authenticity: 0.8,  // "Posers" rejected
+      narrative: 0.6,     // Themes of darkness, fantasy
+    },
   },
+  
   INDIE_DEVOTEE: {
     id: 'indie-devotee',
     name: 'Indie Devotee',
     description: 'Champions the underground and obscure',
-    genres: ['indie', 'indie pop', 'indie folk', 'lo-fi', 'bedroom pop', 'art pop'],
+    genres: ['indie', 'indie pop', 'indie folk', 'lo-fi', 'bedroom pop', 'art pop', 'shoegaze', 'dream pop', 'post-rock'],
     icon: '🎧',
+    polarityProfile: {
+      arousal: 0.4,       // Often subdued
+      valence: 0.5,       // Variable, often melancholic
+      texture: 0.5,       // Lo-fi to lush
+      temporal: 0.45,     // Often floating
+      novelty: 0.75,      // Prizes uniqueness
+      scale: 0.3,         // Intimate, personal
+      authenticity: 0.8,  // Anti-mainstream stance
+      narrative: 0.65,    // Personal stories
+    },
   },
+  
   POP_CONNOISSEUR: {
     id: 'pop-connoisseur',
     name: 'Pop Connoisseur',
     description: 'Appreciates craft in mainstream music',
-    genres: ['pop', 'synth-pop', 'dance pop', 'electropop', 'k-pop', 'j-pop'],
+    genres: ['pop', 'synth-pop', 'dance pop', 'electropop', 'k-pop', 'j-pop', 'art pop', 'hyperpop', 'bubblegum pop'],
     icon: '⭐',
+    polarityProfile: {
+      arousal: 0.65,      // Upbeat, energetic
+      valence: 0.75,      // Positive, euphoric
+      texture: 0.35,      // Polished, clean
+      temporal: 0.7,      // Danceable, catchy
+      novelty: 0.5,       // Trend-aware
+      scale: 0.6,         // Stadium-ready
+      authenticity: 0.35, // Production over rawness
+      narrative: 0.6,     // Relatable themes
+    },
   },
+  
   COUNTRY_SOUL: {
     id: 'country-soul',
     name: 'Country Soul',
     description: 'Stories, twang, and heartland vibes',
-    genres: ['country', 'americana', 'bluegrass', 'folk', 'country rock', 'outlaw country'],
+    genres: ['country', 'americana', 'bluegrass', 'folk', 'country rock', 'outlaw country', 'alt-country', 'western', 'country pop'],
     icon: '🤠',
+    polarityProfile: {
+      arousal: 0.5,       // Moderate
+      valence: 0.5,       // Heartbreak to celebration
+      texture: 0.6,       // Organic, acoustic
+      temporal: 0.55,     // Swinging rhythms
+      novelty: 0.3,       // Traditional values
+      scale: 0.5,         // Intimate to arena
+      authenticity: 0.85, // "Real" stories central
+      narrative: 0.9,     // Storytelling paramount
+    },
   },
+  
   CLASSICAL_MIND: {
     id: 'classical-mind',
     name: 'Classical Mind',
     description: 'Appreciates composition and orchestration',
-    genres: ['classical', 'orchestral', 'chamber music', 'opera', 'contemporary classical', 'baroque'],
+    genres: ['classical', 'orchestral', 'chamber music', 'opera', 'contemporary classical', 'baroque', 'romantic era', 'minimalism'],
     icon: '🎻',
+    polarityProfile: {
+      arousal: 0.5,       // Wide range
+      valence: 0.55,      // Often transcendent
+      texture: 0.9,       // Lush, complex
+      temporal: 0.45,     // Flowing, structured
+      novelty: 0.5,       // Tradition and innovation
+      scale: 0.85,        // Epic, cinematic
+      authenticity: 0.6,  // Interpretation matters
+      narrative: 0.8,     // Programmatic, emotional
+    },
   },
+  
+  // ═══════════════════════════════════════════════════════════════
+  // BEHAVIOR-BASED ARCHETYPES
+  // Derived from listening and rating patterns
+  // ═══════════════════════════════════════════════════════════════
 
-  // Behavior-based archetypes
   GENRE_FLUID: {
     id: 'genre-fluid',
     name: 'Genre Fluid',
@@ -200,7 +324,23 @@ export const ARCHETYPES = {
     genres: [],
     behavioral: true,
     icon: '🌈',
+    detectionCriteria: {
+      genreDiversityIndex: 0.8,    // Shannon entropy of genre distribution
+      maxSingleGenreShare: 0.25,   // No genre > 25%
+      adventurenessThreshold: 0.85,
+    },
+    polarityProfile: {
+      arousal: 0.5,       // Neutral - enjoys all levels
+      valence: 0.5,       // Open to all emotions
+      texture: 0.5,       // No preference
+      temporal: 0.5,      // All rhythms
+      novelty: 0.7,       // Exploration-focused
+      scale: 0.5,         // No preference
+      authenticity: 0.5,  // No preference
+      narrative: 0.5,     // No preference
+    },
   },
+  
   DECADE_DIVER: {
     id: 'decade-diver',
     name: 'Decade Diver',
@@ -208,7 +348,23 @@ export const ARCHETYPES = {
     genres: [],
     behavioral: true,
     icon: '⏰',
+    detectionCriteria: {
+      singleDecadeShare: 0.6,      // 60%+ in one decade
+      eraLanguageInReviews: true,
+      lowContemporaryEngagement: 0.2,
+    },
+    polarityProfile: {
+      arousal: 0.5,
+      valence: 0.5,
+      texture: 0.5,       // Era-dependent
+      temporal: 0.5,
+      novelty: 0.3,       // Nostalgic
+      scale: 0.5,
+      authenticity: 0.7,  // "They don't make 'em like they used to"
+      narrative: 0.6,
+    },
   },
+  
   DEEP_CUTTER: {
     id: 'deep-cutter',
     name: 'Deep Cutter',
@@ -216,7 +372,23 @@ export const ARCHETYPES = {
     genres: [],
     behavioral: true,
     icon: '💎',
+    detectionCriteria: {
+      nonSingleTrackShare: 0.7,
+      obscureAlbumShare: 0.4,      // Albums with < 1000 reviews
+      discoveryNetworkHigh: 0.7,
+    },
+    polarityProfile: {
+      arousal: 0.5,
+      valence: 0.5,
+      texture: 0.6,       // Often prefers raw
+      temporal: 0.5,
+      novelty: 0.8,       // Finds the new
+      scale: 0.4,         // Prefers intimate
+      authenticity: 0.75, // Values genuine
+      narrative: 0.6,
+    },
   },
+  
   CHART_CHASER: {
     id: 'chart-chaser',
     name: 'Chart Chaser',
@@ -224,7 +396,23 @@ export const ARCHETYPES = {
     genres: [],
     behavioral: true,
     icon: '📈',
+    detectionCriteria: {
+      chartingAlbumShare: 0.7,
+      newReleaseVelocity: 0.8,
+      reactiveNetworkHigh: 0.7,
+    },
+    polarityProfile: {
+      arousal: 0.65,
+      valence: 0.65,
+      texture: 0.4,       // Polished production
+      temporal: 0.65,     // Danceable, current
+      novelty: 0.6,       // Current trends
+      scale: 0.6,
+      authenticity: 0.4,
+      narrative: 0.55,
+    },
   },
+  
   THE_CRITIC: {
     id: 'the-critic',
     name: 'The Critic',
@@ -232,7 +420,23 @@ export const ARCHETYPES = {
     genres: [],
     behavioral: true,
     icon: '🧐',
+    detectionCriteria: {
+      averageRating: 6.0,          // Below average
+      perfectScoreShare: 0.05,     // < 5% are 10s
+      ratingStdDev: 1.5,           // Consistent standards
+    },
+    polarityProfile: {
+      arousal: 0.5,
+      valence: 0.4,       // More negative reviews
+      texture: 0.6,       // Values craft
+      temporal: 0.5,
+      novelty: 0.6,       // Appreciates innovation
+      scale: 0.5,
+      authenticity: 0.7,  // Values genuine artistry
+      narrative: 0.65,    // Analytical
+    },
   },
+  
   THE_ENTHUSIAST: {
     id: 'the-enthusiast',
     name: 'The Enthusiast',
@@ -240,7 +444,23 @@ export const ARCHETYPES = {
     genres: [],
     behavioral: true,
     icon: '🎉',
+    detectionCriteria: {
+      averageRating: 7.5,          // Above average
+      highScoreShare: 0.4,         // 40%+ are 8+
+      positiveLanguage: 0.7,
+    },
+    polarityProfile: {
+      arousal: 0.6,
+      valence: 0.8,       // Positive orientation
+      texture: 0.5,
+      temporal: 0.6,
+      novelty: 0.55,
+      scale: 0.55,
+      authenticity: 0.5,
+      narrative: 0.5,
+    },
   },
+  
   ESSAY_WRITER: {
     id: 'essay-writer',
     name: 'Essay Writer',
@@ -248,7 +468,23 @@ export const ARCHETYPES = {
     genres: [],
     behavioral: true,
     icon: '📝',
+    detectionCriteria: {
+      avgReviewLength: 300,        // Words
+      paragraphStructure: true,
+      crossReferences: true,
+    },
+    polarityProfile: {
+      arousal: 0.5,
+      valence: 0.5,
+      texture: 0.6,       // Notices production
+      temporal: 0.55,
+      novelty: 0.6,
+      scale: 0.55,
+      authenticity: 0.65,
+      narrative: 0.85,    // Strong narrative focus
+    },
   },
+  
   ALBUM_ARCHAEOLOGIST: {
     id: 'album-archaeologist',
     name: 'Album Archaeologist',
@@ -256,7 +492,23 @@ export const ARCHETYPES = {
     genres: [],
     behavioral: true,
     icon: '🏛️',
+    detectionCriteria: {
+      oldAlbumShare: 0.5,          // 50%+ > 20 years old
+      chronologicalExploration: true,
+      historicalContext: true,
+    },
+    polarityProfile: {
+      arousal: 0.5,
+      valence: 0.55,
+      texture: 0.6,       // Appreciates analog
+      temporal: 0.5,
+      novelty: 0.25,      // Highly nostalgic
+      scale: 0.55,
+      authenticity: 0.75,
+      narrative: 0.7,     // Historical context
+    },
   },
+  
   NEW_RELEASE_HUNTER: {
     id: 'new-release-hunter',
     name: 'New Release Hunter',
@@ -264,7 +516,23 @@ export const ARCHETYPES = {
     genres: [],
     behavioral: true,
     icon: '🆕',
+    detectionCriteria: {
+      recentReleaseShare: 0.8,     // 80%+ within 30 days of release
+      firstSpinBadges: 5,
+      reactiveNetworkDominant: true,
+    },
+    polarityProfile: {
+      arousal: 0.6,
+      valence: 0.6,
+      texture: 0.5,
+      temporal: 0.6,
+      novelty: 0.85,      // Maximum novelty seeking
+      scale: 0.5,
+      authenticity: 0.5,
+      narrative: 0.5,
+    },
   },
+  
   TASTE_TWIN_SEEKER: {
     id: 'taste-twin-seeker',
     name: 'Taste Twin Seeker',
@@ -272,6 +540,21 @@ export const ARCHETYPES = {
     genres: [],
     behavioral: true,
     icon: '👯',
+    detectionCriteria: {
+      profileViews: 50,
+      tasteComparisons: 20,
+      socialFeaturesUsage: 0.8,
+    },
+    polarityProfile: {
+      arousal: 0.55,
+      valence: 0.6,
+      texture: 0.5,
+      temporal: 0.55,
+      novelty: 0.5,
+      scale: 0.5,
+      authenticity: 0.5,
+      narrative: 0.55,
+    },
   },
 } as const
 
@@ -746,28 +1029,416 @@ function getReviewDepth(avgWordCount: number): 'rater' | 'writer' | 'essayist' {
 /**
  * Compute adventureness score (how diverse is their taste)
  */
-function computeAdventurenessScore(genreVector: GenreVector): number {
-  const genres = Object.keys(genreVector)
-  if (genres.length <= 1) return 0
+// ============================================
+// GENRE FAMILIES - Musicological Taxonomy
+// ============================================
+// Based on AllMusic/Discogs genre trees and musicological relationships
+// Reference: Pachet & Cazaly (2000), Aucouturier & Pachet (2003)
+//
+// Key principle: Genres in the same family share musical DNA (instrumentation,
+// harmonic language, rhythmic patterns, cultural lineage)
 
-  // Shannon entropy normalized
-  const values = Object.values(genreVector)
-  const sum = values.reduce((a, b) => a + b, 0)
-  if (sum === 0) return 0
-
-  const probs = values.map(v => v / sum)
-  const entropy = -probs.reduce((acc, p) => {
-    if (p > 0) acc += p * Math.log2(p)
-    return acc
-  }, 0)
-
-  // Normalize by max possible entropy (uniform distribution)
-  const maxEntropy = Math.log2(genres.length)
-  return maxEntropy > 0 ? entropy / maxEntropy : 0
+const GENRE_FAMILIES: Record<string, string[]> = {
+  // R&B/Soul Family - African American vocal tradition, emphasis on groove and emotion
+  // Lineage: Gospel → Soul → R&B → Contemporary variants
+  'r&b-soul': [
+    // Core
+    'r&b', 'soul', 'rhythm and blues',
+    // Classic era
+    'motown', 'philadelphia soul', 'southern soul', 'memphis soul',
+    // Funk crossover
+    'funk', 'p-funk', 'boogie',
+    // Gospel roots
+    'gospel', 'contemporary gospel',
+    // Modern R&B (80s-90s)
+    'new jack swing', 'quiet storm', 'contemporary r&b',
+    // Neo-soul movement (late 90s-2000s)
+    'neo soul', 'neo-soul',
+    // Current R&B subgenres
+    'alternative r&b', 'alt r&b', 'dark r&b', 'trap soul', 'pnb r&b',
+    // Regional
+    'uk r&b',
+  ],
+  
+  // Hip-Hop Family - Rap, sampling, breakbeats
+  // Lineage: Funk/Disco breaks → Old School → Regional styles → Modern
+  'hip-hop': [
+    // Core
+    'hip-hop', 'hip hop', 'rap',
+    // Old school
+    'old school hip hop', 'electro',
+    // Regional (Golden Era)
+    'east coast hip hop', 'west coast hip hop', 'southern hip hop',
+    'dirty south', 'crunk', 'bounce', 'chopped and screwed',
+    // Subgenres
+    'gangsta rap', 'g-funk', 'boom bap', 'conscious rap', 'political hip hop',
+    // Modern
+    'trap', 'drill', 'uk drill', 'chicago drill',
+    'cloud rap', 'mumble rap', 'emo rap', 'melodic rap',
+    'plugg', 'rage', 'hyperpop rap',
+    // Underground
+    'underground hip hop', 'abstract hip hop',
+  ],
+  
+  // Rock Family - Guitar-driven, Western popular music tradition
+  // Lineage: Blues → Rock & Roll → Classic Rock → Fragmentation
+  'rock': [
+    // Foundations
+    'rock', 'rock and roll', 'rock & roll',
+    // Classic era
+    'classic rock', 'hard rock', 'blues rock', 'southern rock',
+    'psychedelic rock', 'acid rock', 'progressive rock', 'art rock',
+    'glam rock', 'arena rock',
+    // Punk lineage
+    'punk', 'punk rock', 'hardcore punk', 'post-punk', 'new wave',
+    'post-punk revival',
+    // Alternative era (80s-90s)
+    'alternative rock', 'alt rock', 'grunge', 'britpop',
+    'noise rock', 'industrial rock',
+    // Indie rock
+    'indie rock', 'garage rock', 'garage rock revival',
+    // Soft/acoustic
+    'soft rock', 'power pop', 'jangle pop',
+    // Modern
+    'post-rock', 'math rock', 'stoner rock', 'desert rock',
+  ],
+  
+  // Electronic/Dance Family - Synthesized, beat-driven, club culture
+  // Lineage: Disco → House/Techno → Fragmentation
+  'electronic': [
+    // Core
+    'electronic', 'electronica', 'edm',
+    // House family
+    'house', 'deep house', 'tech house', 'progressive house',
+    'electro house', 'tropical house', 'future house',
+    // Techno family
+    'techno', 'detroit techno', 'minimal techno', 'acid techno',
+    // UK sounds
+    'uk garage', 'garage', '2-step', 'grime', 'dubstep', 'brostep',
+    'drum and bass', 'jungle', 'breakbeat', 'big beat',
+    // Trance
+    'trance', 'psytrance', 'progressive trance', 'uplifting trance',
+    // Bass music
+    'bass', 'future bass', 'trap edm', 'riddim',
+    // Ambient/experimental
+    'ambient', 'downtempo', 'chillout', 'idm', 'glitch',
+    // Synth-based
+    'synthwave', 'retrowave', 'darksynth', 'vaporwave',
+    // Other
+    'hardstyle', 'happy hardcore', 'gabber',
+  ],
+  
+  // Pop Family - Mainstream appeal, hook-driven, commercial
+  // Note: Many crossovers, but these are primarily "pop" in intent
+  'pop': [
+    // Core
+    'pop', 'pop music',
+    // Synth-pop era
+    'synth-pop', 'synthpop', 'new wave', 'electropop',
+    // Dance-pop
+    'dance pop', 'dance-pop', 'eurodance', 'europop',
+    // Art/experimental pop
+    'art pop', 'baroque pop', 'chamber pop',
+    // Modern
+    'indie pop', 'dream pop', 'bedroom pop',
+    'hyperpop', 'pc music',
+    // Teen/bubblegum
+    'bubblegum pop', 'teen pop',
+    // Power/adult
+    'power pop', 'adult contemporary',
+    // Regional pop
+    'j-pop', 'c-pop', 'cantopop', 'mandopop',
+  ],
+  
+  // K-Pop - Separate family due to distinct industrial/cultural system
+  // Has pop, hip-hop, R&B, EDM elements but unique production style
+  'k-pop': [
+    'k-pop', 'kpop', 'korean pop',
+    'k-hip hop', 'k-r&b', 'k-rock',
+    'korean r&b', 'korean hip hop',
+  ],
+  
+  // Metal Family - Heavy, distorted, extreme
+  // Lineage: Hard Rock/Blues Rock → Heavy Metal → Extreme subgenres
+  'metal': [
+    // Core
+    'metal', 'heavy metal',
+    // Classic subgenres
+    'thrash metal', 'speed metal', 'power metal',
+    // Extreme metal
+    'death metal', 'black metal', 'doom metal', 'sludge metal',
+    'grindcore', 'deathcore', 'blackgaze',
+    // Progressive/technical
+    'progressive metal', 'djent', 'technical death metal',
+    // Crossover
+    'metalcore', 'mathcore', 'nu metal', 'groove metal',
+    'industrial metal', 'gothic metal',
+    // Symphonic
+    'symphonic metal', 'folk metal', 'viking metal',
+  ],
+  
+  // Jazz Family - Improvisation, swing, harmonic sophistication
+  // Lineage: Ragtime → Swing → Bebop → Modal → Free → Fusion
+  'jazz': [
+    // Core
+    'jazz',
+    // Historical styles
+    'traditional jazz', 'dixieland', 'swing', 'big band',
+    // Bebop era
+    'bebop', 'hard bop', 'cool jazz', 'west coast jazz',
+    // Modal/free
+    'modal jazz', 'free jazz', 'avant-garde jazz',
+    // Fusion
+    'jazz fusion', 'jazz-funk', 'jazz-rock',
+    // Contemporary
+    'contemporary jazz', 'smooth jazz', 'nu jazz',
+    'acid jazz', 'jazz rap',
+    // European
+    'ecm style', 'nordic jazz',
+  ],
+  
+  // Country/Americana Family - American roots, storytelling
+  // Lineage: Folk/Blues → Honky Tonk → Nashville → Modern
+  'country-folk': [
+    // Country
+    'country', 'country music',
+    'classic country', 'honky tonk', 'outlaw country',
+    'country rock', 'southern rock',
+    'alt-country', 'americana', 'roots rock',
+    'bro-country', 'country pop', 'country rap',
+    // Bluegrass
+    'bluegrass', 'newgrass', 'progressive bluegrass',
+    // Folk
+    'folk', 'folk rock', 'contemporary folk', 'singer-songwriter',
+    'indie folk', 'freak folk', 'psych folk',
+    // Traditional American
+    'appalachian', 'western', 'western swing',
+  ],
+  
+  // Classical/Orchestral Family - Western art music tradition
+  'classical': [
+    // Historical periods
+    'classical', 'classical music',
+    'baroque', 'romantic', 'impressionist',
+    // Forms
+    'orchestral', 'symphony', 'chamber music', 'choral',
+    'opera', 'operetta', 'lieder',
+    // Modern
+    'contemporary classical', 'modern classical',
+    'minimalism', 'post-minimalism', 'spectralism',
+    'neoclassical', 'neo-romantic',
+    // Crossover
+    'crossover classical', 'new age', 'ambient classical',
+  ],
+  
+  // Latin Family - Spanish/Portuguese language music traditions
+  'latin': [
+    // Reggaeton/Urbano
+    'reggaeton', 'latin trap', 'urbano',
+    // Latin pop
+    'latin pop', 'latin rock',
+    // Caribbean
+    'salsa', 'merengue', 'bachata', 'cumbia',
+    // Brazilian
+    'bossa nova', 'mpb', 'samba', 'tropicalia', 'baile funk',
+    // Regional Mexican
+    'regional mexican', 'norteño', 'banda', 'corrido', 'mariachi',
+    'corridos tumbados',
+    // Other
+    'latin jazz', 'latin soul', 'chicano soul',
+  ],
+  
+  // African/Caribbean Family - African diaspora sounds
+  'african-caribbean': [
+    // African
+    'afrobeats', 'afropop', 'afro-fusion',
+    'highlife', 'juju', 'fuji', 'amapiano',
+    'afrohouse', 'gqom',
+    // Caribbean
+    'reggae', 'roots reggae', 'dub', 'dancehall',
+    'ska', 'rocksteady', 'lovers rock',
+    'soca', 'calypso', 'zouk', 'kompa',
+  ],
+  
+  // Blues Family - Separate from Rock to honor its distinct tradition
+  'blues': [
+    'blues', 'delta blues', 'chicago blues', 'texas blues',
+    'electric blues', 'modern blues', 'blues rock',
+    'soul blues', 'jump blues',
+  ],
 }
 
 /**
- * Classify user archetype based on taste profile
+ * Get the genre family for a given genre (case-insensitive)
+ * Uses multi-pass matching: exact → contains → fuzzy
+ * Priority order matters for ambiguous genres (e.g., "indie pop" → pop, not indie)
+ */
+function getGenreFamily(genre: string): string {
+  const lowerGenre = genre.toLowerCase().trim()
+  
+  // Pass 1: Exact match (highest priority)
+  for (const [family, genres] of Object.entries(GENRE_FAMILIES)) {
+    if (genres.includes(lowerGenre)) {
+      return family
+    }
+  }
+  
+  // Pass 2: Genre contains a family keyword (e.g., "dark r&b" contains "r&b")
+  // Check longer matches first to avoid false positives
+  const familyPriority = [
+    'k-pop',           // Check before pop
+    'r&b-soul',        // Check before hip-hop (trap soul is R&B not hip-hop)
+    'hip-hop',
+    'metal',           // Check before rock
+    'rock',
+    'electronic',
+    'jazz',
+    'classical',
+    'country-folk',
+    'latin',
+    'african-caribbean',
+    'blues',
+    'pop',             // Pop is catch-all, check last among majors
+  ]
+  
+  for (const family of familyPriority) {
+    const genres = GENRE_FAMILIES[family]
+    if (!genres) continue
+    
+    // Sort by length descending to match longer terms first
+    const sortedGenres = [...genres].sort((a, b) => b.length - a.length)
+    
+    for (const g of sortedGenres) {
+      // Skip very short generic terms for contains matching
+      if (g.length < 3) continue
+      
+      if (lowerGenre.includes(g) || g.includes(lowerGenre)) {
+        return family
+      }
+    }
+  }
+  
+  return 'other'
+}
+
+// ============================================
+// ADAPTIVE CONFIDENCE SYSTEM
+// ============================================
+// Based on psychometric reliability research (Nunnally & Bernstein, 1994)
+// More data = higher confidence in classification
+
+interface AccuracyTier {
+  name: string
+  minRatings: number
+  maxConfidence: number
+  description: string
+}
+
+const ACCURACY_TIERS: AccuracyTier[] = [
+  { name: 'Emerging', minRatings: 20, maxConfidence: 0.65, description: 'Basic patterns detected' },
+  { name: 'Developing', minRatings: 50, maxConfidence: 0.78, description: 'Clear preferences forming' },
+  { name: 'Refined', minRatings: 100, maxConfidence: 0.88, description: 'Robust taste profile' },
+  { name: 'Deep', minRatings: 200, maxConfidence: 0.94, description: 'High-fidelity fingerprint' },
+  { name: 'Crystallized', minRatings: 500, maxConfidence: 0.98, description: 'Maximum statistical confidence' },
+]
+
+/**
+ * Get maximum allowable confidence based on review count
+ * Implements psychometric reliability scaling
+ */
+function getMaxConfidence(reviewCount: number): number {
+  // Find applicable tier
+  const tier = [...ACCURACY_TIERS].reverse().find(t => reviewCount >= t.minRatings)
+  if (!tier) return 0.50 // Below minimum threshold
+  
+  // Interpolate within tier
+  const nextTier = ACCURACY_TIERS.find(t => t.minRatings > reviewCount)
+  if (!nextTier) return tier.maxConfidence
+  
+  const progress = (reviewCount - tier.minRatings) / (nextTier.minRatings - tier.minRatings)
+  return tier.maxConfidence + progress * (nextTier.maxConfidence - tier.maxConfidence)
+}
+
+/**
+ * Get current accuracy tier info for display
+ */
+export function getAccuracyTier(reviewCount: number): {
+  tier: string
+  accuracy: number
+  ratingsToNext: number | null
+  description: string
+} {
+  const tier = [...ACCURACY_TIERS].reverse().find(t => reviewCount >= t.minRatings)
+  const nextTier = ACCURACY_TIERS.find(t => t.minRatings > reviewCount)
+  
+  if (!tier) {
+    return {
+      tier: 'Locked',
+      accuracy: 0,
+      ratingsToNext: 20 - reviewCount,
+      description: 'Need more ratings to unlock TasteID'
+    }
+  }
+  
+  return {
+    tier: tier.name,
+    accuracy: Math.round(getMaxConfidence(reviewCount) * 100),
+    ratingsToNext: nextTier ? nextTier.minRatings - reviewCount : null,
+    description: tier.description
+  }
+}
+
+/**
+ * SIMPLE ADVENTURENESS SCORE
+ * 
+ * Logic: If your top genre family is > 40% of your listening, you're NOT adventurous.
+ * Simple and correct.
+ */
+function computeAdventurenessScore(genreVector: GenreVector): number {
+  console.log('\n=== ADVENTURENESS CALCULATION ===')
+  
+  // Step 1: Map all genres to families
+  const familyTotals: Record<string, number> = {}
+  
+  for (const [genre, weight] of Object.entries(genreVector)) {
+    const family = getGenreFamily(genre)
+    console.log(`  Genre "${genre}" -> Family "${family}" (weight: ${weight.toFixed(2)})`)
+    familyTotals[family] = (familyTotals[family] || 0) + weight
+  }
+  
+  // Remove 'other' family
+  delete familyTotals['other']
+  
+  console.log('\nFamily totals:', familyTotals)
+  
+  // Step 2: Calculate total and find dominant family
+  const total = Object.values(familyTotals).reduce((a, b) => a + b, 0)
+  if (total === 0) return 0
+  
+  const sortedFamilies = Object.entries(familyTotals).sort((a, b) => b[1] - a[1])
+  const [topFamily, topWeight] = sortedFamilies[0] || ['none', 0]
+  const dominance = topWeight / total
+  
+  console.log(`\nTop family: "${topFamily}" at ${(dominance * 100).toFixed(1)}%`)
+  console.log(`Family count: ${sortedFamilies.length}`)
+  
+  // Step 3: Simple rule - if one family dominates, LOW adventureness
+  // dominance 50% = 0.25 adventureness
+  // dominance 30% = 0.55 adventureness  
+  // dominance 20% = 0.70 adventureness
+  const adventureness = Math.max(0, Math.min(1, 1 - dominance * 1.5))
+  
+  console.log(`FINAL ADVENTURENESS: ${(adventureness * 100).toFixed(1)}%`)
+  console.log('=================================\n')
+  
+  return adventureness
+}
+
+/**
+ * SIMPLE ARCHETYPE CLASSIFICATION
+ * 
+ * Rule: Look at the dominant genre family and assign the matching archetype.
+ * R&B dominant = Soul Searcher. Hip-Hop dominant = Hip-Hop Head. Simple.
  */
 function classifyArchetype(
   genreVector: GenreVector,
@@ -777,66 +1448,123 @@ function classifyArchetype(
   avgReviewLength: number,
   reviews: ReviewWithAlbum[]
 ): { primary: string; secondary: string | null; confidence: number } {
-  const scores: Record<string, number> = {}
-
-  // Check behavioral archetypes first
-  if (adventurenessScore > 0.75) {
-    scores['genre-fluid'] = adventurenessScore
+  console.log('\n========================================')
+  console.log('ARCHETYPE CLASSIFICATION')
+  console.log('========================================\n')
+  
+  const reviewCount = reviews.length
+  
+  // Step 1: Get family distribution
+  const familyTotals: Record<string, number> = {}
+  for (const [genre, weight] of Object.entries(genreVector)) {
+    const family = getGenreFamily(genre)
+    familyTotals[family] = (familyTotals[family] || 0) + weight
   }
-
-  if (ratingSkew === 'harsh') {
-    scores['the-critic'] = 0.8
-  } else if (ratingSkew === 'lenient') {
-    scores['the-enthusiast'] = 0.8
+  delete familyTotals['other']
+  
+  const total = Object.values(familyTotals).reduce((a, b) => a + b, 0)
+  const sortedFamilies = Object.entries(familyTotals).sort((a, b) => b[1] - a[1])
+  
+  console.log('Family distribution:')
+  sortedFamilies.forEach(([f, w]) => {
+    console.log(`  ${f}: ${((w / total) * 100).toFixed(1)}%`)
+  })
+  
+  const [topFamily, topWeight] = sortedFamilies[0] || ['none', 0]
+  const dominance = total > 0 ? topWeight / total : 0
+  
+  console.log(`\nDominant family: "${topFamily}" at ${(dominance * 100).toFixed(1)}%`)
+  console.log(`Adventureness: ${(adventurenessScore * 100).toFixed(1)}%`)
+  
+  // Step 2: Map family to archetype
+  const FAMILY_TO_ARCHETYPE: Record<string, string> = {
+    'r&b-soul': 'soul-searcher',
+    'hip-hop': 'hip-hop-head',
+    'rock': 'rock-purist',
+    'electronic': 'electronic-pioneer',
+    'pop': 'pop-connoisseur',
+    'k-pop': 'pop-connoisseur',
+    'metal': 'metal-maven',
+    'jazz': 'jazz-explorer',
+    'country-folk': 'country-soul',
+    'classical': 'classical-mind',
+    'latin': 'pop-connoisseur',
+    'african-caribbean': 'soul-searcher',
+    'blues': 'soul-searcher',
+    'indie-alternative': 'indie-devotee',
   }
-
-  if (reviewDepth === 'essayist' || avgReviewLength > 150) {
-    scores['essay-writer'] = 0.85
+  
+  let primary: string
+  let secondary: string | null = null
+  let confidence: number
+  
+  // Step 3: SIMPLE DECISION
+  // If any family is > 25%, use that archetype. Period.
+  if (dominance > 0.25) {
+    primary = FAMILY_TO_ARCHETYPE[topFamily] || 'indie-devotee'
+    confidence = 0.65 + (dominance * 0.4)  // Higher dominance = higher confidence
+    
+    // Secondary from second family if it's substantial
+    const [secondFamily] = sortedFamilies[1] || ['none', 0]
+    if (secondFamily && sortedFamilies[1][1] / total > 0.15) {
+      secondary = FAMILY_TO_ARCHETYPE[secondFamily] || null
+    }
+    
+    console.log(`\n→ GENRE-BASED: ${primary} (${topFamily} dominates at ${(dominance * 100).toFixed(0)}%)`)
   }
+  // Only if NO family dominates AND high adventureness, consider Genre Fluid
+  else if (dominance < 0.25 && adventurenessScore > 0.5 && sortedFamilies.length >= 4) {
+    primary = 'genre-fluid'
+    confidence = adventurenessScore
+    secondary = FAMILY_TO_ARCHETYPE[topFamily] || null
+    
+    console.log(`\n→ BEHAVIORAL: genre-fluid (no dominant family, high diversity)`)
+  }
+  // Default fallback
+  else {
+    primary = FAMILY_TO_ARCHETYPE[topFamily] || 'indie-devotee'
+    confidence = 0.55
+    
+    console.log(`\n→ DEFAULT: ${primary}`)
+  }
+  
+  // Cap confidence by review count
+  const maxConfidence = getMaxConfidence(reviewCount)
+  confidence = Math.min(confidence, maxConfidence)
+  
+  console.log(`\nFINAL: ${primary} @ ${(confidence * 100).toFixed(0)}% confidence`)
+  if (secondary) console.log(`SECONDARY: ${secondary}`)
+  console.log('========================================\n')
+  
+  return { primary, secondary, confidence }
+}
 
-  // Check decade obsession
+// Compute secondary behavioral archetype
+function computeSecondaryBehavioral(
+  ratingSkew: string,
+  reviews: ReviewWithAlbum[]
+): string | null {
+  const totalReviews = reviews.length
+  if (totalReviews < 10) return null
+  
+  // Check for Decade Diver
   const decadeCount: Record<string, number> = {}
   for (const review of reviews) {
     const year = new Date(review.album.releaseDate).getFullYear()
     const decade = `${Math.floor(year / 10) * 10}s`
     decadeCount[decade] = (decadeCount[decade] || 0) + 1
   }
-  const totalReviews = reviews.length
-  for (const [decade, count] of Object.entries(decadeCount)) {
-    if (count / totalReviews > 0.6) {
-      scores['decade-diver'] = count / totalReviews
+  for (const [, count] of Object.entries(decadeCount)) {
+    if (count / totalReviews > 0.60) {
+      return 'decade-diver'
     }
   }
-
-  // Check genre-based archetypes
-  for (const [key, archetype] of Object.entries(ARCHETYPES)) {
-    if ('behavioral' in archetype && archetype.behavioral) continue
-
-    let matchScore = 0
-    for (const genre of archetype.genres) {
-      if (genreVector[genre]) {
-        matchScore += genreVector[genre]
-      }
-    }
-    if (archetype.genres.length > 0) {
-      scores[archetype.id] = matchScore / archetype.genres.length
-    }
-  }
-
-  // Sort and pick top 2
-  const sorted = Object.entries(scores)
-    .filter(([, score]) => score > 0.1)
-    .sort((a, b) => b[1] - a[1])
-
-  if (sorted.length === 0) {
-    return { primary: 'genre-fluid', secondary: null, confidence: 0.5 }
-  }
-
-  return {
-    primary: sorted[0][0],
-    secondary: sorted[1]?.[0] || null,
-    confidence: sorted[0][1],
-  }
+  
+  // Check for Critic/Enthusiast
+  if (ratingSkew === 'harsh') return 'the-critic'
+  if (ratingSkew === 'lenient') return 'the-enthusiast'
+  
+  return null
 }
 
 /**

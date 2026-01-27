@@ -3,6 +3,10 @@ import { notFound } from "next/navigation"
 import { auth } from "@/lib/auth"
 import Link from "next/link"
 import type { Metadata } from "next"
+
+// Disable caching for this page - always fetch fresh data
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 import {
   ArchetypeBadge,
   GenreRadarChart,
@@ -30,7 +34,7 @@ import {
   ArtistDNA,
 } from "@/lib/tasteid"
 import { ArrowRightIcon } from "@/components/icons"
-import { GenerateTasteIDButton, RecomputeButton } from "./tasteid-actions"
+import { GenerateTasteIDButton, RecomputeButton, SmallRecomputeButton } from "./tasteid-actions"
 
 interface Props {
   params: Promise<{ username: string }>
@@ -275,14 +279,27 @@ export default async function TasteIDPage({ params }: Props) {
           >
             ← Back to profile
           </Link>
-          {!isOwnProfile && session?.user && (
-            <Link
-              href={`/u/${username}/compare`}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2 border-2 border-foreground text-sm font-bold uppercase tracking-wider hover:bg-foreground hover:text-background transition-colors w-full sm:w-auto"
-            >
-              COMPARE TASTE <ArrowRightIcon className="w-4 h-4" />
-            </Link>
-          )}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+            {isOwnProfile && (
+              <Link
+                href="/quick-rate"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-[#ffd700] text-black text-sm font-bold uppercase tracking-wider hover:bg-[#ffed4a] transition-colors w-full sm:w-auto"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Keep Building
+              </Link>
+            )}
+            {!isOwnProfile && session?.user && (
+              <Link
+                href={`/u/${username}/compare`}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 border-2 border-foreground text-sm font-bold uppercase tracking-wider hover:bg-foreground hover:text-background transition-colors w-full sm:w-auto"
+              >
+                COMPARE TASTE <ArrowRightIcon className="w-4 h-4" />
+              </Link>
+            )}
+          </div>
         </div>
 
         {/* Hero Section */}
@@ -317,12 +334,15 @@ export default async function TasteIDPage({ params }: Props) {
             {/* Archetype */}
             <div className="flex-1">
               <div className="space-y-3">
-                <ArchetypeBadge
-                  {...archetypeInfo}
-                  confidence={tasteId.archetypeConfidence}
-                  size="lg"
-                  showDescription
-                />
+                <div className="flex items-start gap-3">
+                  <ArchetypeBadge
+                    {...archetypeInfo}
+                    confidence={tasteId.archetypeConfidence}
+                    size="lg"
+                    showDescription
+                  />
+                  {isOwnProfile && <SmallRecomputeButton />}
+                </div>
                 {secondaryInfo && (
                   <div>
                     <span className="text-xs text-muted-foreground mr-2">ALSO:</span>

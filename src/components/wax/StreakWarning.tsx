@@ -12,8 +12,14 @@ export function StreakWarning() {
     lastReviewDate: string | null
   } | null>(null)
   const [dismissed, setDismissed] = useState(false)
+  const [isLateInDay, setIsLateInDay] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
+    setIsMounted(true)
+    // Check if it's late in the day (after 6pm local time)
+    setIsLateInDay(new Date().getHours() >= 18)
+    
     const fetchStats = async () => {
       if (!session?.user) return
       try {
@@ -29,19 +35,15 @@ export function StreakWarning() {
     fetchStats()
   }, [session])
 
+  // Don't render until mounted to prevent hydration mismatch
+  if (!isMounted) return null
   if (!session || !stats || dismissed) return null
 
   // Only show warning if user has a streak and hasn't reviewed today
   const hasStreak = stats.currentStreak > 0
   const needsActivity = stats.canClaimDaily // If can claim daily, they haven't been active today
 
-  if (!hasStreak || !needsActivity) return null
-
-  // Check if it's late in the day (after 6pm local time)
-  const now = new Date()
-  const isLateInDay = now.getHours() >= 18
-
-  if (!isLateInDay) return null
+  if (!hasStreak || !needsActivity || !isLateInDay) return null
 
   return (
     <div className="fixed bottom-4 right-4 max-w-sm p-4 bg-orange-900/90 border border-orange-600/50 rounded-xl shadow-xl z-50 animate-pulse">

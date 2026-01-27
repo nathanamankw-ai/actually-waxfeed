@@ -5,10 +5,14 @@ import { useRouter } from 'next/navigation'
 
 export function FirstTimeWelcome() {
   const router = useRouter()
+  const [isMounted, setIsMounted] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
 
   useEffect(() => {
+    // Mark as mounted first to prevent hydration mismatch
+    setIsMounted(true)
+    
     // Show for ALL first-time visitors (not just logged in users)
     const hasSeenWelcome = localStorage.getItem('waxfeed-seen-welcome')
     
@@ -36,7 +40,8 @@ export function FirstTimeWelcome() {
     }, 200)
   }
 
-  if (!isVisible) {
+  // Don't render until mounted (prevents hydration mismatch)
+  if (!isMounted || !isVisible) {
     return null
   }
 

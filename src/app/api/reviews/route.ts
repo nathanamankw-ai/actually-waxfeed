@@ -15,7 +15,7 @@ const createReviewSchema = z.object({
   rating: z.number().min(0).max(10),
   text: z.string().max(5000).optional(),
   isQuickRate: z.boolean().optional(), // Quick rate mode (swipe) - no text required, no First Spin
-  vibes: z.array(z.string()).max(3).optional(), // Vibe tags for TasteID Polarity Model
+  vibes: z.array(z.string()).max(5).optional(), // Vibe tags for TasteID CCX POLARITY Model (3-5 required for quick rate)
 })
 
 // GET /api/reviews - List reviews (trending, recent, etc.)
@@ -115,6 +115,11 @@ export async function POST(request: NextRequest) {
     }
 
     const { albumId, rating, text, isQuickRate, vibes } = validation.data
+
+    // Quick rate requires at least 3 vibes for CCX POLARITY model accuracy
+    if (isQuickRate && (!vibes || vibes.length < 3)) {
+      return errorResponse('Quick rate requires at least 3 descriptors for TasteID accuracy', 400)
+    }
 
     // Check album exists
     const album = await prisma.album.findUnique({ where: { id: albumId } })
