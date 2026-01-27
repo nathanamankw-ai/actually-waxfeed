@@ -47,94 +47,114 @@ export function FirstTimeWelcome() {
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center transition-all duration-200 ${
-        isAnimating ? 'bg-black/80 backdrop-blur-sm' : 'bg-black/0'
+      className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${
+        isAnimating ? 'bg-black/90 backdrop-blur-md' : 'bg-black/0'
       }`}
       style={{ pointerEvents: isAnimating ? 'auto' : 'none' }}
     >
       <div
-        className={`max-w-2xl mx-4 transition-all duration-300 ${
+        className={`max-w-md w-full transition-all duration-400 ${
           isAnimating
             ? 'scale-100 opacity-100 translate-y-0'
             : 'scale-95 opacity-0 translate-y-4'
         }`}
       >
-        <div className="bg-[#0a0a0a] border-2 border-[#ffd700] p-8 md:p-12 relative">
-          {/* Close button - top right */}
+        {/* Premium Card */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f0f23] border border-white/10 shadow-2xl">
+          {/* Animated gradient orbs */}
+          <div className="absolute top-0 left-1/4 w-64 h-64 bg-[#ffd700]/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-[#00ff88]/15 rounded-full blur-3xl" />
+          
+          {/* Close button */}
           <button
             onClick={handleSkip}
-            className="absolute top-4 right-4 text-[#666] hover:text-white transition-colors"
+            className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/20 transition-all"
             aria-label="Close"
           >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
 
-          {/* Content */}
-          <div className="text-center">
-            {/* Icon */}
-            <div className="w-16 h-16 border-2 border-[#ffd700] flex items-center justify-center mx-auto mb-6">
-              <svg className="w-8 h-8 text-[#ffd700]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
+          <div className="relative p-8 pt-10">
+            {/* Badge */}
+            <div className="flex justify-center mb-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#ffd700]/10 border border-[#ffd700]/30">
+                <span className="w-2 h-2 rounded-full bg-[#ffd700] animate-pulse" />
+                <span className="text-xs font-bold text-[#ffd700] uppercase tracking-wider">Free Forever</span>
+              </div>
             </div>
 
-            {/* Headline */}
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">
-              Welcome to WaxFeed
-            </h2>
-
-            {/* Subheadline */}
-            <p className="text-[#ffd700] text-lg md:text-xl font-bold mb-6">
-              Let's build your music identity
-            </p>
-
-            {/* Description */}
-            <p className="text-[#888] text-base md:text-lg mb-8 max-w-lg mx-auto leading-relaxed">
-              Rate albums, earn badges when they blow up, and find your music people.
-              Your taste, timestamped and verified.
-            </p>
-
-            {/* Primary CTA - Game-like */}
-            <div className="space-y-4">
-              <button
-                onClick={handleCreateTasteID}
-                className="w-full bg-[#ffd700] text-black py-5 px-6 font-bold text-lg hover:bg-[#ffed4a] transition-all hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <span className="block text-xs uppercase tracking-[0.2em] mb-1 opacity-80">
-                  Let's Play
-                </span>
-                <span className="block text-xl md:text-2xl">
-                  🎮 Guess My Taste in 5 Minutes
-                </span>
-              </button>
-
-              {/* Secondary CTA - Skip */}
-              <button
-                onClick={handleSkip}
-                className="text-sm text-[#666] hover:text-[#888] transition-colors"
-              >
-                Skip for now, I'll explore first →
-              </button>
+            {/* Main headline */}
+            <div className="text-center mb-6">
+              <h2 className="text-3xl font-bold mb-3 text-white">
+                Prove Your <span className="text-[#ffd700]">Music Taste</span>
+              </h2>
+              <p className="text-white/60 text-sm leading-relaxed">
+                Be the one who found it first. Get timestamped proof when you discover artists before they blow up.
+              </p>
             </div>
 
-            {/* Trust indicators */}
-            <div className="mt-8 pt-6 border-t border-[#333]">
-              <div className="flex flex-wrap justify-center gap-6 text-xs text-[#666]">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-[#ffd700] rounded-full" />
-                  <span>No credit card required</span>
+            {/* Benefits */}
+            <div className="space-y-3 mb-8">
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ffd700] to-[#ff6b6b] flex items-center justify-center flex-shrink-0">
+                  <span className="text-lg">🏆</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-[#ffd700] rounded-full" />
-                  <span>Takes 5 minutes</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-[#ffd700] rounded-full" />
-                  <span>Fully optional</span>
+                <div>
+                  <div className="text-sm font-bold text-white">Earn First Spin Badges</div>
+                  <div className="text-xs text-white/50">Gold, Silver, Bronze when albums trend</div>
                 </div>
               </div>
+              
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00ff88] to-[#00bfff] flex items-center justify-center flex-shrink-0">
+                  <span className="text-lg">🧬</span>
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-white">Get Your TasteID</div>
+                  <div className="text-xs text-white/50">AI-powered musical fingerprint</div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00bfff] to-[#a855f7] flex items-center justify-center flex-shrink-0">
+                  <span className="text-lg">👥</span>
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-white">Find Your People</div>
+                  <div className="text-xs text-white/50">Connect with taste matches</div>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA */}
+            <button
+              onClick={handleCreateTasteID}
+              className="w-full py-4 rounded-xl bg-gradient-to-r from-[#ffd700] to-[#ffed4a] text-black font-bold text-base hover:shadow-lg hover:shadow-[#ffd700]/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            >
+              Create Free Account
+            </button>
+
+            {/* Secondary */}
+            <button
+              onClick={handleSkip}
+              className="w-full mt-3 py-3 text-sm text-white/40 hover:text-white/70 transition-colors"
+            >
+              Maybe later, let me browse first
+            </button>
+
+            {/* Social proof */}
+            <div className="mt-6 pt-6 border-t border-white/10 text-center">
+              <div className="flex items-center justify-center gap-1 mb-2">
+                {[1,2,3,4,5].map((i) => (
+                  <div key={i} className="w-6 h-6 rounded-full bg-gradient-to-br from-[#ffd700] to-[#ff6b6b] border-2 border-[#1a1a2e] -ml-2 first:ml-0" />
+                ))}
+                <span className="text-xs text-white/60 ml-2">+2.5k members</span>
+              </div>
+              <p className="text-[10px] text-white/40">
+                Join music lovers proving their taste daily
+              </p>
             </div>
           </div>
         </div>
