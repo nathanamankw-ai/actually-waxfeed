@@ -69,7 +69,7 @@ async function getUserStatus(userId: string) {
     prisma.review.count({ 
       where: { 
         userId, 
-        position: { lte: 100 } 
+        reviewPosition: { lte: 100 } 
       } 
     })
   ])
