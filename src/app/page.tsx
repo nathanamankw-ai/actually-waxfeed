@@ -52,56 +52,209 @@ async function getStats() {
   return { albumCount, reviewCount, userCount }
 }
 
-// Get current user's TasteID completion status
-async function getUserTasteIDStatus(userId: string) {
-  const [user, reviewCount] = await Promise.all([
+// Get current user's full status for personalized homepage
+async function getUserStatus(userId: string) {
+  const [user, reviewCount, firstSpinCount] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
-      select: { tasteId: { select: { id: true } } }
+      select: { 
+        username: true,
+        image: true,
+        waxBalance: true,
+        tasteId: { select: { id: true, archetype: true } },
+        createdAt: true,
+      }
     }),
-    prisma.review.count({ where: { userId } })
+    prisma.review.count({ where: { userId } }),
+    prisma.review.count({ 
+      where: { 
+        userId, 
+        position: { lte: 100 } 
+      } 
+    })
   ])
-  return { reviewCount, hasTasteID: !!user?.tasteId }
+  
+  const tasteIDProgress = Math.min(100, Math.round((reviewCount / 25) * 100))
+  
+  return { 
+    username: user?.username || 'user',
+    image: user?.image,
+    waxBalance: user?.waxBalance || 0,
+    reviewCount, 
+    hasTasteID: !!user?.tasteId,
+    archetype: user?.tasteId?.archetype,
+    tasteIDProgress,
+    firstSpinCount,
+    memberSince: user?.createdAt,
+  }
 }
 
 export default async function Home() {
   const session = await auth()
-  const [billboardAlbums, recentReviews, stats, tasteIDStatus] = await Promise.all([
+  const [billboardAlbums, recentReviews, stats, userStatus] = await Promise.all([
     getBillboardAlbums(),
     getRecentReviews(),
     getStats(),
-    session?.user?.id ? getUserTasteIDStatus(session.user.id) : Promise.resolve({ reviewCount: 0, hasTasteID: false }),
+    session?.user?.id ? getUserStatus(session.user.id) : Promise.resolve({ 
+      username: '', image: null, waxBalance: 0, reviewCount: 0, hasTasteID: false, 
+      archetype: null, tasteIDProgress: 0, firstSpinCount: 0, memberSince: null 
+    }),
   ])
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      {/* PERSONALIZED DASHBOARD BAR - Always visible when logged in */}
+      {session?.user && (
+        <section className="border-b border-[var(--border)] bg-[var(--surface)]">
+          <div className="w-full px-6 lg:px-12 xl:px-20 py-4">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              {/* Welcome + User Info */}
+              <div className="flex items-center gap-4">
+                <Link href={`/u/${userStatus.username}`} className="flex items-center gap-3 group">
+                  {userStatus.image ? (
+                    <img src={userStatus.image} alt="" className="w-10 h-10 rounded-full border-2 border-[var(--border)] group-hover:border-[#ffd700] transition-colors" />
+                  ) : (
+                    <DefaultAvatar size="md" />
+                  )}
+                  <div>
+                    <p className="font-bold group-hover:text-[#ffd700] transition-colors">@{userStatus.username}</p>
+                    <p className="text-xs text-[var(--muted)]">
+                      {userStatus.archetype ? userStatus.archetype : 'Building TasteID...'}
+                    </p>
+                  </div>
+                </Link>
+              </div>
+
+              {/* Progress Stats */}
+              <div className="flex items-center gap-6 flex-wrap">
+                {/* TasteID Progress */}
+                <div className="flex items-center gap-3">
+                  <div className="text-right">
+                    <p className="text-xs text-[var(--muted)] uppercase tracking-wider">TasteID</p>
+                    <p className="text-sm font-bold tabular-nums">
+                      {userStatus.hasTasteID ? (
+                        <span className="text-[#ffd700]">Complete</span>
+                      ) : (
+                        <span>{userStatus.tasteIDProgress}%</span>
+                      )}
+                    </p>
+                  </div>
+                  {!userStatus.hasTasteID && (
+                    <div className="w-20 h-2 bg-[var(--border)] overflow-hidden">
+                      <div 
+                        className="h-full bg-[#ffd700] transition-all duration-500"
+                        style={{ width: `${userStatus.tasteIDProgress}%` }}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Ratings */}
+                <div className="text-center border-l border-[var(--border)] pl-6">
+                  <p className="text-lg font-bold tabular-nums">{userStatus.reviewCount}</p>
+                  <p className="text-xs text-[var(--muted)] uppercase tracking-wider">Ratings</p>
+                </div>
+
+                {/* First Spins */}
+                <div className="text-center border-l border-[var(--border)] pl-6">
+                  <p className="text-lg font-bold tabular-nums text-[#ffd700]">{userStatus.firstSpinCount}</p>
+                  <p className="text-xs text-[var(--muted)] uppercase tracking-wider">First Spins</p>
+                </div>
+
+                {/* WAX Balance */}
+                <Link 
+                  href="/wallet" 
+                  className="flex items-center gap-2 border-l border-[var(--border)] pl-6 hover:text-[#ffd700] transition-colors"
+                >
+                  <div className="text-center">
+                    <p className="text-lg font-bold tabular-nums">{userStatus.waxBalance}</p>
+                    <p className="text-xs text-[var(--muted)] uppercase tracking-wider">WAX</p>
+                  </div>
+                  <svg className="w-4 h-4 text-[var(--muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+
+                {/* Quick Action */}
+                <Link
+                  href="/quick-rate"
+                  className="px-4 py-2 bg-[#ffd700] text-black text-xs font-bold uppercase tracking-wider hover:bg-[#ffed4a] transition-colors"
+                >
+                  + Rate Album
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* HERO - Clear Value Proposition */}
       <section className="border-b border-[var(--border)]">
         <div className="w-full px-6 lg:px-12 xl:px-20 py-12 lg:py-16">
           <div className="max-w-3xl">
-            {/* Tagline */}
-            <p className="text-sm tracking-widest uppercase text-[#ffd700] mb-6 font-medium">
-              The Music Platform That Proves Your Taste
-            </p>
-            
-            {/* Main headline - clear, readable */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-8">
-              Discover Music.
-              <br />
-              <span className="text-[var(--muted)]">Connect Through Sound.</span>
-              <br />
-              <span className="text-[#ffd700]">Earn Rewards.</span>
-            </h1>
-            
-            <p className="text-lg text-[var(--muted)] mb-10 max-w-xl leading-relaxed">
-              Rate albums. Build your TasteID. Find people who get your music. 
-              Be the first to discover what's next.
-            </p>
-            
-            {/* Clear CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              {!session ? (
-                <>
+            {session ? (
+              /* Personalized hero for logged in users */
+              <>
+                <p className="text-sm tracking-widest uppercase text-[#ffd700] mb-4 font-medium">
+                  Welcome Back
+                </p>
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-6">
+                  {userStatus.reviewCount < 5 ? (
+                    <>Keep rating to unlock your TasteID</>
+                  ) : userStatus.reviewCount < 25 ? (
+                    <>{25 - userStatus.reviewCount} more ratings to complete TasteID</>
+                  ) : !userStatus.hasTasteID ? (
+                    <>Your TasteID is ready!</>
+                  ) : (
+                    <>Find your next obsession</>
+                  )}
+                </h1>
+                <p className="text-lg text-[var(--muted)] mb-8 max-w-xl leading-relaxed">
+                  {userStatus.reviewCount < 25 ? (
+                    <>Every rating brings you closer to your unique TasteID and earns you WAX.</>
+                  ) : (
+                    <>Discover new music, connect with similar taste, and be the first to find what's next.</>
+                  )}
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  <Link
+                    href="/quick-rate"
+                    className="px-6 py-3 bg-[#ffd700] text-black text-sm font-bold uppercase tracking-wider hover:bg-[#ffed4a] transition-colors"
+                  >
+                    {userStatus.hasTasteID ? 'Keep Rating' : 'Build TasteID'}
+                  </Link>
+                  <Link
+                    href="/discover"
+                    className="px-6 py-3 border border-[var(--border)] text-sm font-bold uppercase tracking-wider hover:border-[var(--foreground)] transition-colors"
+                  >
+                    Discover
+                  </Link>
+                  <Link
+                    href="/discover/connections"
+                    className="px-6 py-3 border border-[var(--border)] text-sm font-bold uppercase tracking-wider hover:border-[var(--foreground)] transition-colors"
+                  >
+                    Find Connections
+                  </Link>
+                </div>
+              </>
+            ) : (
+              /* Default hero for logged out users */
+              <>
+                <p className="text-sm tracking-widest uppercase text-[#ffd700] mb-6 font-medium">
+                  The Music Platform That Proves Your Taste
+                </p>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-8">
+                  Discover Music.
+                  <br />
+                  <span className="text-[var(--muted)]">Connect Through Sound.</span>
+                  <br />
+                  <span className="text-[#ffd700]">Earn Rewards.</span>
+                </h1>
+                <p className="text-lg text-[var(--muted)] mb-10 max-w-xl leading-relaxed">
+                  Rate albums. Build your TasteID. Find people who get your music. 
+                  Be the first to discover what's next.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
                   <Link
                     href="/signup"
                     className="px-8 py-4 bg-[#ffd700] text-black text-sm font-bold uppercase tracking-wider hover:bg-[#ffed4a] transition-colors text-center"
@@ -114,33 +267,18 @@ export default async function Home() {
                   >
                     Explore Albums
                   </Link>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/quick-rate"
-                    className="px-8 py-4 bg-[#ffd700] text-black text-sm font-bold uppercase tracking-wider hover:bg-[#ffed4a] transition-colors text-center"
-                  >
-                    Build Your TasteID
-                  </Link>
-                  <Link
-                    href="/discover"
-                    className="px-8 py-4 border-2 border-[var(--border-dim)] text-sm font-bold uppercase tracking-wider hover:border-[var(--foreground)] transition-colors text-center"
-                  >
-                    Discover Music
-                  </Link>
-                </>
-              )}
-            </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </section>
 
-      {/* TasteID Banner for logged in users */}
-      {session?.user && (
+      {/* TasteID Banner for logged in users - only show if not complete */}
+      {session?.user && !userStatus.hasTasteID && (
         <TasteIDCompletionBanner
-          reviewCount={tasteIDStatus.reviewCount}
-          hasTasteID={tasteIDStatus.hasTasteID}
+          reviewCount={userStatus.reviewCount}
+          hasTasteID={userStatus.hasTasteID}
         />
       )}
 
