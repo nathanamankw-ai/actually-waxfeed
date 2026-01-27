@@ -175,29 +175,19 @@ export function Header() {
           {/* WAX Button - Always visible */}
           <Link
             href={session ? "/wallet" : "/signup"}
-            className="flex items-center gap-2 px-3 py-1.5 transition-colors hover:opacity-70"
-            style={{ border: '1px solid var(--header-border)' }}
+            className="px-4 py-1.5 text-xs font-medium transition-colors hover:opacity-70 text-center"
+            style={{ border: '1px solid var(--header-border)', color: 'var(--header-text)' }}
           >
-            <div className="w-4 h-4 bg-[#ffd700] rounded-full flex items-center justify-center">
-              <span className="text-[8px] font-bold text-black">W</span>
-            </div>
-            {isMounted && session && waxStats ? (
-              <span className="text-sm font-bold text-[#ffd700]">{waxStats.balance.toLocaleString()}</span>
-            ) : (
-              <span className="text-xs font-medium" style={{ color: 'var(--header-text)' }}>WAX</span>
-            )}
+            WAX
           </Link>
 
           {/* College Radio Program */}
           <Link
             href="/stations"
-            className="flex items-center gap-2 px-3 py-1.5 transition-colors hover:opacity-70"
-            style={{ border: '1px solid var(--header-border)' }}
+            className="px-4 py-1.5 text-xs font-medium transition-colors hover:opacity-70 text-center"
+            style={{ border: '1px solid var(--header-border)', color: 'var(--header-text)' }}
           >
-            <svg className="w-4 h-4" style={{ color: 'var(--header-text)', opacity: 0.6 }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-            </svg>
-            <span className="text-xs font-medium" style={{ color: 'var(--header-text)' }}>College Radio Program</span>
+            College Radio Program
           </Link>
 
           {/* Messages Button */}
