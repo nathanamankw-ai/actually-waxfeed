@@ -6,10 +6,13 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ConversationList } from '@/components/messaging/ConversationList'
 
+type TabType = 'dms' | 'circles' | 'rooms'
+
 export default function MessagesPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [totalUnread, setTotalUnread] = useState(0)
+  const [activeTab, setActiveTab] = useState<TabType>('dms')
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -36,7 +39,7 @@ export default function MessagesPage() {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--background)' }}>
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-2 border-[--muted] border-t-[#ffd700] animate-spin" />
           <span className="text-xs tracking-[0.2em] uppercase text-[--muted]">Loading messages</span>
@@ -50,62 +53,174 @@ export default function MessagesPage() {
   }
 
   return (
-    <div className="min-h-screen">
-      <div className="w-full px-4 lg:px-12 xl:px-20">
-        {/* Header */}
-        <div className="px-6 pt-10 pb-8 border-b border-[--border] animate-fade-in">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-2 h-2 bg-[#ffd700]" />
-                <span className="text-[10px] tracking-[0.3em] uppercase text-[--muted]">Direct Messages</span>
+    <div className="h-screen flex flex-col overflow-hidden" style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
+      <div className="w-full px-4 lg:px-12 xl:px-20 flex flex-col flex-1 overflow-hidden">
+        {/* Compact Header */}
+        <div className="py-4 border-b border-[--border] flex-shrink-0">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-[#ffd700] flex items-center justify-center">
+                <svg className="w-5 h-5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">Messages</h1>
-              <p className="text-sm text-[--muted] leading-relaxed max-w-md">
-                Private conversations with taste-matched users · Minimum 60% compatibility required
-              </p>
+              <div>
+                <h1 className="text-xl font-bold tracking-tight">Messages</h1>
+                <p className="text-xs text-[--muted]">Connect through music taste</p>
+              </div>
             </div>
-            {totalUnread > 0 && (
-              <div className="flex-shrink-0 animate-fade-in" style={{ animationDelay: '200ms' }}>
-                <div className="px-4 py-2 bg-[#ffd700] text-black">
-                  <span className="text-2xl font-bold tabular-nums">{totalUnread}</span>
-                  <span className="text-[10px] tracking-wider uppercase ml-2 opacity-80">unread</span>
+            <div className="flex items-center gap-3">
+              {totalUnread > 0 && (
+                <div className="px-3 py-1 bg-[#ffd700] text-black text-sm font-bold">
+                  {totalUnread} unread
                 </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Info banner */}
-        <div className="p-5 bg-gradient-to-r from-[#ffd700]/5 to-transparent border-b border-[--border] animate-fade-in" style={{ animationDelay: '100ms' }}>
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 flex items-center justify-center border border-[#ffd700]/30 bg-[#ffd700]/10 flex-shrink-0">
-              <svg className="w-5 h-5 text-[#ffd700]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-            </div>
-            <div>
-              <p className="font-semibold text-sm mb-1">Taste-Gated Messaging</p>
-              <p className="text-sm text-[--muted] leading-relaxed">
-                Only users with 60%+ taste compatibility can message each other.
-                Every conversation starts with genuine common ground.
-              </p>
+              )}
               <Link
                 href="/discover/similar-tasters"
-                className="inline-flex items-center gap-2 text-sm text-[#ffd700] hover:underline mt-3 group"
+                className="px-4 py-2 border border-[--border] text-xs uppercase tracking-wider hover:border-[#ffd700] hover:text-[#ffd700] transition-colors"
               >
-                <span>Find people who share your taste</span>
-                <svg className="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
+                Find Matches
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Conversation List */}
-        <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
-          <ConversationList />
+        {/* Tabs */}
+        <div className="flex border-b border-[--border] flex-shrink-0">
+          <button
+            onClick={() => setActiveTab('dms')}
+            className={`px-6 py-3 text-xs uppercase tracking-wider transition-colors border-b-2 -mb-px ${
+              activeTab === 'dms'
+                ? 'border-[#ffd700] text-[#ffd700]'
+                : 'border-transparent text-[--muted] hover:text-[--foreground]'
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              Direct Messages
+            </span>
+          </button>
+          <button
+            onClick={() => setActiveTab('circles')}
+            className={`px-6 py-3 text-xs uppercase tracking-wider transition-colors border-b-2 -mb-px ${
+              activeTab === 'circles'
+                ? 'border-[#00ff88] text-[#00ff88]'
+                : 'border-transparent text-[--muted] hover:text-[--foreground]'
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              Taste Circles
+            </span>
+          </button>
+          <button
+            onClick={() => setActiveTab('rooms')}
+            className={`px-6 py-3 text-xs uppercase tracking-wider transition-colors border-b-2 -mb-px ${
+              activeTab === 'rooms'
+                ? 'border-[#00bfff] text-[#00bfff]'
+                : 'border-transparent text-[--muted] hover:text-[--foreground]'
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+              </svg>
+              Album Rooms
+            </span>
+          </button>
+        </div>
+
+        {/* Content Area */}
+        <div className="flex-1 overflow-y-auto">
+          {activeTab === 'dms' && (
+            <div>
+              {/* Taste-gated info */}
+              <div className="p-4 bg-[#ffd700]/5 border-b border-[--border]">
+                <div className="flex items-center gap-3">
+                  <svg className="w-5 h-5 text-[#ffd700]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  <p className="text-sm text-[--muted]">
+                    <span className="text-[#ffd700] font-medium">60%+ taste match</span> required to message
+                  </p>
+                </div>
+              </div>
+              <ConversationList />
+            </div>
+          )}
+
+          {activeTab === 'circles' && (
+            <div className="p-8 text-center">
+              <div className="w-16 h-16 mx-auto mb-4 border border-[#00ff88]/30 bg-[#00ff88]/10 flex items-center justify-center">
+                <svg className="w-8 h-8 text-[#00ff88]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold mb-2">Taste Circles</h3>
+              <p className="text-sm text-[--muted] mb-6 max-w-sm mx-auto">
+                Join group chats with your taste archetype. Connect with Eclectics, Curators, Nostalgics, and more.
+              </p>
+              <Link
+                href="/circles"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#00ff88] text-black font-bold text-sm uppercase tracking-wider hover:bg-[#00ff99] transition-colors"
+              >
+                Explore Circles
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
+            </div>
+          )}
+
+          {activeTab === 'rooms' && (
+            <div className="p-8 text-center">
+              <div className="w-16 h-16 mx-auto mb-4 border border-[#00bfff]/30 bg-[#00bfff]/10 flex items-center justify-center">
+                <svg className="w-8 h-8 text-[#00bfff]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold mb-2">Album Rooms</h3>
+              <p className="text-sm text-[--muted] mb-6 max-w-sm mx-auto">
+                Real-time chat rooms for specific albums. Discuss tracks, share opinions, find fans.
+              </p>
+              <Link
+                href="/rooms"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#00bfff] text-black font-bold text-sm uppercase tracking-wider hover:bg-[#00cfff] transition-colors"
+              >
+                Browse Rooms
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Quick Actions Footer */}
+        <div className="border-t border-[--border] py-4 flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-[--muted]">
+              Messaging powered by <span className="text-[#ffd700]">Polarity</span> taste matching
+            </p>
+            <div className="flex gap-3">
+              <Link
+                href="/discover/connections"
+                className="text-xs text-[--muted] hover:text-[--foreground] transition-colors"
+              >
+                Find Connections
+              </Link>
+              <Link
+                href="/settings"
+                className="text-xs text-[--muted] hover:text-[--foreground] transition-colors"
+              >
+                Message Settings
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </div>
