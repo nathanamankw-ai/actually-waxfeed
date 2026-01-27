@@ -2,8 +2,10 @@ import { ImageResponse } from 'next/og'
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getArchetypeInfo } from '@/lib/tasteid'
+import { getCurrentTier } from '@/lib/tasteid-tiers'
 
-export const runtime = 'edge'
+// Use nodejs runtime since Prisma doesn't work on edge
+export const runtime = 'nodejs'
 
 export async function GET(request: NextRequest) {
   try {
@@ -39,6 +41,7 @@ export async function GET(request: NextRequest) {
     }
 
     const archetype = getArchetypeInfo(user.tasteId.primaryArchetype)
+    const tier = getCurrentTier(user.tasteId.reviewCount)
 
     return new ImageResponse(
       (
@@ -48,9 +51,9 @@ export async function GET(request: NextRequest) {
             flexDirection: 'column',
             width: '100%',
             height: '100%',
-            backgroundColor: '#000',
+            backgroundColor: '#0a0a0a',
             color: '#fff',
-            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontFamily: 'system-ui, -apple-system, sans-serif',
             padding: '48px',
           }}
         >
@@ -74,19 +77,36 @@ export async function GET(request: NextRequest) {
               >
                 TASTEID
               </span>
-              <span style={{ fontSize: '32px', fontWeight: 'bold' }}>
+              <span style={{ fontSize: '36px', fontWeight: 'bold' }}>
                 @{user.username}
               </span>
             </div>
-            <span
-              style={{
-                fontSize: '14px',
-                color: '#666',
-                letterSpacing: '0.1em',
-              }}
-            >
-              WAXFEED
-            </span>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+              <span
+                style={{
+                  fontSize: '20px',
+                  fontWeight: 'bold',
+                  letterSpacing: '0.1em',
+                }}
+              >
+                WAXFEED
+              </span>
+              {/* Tier badge */}
+              <span
+                style={{
+                  marginTop: '8px',
+                  padding: '4px 12px',
+                  backgroundColor: tier.color,
+                  color: '#000',
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
+                }}
+              >
+                {tier.name} • {tier.maxConfidence}%
+              </span>
+            </div>
           </div>
 
           {/* Archetype */}
@@ -94,17 +114,18 @@ export async function GET(request: NextRequest) {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '16px',
+              gap: '20px',
               marginBottom: '32px',
-              padding: '24px',
-              border: '2px solid #fff',
+              padding: '28px',
+              border: '3px solid #fff',
+              backgroundColor: '#111',
             }}
           >
-            <span style={{ fontSize: '48px' }}>{archetype.icon}</span>
+            <span style={{ fontSize: '56px' }}>{archetype.icon}</span>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span
                 style={{
-                  fontSize: '28px',
+                  fontSize: '32px',
                   fontWeight: 'bold',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
@@ -112,7 +133,7 @@ export async function GET(request: NextRequest) {
               >
                 {archetype.name}
               </span>
-              <span style={{ fontSize: '16px', color: '#888' }}>
+              <span style={{ fontSize: '18px', color: '#888', marginTop: '4px' }}>
                 {archetype.description}
               </span>
             </div>
@@ -131,15 +152,17 @@ export async function GET(request: NextRequest) {
             >
               TOP GENRES
             </span>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
               {user.tasteId.topGenres.slice(0, 5).map((genre, i) => (
                 <span
                   key={i}
                   style={{
-                    padding: '8px 16px',
-                    border: '1px solid #555',
-                    fontSize: '14px',
+                    padding: '10px 20px',
+                    border: '2px solid #444',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
                     textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
                   }}
                 >
                   {genre}
@@ -152,34 +175,42 @@ export async function GET(request: NextRequest) {
           <div
             style={{
               display: 'flex',
-              gap: '24px',
+              gap: '40px',
               marginTop: 'auto',
               paddingTop: '24px',
-              borderTop: '1px solid #333',
+              borderTop: '2px solid #333',
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '24px', fontWeight: 'bold' }}>
+              <span style={{ fontSize: '32px', fontWeight: 'bold', color: '#00ff88' }}>
                 {Math.round(user.tasteId.adventurenessScore * 100)}%
               </span>
-              <span style={{ fontSize: '10px', color: '#666', textTransform: 'uppercase' }}>
-                ADVENTUROUS
+              <span style={{ fontSize: '12px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                ADVENTURENESS
               </span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '24px', fontWeight: 'bold' }}>
+              <span style={{ fontSize: '32px', fontWeight: 'bold', color: '#00bfff' }}>
+                {user.tasteId.polarityScore.toFixed(2)}
+              </span>
+              <span style={{ fontSize: '12px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                POLARITY
+              </span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ fontSize: '32px', fontWeight: 'bold', color: '#ffd700' }}>
                 {user.tasteId.averageRating.toFixed(1)}
               </span>
-              <span style={{ fontSize: '10px', color: '#666', textTransform: 'uppercase' }}>
+              <span style={{ fontSize: '12px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                 AVG RATING
               </span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '24px', fontWeight: 'bold' }}>
+              <span style={{ fontSize: '32px', fontWeight: 'bold' }}>
                 {user.tasteId.reviewCount}
               </span>
-              <span style={{ fontSize: '10px', color: '#666', textTransform: 'uppercase' }}>
-                REVIEWS
+              <span style={{ fontSize: '12px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                RATINGS
               </span>
             </div>
           </div>
