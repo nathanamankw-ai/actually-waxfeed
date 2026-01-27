@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Dark mode (default) - dark body, contrasting header */
+/* Dark mode (default) - dark body, white contrasting header */
 :root,
 html.dark {
   --background: #0a0a0a;
@@ -14,9 +14,9 @@ html.dark {
   --surface-raised: #1a1a1a;
   --accent: #ffffff;
   --accent-muted: #cccccc;
-  --header-bg: #0a0a0a;
-  --header-text: #ededed;
-  --header-border: #333333;
+  --header-bg: #ffffff;
+  --header-text: #000000;
+  --header-border: #e0e0e0;
   --error: #ff3b3b;
   --success: #22c55e;
   --warning: #eab308;
