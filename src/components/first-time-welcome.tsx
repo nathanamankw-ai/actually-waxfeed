@@ -10,12 +10,8 @@ export function FirstTimeWelcome() {
   const [isAnimating, setIsAnimating] = useState(false)
 
   useEffect(() => {
-    // Mark as mounted first to prevent hydration mismatch
     setIsMounted(true)
-    
-    // Show for ALL first-time visitors (not just logged in users)
     const hasSeenWelcome = localStorage.getItem('waxfeed-seen-welcome')
-    
     if (!hasSeenWelcome) {
       setIsVisible(true)
       setIsAnimating(true)
@@ -27,7 +23,6 @@ export function FirstTimeWelcome() {
     setIsAnimating(false)
     setTimeout(() => {
       setIsVisible(false)
-      // Takes them to signup where they'll start the TasteID flow
       router.push('/signup')
     }, 200)
   }
@@ -35,127 +30,103 @@ export function FirstTimeWelcome() {
   const handleSkip = () => {
     localStorage.setItem('waxfeed-seen-welcome', 'true')
     setIsAnimating(false)
-    setTimeout(() => {
-      setIsVisible(false)
-    }, 200)
+    setTimeout(() => setIsVisible(false), 200)
   }
 
-  // Don't render until mounted (prevents hydration mismatch)
-  if (!isMounted || !isVisible) {
-    return null
-  }
+  if (!isMounted || !isVisible) return null
 
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${
-        isAnimating ? 'bg-black/90 backdrop-blur-md' : 'bg-black/0'
+        isAnimating ? 'bg-black/95' : 'bg-black/0'
       }`}
       style={{ pointerEvents: isAnimating ? 'auto' : 'none' }}
     >
       <div
-        className={`max-w-md w-full transition-all duration-400 ${
-          isAnimating
-            ? 'scale-100 opacity-100 translate-y-0'
-            : 'scale-95 opacity-0 translate-y-4'
+        className={`max-w-lg w-full transition-all duration-400 ${
+          isAnimating ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
         }`}
       >
-        {/* Premium Card */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f0f23] border border-white/10 shadow-2xl">
-          {/* Animated gradient orbs */}
-          <div className="absolute top-0 left-1/4 w-64 h-64 bg-[#ffd700]/20 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-[#00ff88]/15 rounded-full blur-3xl" />
-          
-          {/* Close button */}
+        <div className="bg-black border border-[#222] relative">
+          {/* Close */}
           <button
             onClick={handleSkip}
-            className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/20 transition-all"
+            className="absolute top-6 right-6 text-[#444] hover:text-white transition-colors"
             aria-label="Close"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
 
-          <div className="relative p-8 pt-10">
-            {/* Badge */}
-            <div className="flex justify-center mb-6">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#ffd700]/10 border border-[#ffd700]/30">
-                <span className="w-2 h-2 rounded-full bg-[#ffd700] animate-pulse" />
-                <span className="text-xs font-bold text-[#ffd700] uppercase tracking-wider">Free Forever</span>
-              </div>
-            </div>
+          <div className="p-10 md:p-12">
+            {/* Category label */}
+            <p className="text-[10px] tracking-[0.4em] uppercase text-[#ffd700] mb-6">
+              First of Its Kind
+            </p>
 
-            {/* Main headline */}
-            <div className="text-center mb-6">
-              <h2 className="text-3xl font-bold mb-3 text-white">
-                Prove Your <span className="text-[#ffd700]">Music Taste</span>
-              </h2>
-              <p className="text-white/60 text-sm leading-relaxed">
-                Be the one who found it first. Get timestamped proof when you discover artists before they blow up.
+            {/* Headline */}
+            <h2 className="text-3xl md:text-4xl font-bold leading-tight mb-4">
+              The world's first platform<br />
+              <span className="text-[#ffd700]">that proves your taste.</span>
+            </h2>
+
+            {/* Subhead */}
+            <p className="text-[#777] text-base leading-relaxed mb-10 max-w-md">
+              Every album you rate is timestamped. When it blows up months later, 
+              you have the proof. No more "I told you so" — just verified discovery.
+            </p>
+
+            {/* The differentiator */}
+            <div className="border-l-2 border-[#ffd700] pl-5 mb-10">
+              <p className="text-sm text-[#999] leading-relaxed">
+                "Letterboxd proved people care about logging films. 
+                WaxFeed proves people care about <span className="text-white">being first</span>."
               </p>
             </div>
 
-            {/* Benefits */}
-            <div className="space-y-3 mb-8">
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ffd700] to-[#ff6b6b] flex items-center justify-center flex-shrink-0">
-                  <span className="text-lg">🏆</span>
-                </div>
-                <div>
-                  <div className="text-sm font-bold text-white">Earn First Spin Badges</div>
-                  <div className="text-xs text-white/50">Gold, Silver, Bronze when albums trend</div>
-                </div>
+            {/* What you get - clean list */}
+            <div className="grid grid-cols-2 gap-4 mb-10 text-sm">
+              <div>
+                <div className="text-white font-medium mb-1">Timestamped Reviews</div>
+                <div className="text-[#555]">Permanent proof of discovery</div>
               </div>
-              
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00ff88] to-[#00bfff] flex items-center justify-center flex-shrink-0">
-                  <span className="text-lg">🧬</span>
-                </div>
-                <div>
-                  <div className="text-sm font-bold text-white">Get Your TasteID</div>
-                  <div className="text-xs text-white/50">AI-powered musical fingerprint</div>
-                </div>
+              <div>
+                <div className="text-white font-medium mb-1">First Spin Badges</div>
+                <div className="text-[#555]">Recognition when you're early</div>
               </div>
-              
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00bfff] to-[#a855f7] flex items-center justify-center flex-shrink-0">
-                  <span className="text-lg">👥</span>
-                </div>
-                <div>
-                  <div className="text-sm font-bold text-white">Find Your People</div>
-                  <div className="text-xs text-white/50">Connect with taste matches</div>
-                </div>
+              <div>
+                <div className="text-white font-medium mb-1">TasteID Profile</div>
+                <div className="text-[#555]">Your musical fingerprint</div>
+              </div>
+              <div>
+                <div className="text-white font-medium mb-1">Taste Matching</div>
+                <div className="text-[#555]">Find people who get it</div>
               </div>
             </div>
 
             {/* CTA */}
             <button
               onClick={handleCreateTasteID}
-              className="w-full py-4 rounded-xl bg-gradient-to-r from-[#ffd700] to-[#ffed4a] text-black font-bold text-base hover:shadow-lg hover:shadow-[#ffd700]/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full py-4 bg-[#ffd700] text-black font-bold text-sm uppercase tracking-wider hover:bg-[#ffe44d] transition-colors"
             >
-              Create Free Account
+              Join Free — Takes 30 Seconds
             </button>
 
-            {/* Secondary */}
+            {/* Skip */}
             <button
               onClick={handleSkip}
-              className="w-full mt-3 py-3 text-sm text-white/40 hover:text-white/70 transition-colors"
+              className="w-full mt-4 text-[#444] text-xs hover:text-[#666] transition-colors"
             >
-              Maybe later, let me browse first
+              Continue as guest
             </button>
+          </div>
 
-            {/* Social proof */}
-            <div className="mt-6 pt-6 border-t border-white/10 text-center">
-              <div className="flex items-center justify-center gap-1 mb-2">
-                {[1,2,3,4,5].map((i) => (
-                  <div key={i} className="w-6 h-6 rounded-full bg-gradient-to-br from-[#ffd700] to-[#ff6b6b] border-2 border-[#1a1a2e] -ml-2 first:ml-0" />
-                ))}
-                <span className="text-xs text-white/60 ml-2">+2.5k members</span>
-              </div>
-              <p className="text-[10px] text-white/40">
-                Join music lovers proving their taste daily
-              </p>
-            </div>
+          {/* Bottom bar */}
+          <div className="border-t border-[#222] px-10 py-4 flex items-center justify-between text-[11px] text-[#444]">
+            <span>No credit card required</span>
+            <span>Free forever</span>
+            <span>2,500+ members</span>
           </div>
         </div>
       </div>
