@@ -127,8 +127,11 @@ export default async function Home() {
 
               {/* Progress Stats */}
               <div className="flex items-center gap-6 flex-wrap">
-                {/* TasteID Progress */}
-                <div className="flex items-center gap-3">
+                {/* TasteID Button + Progress */}
+                <Link 
+                  href={`/u/${userStatus.username}/tasteid`}
+                  className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+                >
                   <div className="text-right">
                     <p className="text-xs text-[var(--muted)] uppercase tracking-wider">TasteID</p>
                     <p className="text-sm font-bold tabular-nums">
@@ -139,15 +142,19 @@ export default async function Home() {
                       )}
                     </p>
                   </div>
-                  {!userStatus.hasTasteID && (
+                  {!userStatus.hasTasteID ? (
                     <div className="w-20 h-2 bg-[var(--border)] overflow-hidden">
                       <div 
                         className="h-full bg-[#ffd700] transition-all duration-500"
                         style={{ width: `${userStatus.tasteIDProgress}%` }}
                       />
                     </div>
+                  ) : (
+                    <svg className="w-4 h-4 text-[#ffd700]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
                   )}
-                </div>
+                </Link>
 
                 {/* Ratings */}
                 <div className="text-center border-l border-[var(--border)] pl-6">
@@ -238,36 +245,61 @@ export default async function Home() {
                 </div>
               </>
             ) : (
-              /* Default hero for logged out users */
+              /* Default hero for logged out users - FIRST IMPRESSION */
               <>
                 <p className="text-sm tracking-widest uppercase text-[#ffd700] mb-6 font-medium">
-                  The Music Platform That Proves Your Taste
+                  The World's First Music Taste Platform
                 </p>
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-8">
-                  Discover Music.
-                  <br />
-                  <span className="text-[var(--muted)]">Connect Through Sound.</span>
-                  <br />
-                  <span className="text-[#ffd700]">Earn Rewards.</span>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                  Prove You Found It First.
                 </h1>
-                <p className="text-lg text-[var(--muted)] mb-10 max-w-xl leading-relaxed">
-                  Rate albums. Build your TasteID. Find people who get your music. 
-                  Be the first to discover what's next.
+                <p className="text-xl md:text-2xl text-[var(--muted)] mb-4 leading-relaxed">
+                  Rate albums. Get <span className="text-[#ffd700] font-semibold">timestamped proof</span> of your discovery.
+                  <br />
+                  Connect with people who <span className="text-[var(--foreground)]">actually get your music</span>.
                 </p>
+                
+                {/* Key Value Props */}
+                <div className="flex flex-wrap gap-x-6 gap-y-2 mb-8 text-sm">
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-[#ffd700]" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    First-ever music connection platform
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-[#ffd700]" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    Build your unique TasteID
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-[#ffd700]" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    Earn WAX rewards
+                  </span>
+                </div>
+
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link
                     href="/signup"
                     className="px-8 py-4 bg-[#ffd700] text-black text-sm font-bold uppercase tracking-wider hover:bg-[#ffed4a] transition-colors text-center"
                   >
-                    Get Started Free
+                    Start Building Your TasteID
                   </Link>
                   <Link
                     href="/discover"
                     className="px-8 py-4 border-2 border-[var(--border-dim)] text-sm font-bold uppercase tracking-wider hover:border-[var(--foreground)] transition-colors text-center"
                   >
-                    Explore Albums
+                    Explore First
                   </Link>
                 </div>
+
+                {/* Social Proof */}
+                <p className="mt-8 text-sm text-[var(--muted-dim)]">
+                  Join <span className="text-[var(--foreground)] font-medium">{stats.userCount.toLocaleString()}+</span> music lovers · <span className="text-[var(--foreground)] font-medium">{stats.reviewCount.toLocaleString()}</span> ratings logged
+                </p>
               </>
             )}
           </div>
