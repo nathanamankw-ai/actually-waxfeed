@@ -172,19 +172,23 @@ export function Header() {
             </Link>
           )}
           
-          {/* WAX Balance */}
-          {isMounted && session && waxStats && (
-            <Link
-              href="/wallet"
-              className="flex items-center gap-2 px-3 py-1.5 transition-colors hover:opacity-70"
-              style={{ border: '1px solid var(--header-border)' }}
-            >
-              <span className="text-xs" style={{ color: 'var(--header-text)', opacity: 0.6 }}>WAX</span>
+          {/* WAX Button - Always visible */}
+          <Link
+            href={session ? "/wallet" : "/signup"}
+            className="flex items-center gap-2 px-3 py-1.5 transition-colors hover:opacity-70"
+            style={{ border: '1px solid var(--header-border)' }}
+          >
+            <div className="w-4 h-4 bg-[#ffd700] rounded-full flex items-center justify-center">
+              <span className="text-[8px] font-bold text-black">W</span>
+            </div>
+            {isMounted && session && waxStats ? (
               <span className="text-sm font-bold text-[#ffd700]">{waxStats.balance.toLocaleString()}</span>
-            </Link>
-          )}
+            ) : (
+              <span className="text-xs font-medium" style={{ color: 'var(--header-text)' }}>WAX</span>
+            )}
+          </Link>
 
-          {/* College Radio Partnership */}
+          {/* College Radio Program */}
           <Link
             href="/stations"
             className="flex items-center gap-2 px-3 py-1.5 transition-colors hover:opacity-70"
