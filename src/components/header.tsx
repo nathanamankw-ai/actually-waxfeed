@@ -184,6 +184,18 @@ export function Header() {
             </Link>
           )}
 
+          {/* College Radio Partnership */}
+          <Link
+            href="/stations"
+            className="flex items-center gap-2 px-3 py-1.5 transition-colors hover:opacity-70"
+            style={{ border: '1px solid var(--header-border)' }}
+          >
+            <svg className="w-4 h-4" style={{ color: 'var(--header-text)', opacity: 0.6 }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+            </svg>
+            <span className="text-xs font-medium" style={{ color: 'var(--header-text)' }}>College Radio</span>
+          </Link>
+
           {/* Messages Button */}
           {isMounted && session && (
             <Link
@@ -487,6 +499,22 @@ export function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               Lists
+              <svg className="w-5 h-5 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+            <Link
+              href="/stations"
+              className="flex items-center justify-between px-6 py-4 text-base font-medium"
+              style={{ color: 'var(--header-text)', borderBottom: '1px solid var(--header-border)' }}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span className="flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+                College Radio
+              </span>
               <svg className="w-5 h-5 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
