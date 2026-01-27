@@ -118,24 +118,29 @@ export function TasteIDCompletionBanner({ reviewCount, hasTasteID }: TasteIDComp
             </p>
           </div>
 
-          {/* Tier step indicators */}
-          <div className="hidden md:flex items-center gap-1">
-            {tiers.map((tier) => {
+          {/* Tier step indicators with CLEAR LABELS */}
+          <div className="hidden lg:flex items-center gap-0.5">
+            {tiers.map((tier, index) => {
               const isActive = tier.id === currentTier.id
               const isCompleted = reviewCount >= tier.minRatings
+              const isLast = index === tiers.length - 1
               return (
-                <div
-                  key={tier.id}
-                  className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold border-2 transition-all ${
-                    isCompleted ? 'text-black' : 'text-[#666]'
-                  }`}
-                  style={{
-                    backgroundColor: isCompleted ? tier.color : 'transparent',
-                    borderColor: isCompleted || isActive ? tier.color : '#333'
-                  }}
-                  title={`${tier.name}: ${tier.minRatings}+ ratings`}
-                >
-                  {isCompleted ? '✓' : tier.shortName}
+                <div key={tier.id} className="flex items-center">
+                  <div
+                    className={`px-2 py-1 text-[9px] font-bold uppercase tracking-wider transition-all ${
+                      isCompleted ? 'text-black' : isActive ? 'text-white' : 'text-[#555]'
+                    }`}
+                    style={{
+                      backgroundColor: isCompleted ? tier.color : isActive ? '#333' : 'transparent',
+                      border: `1px solid ${isCompleted || isActive ? tier.color : '#333'}`
+                    }}
+                    title={`${tier.minRatings}+ ratings`}
+                  >
+                    {tier.name}
+                  </div>
+                  {!isLast && (
+                    <div className={`w-2 h-0.5 ${isCompleted ? 'bg-white' : 'bg-[#333]'}`} />
+                  )}
                 </div>
               )
             })}

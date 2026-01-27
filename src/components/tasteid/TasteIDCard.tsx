@@ -149,28 +149,23 @@ function TierProgressBar({ reviewCount }: { reviewCount: number }) {
   
   return (
     <div className="pt-3 border-t border-border space-y-2">
-      {/* Header */}
+      {/* Header with current tier badge */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div 
-            className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-black"
-            style={{ backgroundColor: currentTier.color }}
-          >
-            {currentTier.shortName}
-          </div>
-          <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: currentTier.color }}>
-            {currentTier.name}
-          </span>
-        </div>
+        <span 
+          className="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-black"
+          style={{ backgroundColor: currentTier.color }}
+        >
+          {currentTier.name}
+        </span>
         {nextTier && (
-          <span className="text-[10px] text-muted-foreground">
-            {ratingsToNext} to {nextTier.name}
+          <span className="text-[9px] text-muted-foreground">
+            {ratingsToNext} to <span style={{ color: nextTier.color }}>{nextTier.name}</span>
           </span>
         )}
       </div>
       
-      {/* Segmented progress bar */}
-      <div className="flex gap-0.5 h-2">
+      {/* Segmented progress bar with tier names */}
+      <div className="flex gap-0.5">
         {tiers.map((tier) => {
           const isCompleted = reviewCount >= tier.minRatings
           const isCurrent = tier.id === currentTier.id
@@ -180,45 +175,26 @@ function TierProgressBar({ reviewCount }: { reviewCount: number }) {
           else if (isCurrent) fillPercent = progress
           
           return (
-            <div 
-              key={tier.id}
-              className="flex-1 bg-muted rounded-sm overflow-hidden"
-              title={`${tier.name}: ${tier.minRatings}+ ratings`}
-            >
+            <div key={tier.id} className="flex-1">
+              {/* Progress bar segment */}
               <div 
-                className="h-full transition-all duration-500"
-                style={{ 
-                  width: `${fillPercent}%`,
-                  backgroundColor: tier.color
-                }}
-              />
-            </div>
-          )
-        })}
-      </div>
-      
-      {/* Tier indicators */}
-      <div className="flex justify-between">
-        {tiers.map((tier) => {
-          const isCompleted = reviewCount >= tier.minRatings
-          const isCurrent = tier.id === currentTier.id
-          return (
-            <div
-              key={tier.id}
-              className="text-center"
-              style={{ width: `${100 / tiers.length}%` }}
-              title={`${tier.name}: ${tier.minRatings}+ ratings`}
-            >
-              <div 
-                className={`w-3 h-3 mx-auto rounded-full flex items-center justify-center text-[7px] font-bold border ${
-                  isCompleted ? 'text-black' : 'text-muted-foreground'
-                }`}
-                style={{ 
-                  backgroundColor: isCompleted ? tier.color : 'transparent',
-                  borderColor: isCompleted || isCurrent ? tier.color : 'var(--border)'
-                }}
+                className="h-1.5 bg-muted rounded-sm overflow-hidden mb-1"
+                title={`${tier.name}: ${tier.minRatings}+ ratings`}
               >
-                {isCompleted ? '✓' : tier.shortName}
+                <div 
+                  className="h-full transition-all duration-500"
+                  style={{ 
+                    width: `${fillPercent}%`,
+                    backgroundColor: tier.color
+                  }}
+                />
+              </div>
+              {/* Tier name */}
+              <div 
+                className={`text-[7px] text-center uppercase tracking-wider ${isCurrent ? 'font-bold' : ''}`}
+                style={{ color: isCompleted || isCurrent ? tier.color : 'var(--muted-foreground)' }}
+              >
+                {tier.name.slice(0, 3)}
               </div>
             </div>
           )

@@ -49,8 +49,27 @@ export function TierProgress({
   if (variant === 'steps') {
     return (
       <div className={className}>
-        {/* Step progress indicator */}
-        <div className="flex items-center justify-between mb-2">
+        {/* Current tier banner */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <span 
+              className="px-3 py-1 text-xs font-bold uppercase tracking-wider text-black"
+              style={{ backgroundColor: currentTier.color }}
+            >
+              {currentTier.name}
+            </span>
+            <span className="text-xs text-[#888]">{currentTier.maxConfidence}% accuracy</span>
+          </div>
+          {nextTier && (
+            <span className="text-xs text-[#888]">
+              <span className="font-bold text-white">{ratingsToNext}</span> ratings to{' '}
+              <span style={{ color: nextTier.color }}>{nextTier.name}</span>
+            </span>
+          )}
+        </div>
+
+        {/* Step progress with CLEAR tier names */}
+        <div className="flex items-start">
           {tiers.map((tier, index) => {
             const isCompleted = ratingCount >= tier.minRatings
             const isCurrent = tier.id === currentTier.id
@@ -58,10 +77,10 @@ export function TierProgress({
             
             return (
               <div key={tier.id} className="flex items-center flex-1">
-                {/* Step circle */}
+                {/* Step with tier name */}
                 <div className="flex flex-col items-center">
                   <div 
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all ${
+                    className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all ${
                       isCompleted ? 'text-black' : 'text-[#666]'
                     }`}
                     style={{ 
@@ -70,24 +89,29 @@ export function TierProgress({
                     }}
                   >
                     {isCompleted ? (
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     ) : (
                       tier.shortName
                     )}
                   </div>
+                  {/* CLEAR TIER NAME */}
                   <span 
-                    className={`text-[9px] mt-1 uppercase tracking-wider ${isCurrent ? 'font-bold' : ''}`}
+                    className={`text-[10px] mt-2 uppercase tracking-wider text-center ${isCurrent ? 'font-bold' : ''}`}
                     style={{ color: isCompleted || isCurrent ? tier.color : '#555' }}
                   >
                     {tier.name}
+                  </span>
+                  {/* Ratings threshold */}
+                  <span className="text-[9px] text-[#444]">
+                    {tier.minRatings}+
                   </span>
                 </div>
                 
                 {/* Connecting line */}
                 {!isLast && (
-                  <div className="flex-1 h-0.5 mx-2 mt-[-16px]">
+                  <div className="flex-1 h-0.5 mx-1 mt-5">
                     <div 
                       className="h-full transition-all duration-500"
                       style={{ 
@@ -100,16 +124,6 @@ export function TierProgress({
             )
           })}
         </div>
-        
-        {/* Progress text */}
-        <div className="flex justify-between text-xs text-[#666] mt-3">
-          <span>{ratingCount} ratings</span>
-          {nextTier && (
-            <span>
-              <span className="font-bold text-white">{ratingsToNext}</span> to {nextTier.name}
-            </span>
-          )}
-        </div>
       </div>
     )
   }
@@ -118,27 +132,21 @@ export function TierProgress({
     return (
       <div className={`p-3 border border-[#333] bg-[#111] ${className}`}>
         <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <div 
-              className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-black"
-              style={{ backgroundColor: currentTier.color }}
-            >
-              {currentTier.shortName}
-            </div>
-            <span className="text-xs font-bold uppercase tracking-wider" style={{ color: currentTier.color }}>
-              {currentTier.name}
-            </span>
-            <span className="text-[10px] text-[#666]">{currentTier.maxConfidence}%</span>
-          </div>
+          <span 
+            className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-black"
+            style={{ backgroundColor: currentTier.color }}
+          >
+            {currentTier.name}
+          </span>
           {nextTier && (
             <span className="text-[10px] text-[#888]">
-              {ratingsToNext} to {nextTier.name}
+              {ratingsToNext} to <span style={{ color: nextTier.color }}>{nextTier.name}</span>
             </span>
           )}
         </div>
         
-        {/* Segmented bar */}
-        <div className="flex gap-0.5 h-2">
+        {/* Segmented bar with tier names */}
+        <div className="flex gap-0.5">
           {tiers.map((tier) => {
             const isCompleted = ratingCount >= tier.minRatings
             const isCurrent = tier.id === currentTier.id
@@ -148,40 +156,27 @@ export function TierProgress({
             else if (isCurrent) fillPercent = progress
             
             return (
-              <div 
-                key={tier.id}
-                className="flex-1 bg-[#222] rounded-sm overflow-hidden"
-                title={`${tier.name}: ${tier.minRatings}+ ratings`}
-              >
+              <div key={tier.id} className="flex-1">
                 <div 
-                  className="h-full transition-all duration-500"
-                  style={{ 
-                    width: `${fillPercent}%`,
-                    backgroundColor: tier.color
-                  }}
-                />
+                  className="h-2 bg-[#222] rounded-sm overflow-hidden mb-1"
+                  title={`${tier.name}: ${tier.minRatings}+ ratings`}
+                >
+                  <div 
+                    className="h-full transition-all duration-500"
+                    style={{ 
+                      width: `${fillPercent}%`,
+                      backgroundColor: tier.color
+                    }}
+                  />
+                </div>
+                {/* Clear tier name */}
+                <div 
+                  className={`text-[7px] text-center uppercase tracking-wider ${isCurrent ? 'font-bold' : ''}`}
+                  style={{ color: isCompleted || isCurrent ? tier.color : '#444' }}
+                >
+                  {tier.name.slice(0, 3)}
+                </div>
               </div>
-            )
-          })}
-        </div>
-        
-        {/* Tier labels */}
-        <div className="flex justify-between mt-1.5">
-          {tiers.map((tier) => {
-            const isCompleted = ratingCount >= tier.minRatings
-            const isCurrent = tier.id === currentTier.id
-            return (
-              <span 
-                key={tier.id}
-                className={`text-[8px] uppercase tracking-wider ${isCurrent ? 'font-bold' : ''}`}
-                style={{ 
-                  color: isCompleted || isCurrent ? tier.color : '#444',
-                  width: `${100 / tiers.length}%`,
-                  textAlign: 'center'
-                }}
-              >
-                {tier.shortName}
-              </span>
             )
           })}
         </div>
@@ -192,35 +187,30 @@ export function TierProgress({
   // Full variant
   return (
     <div className={`p-4 border border-[#333] bg-[#111] ${className}`}>
-      {/* Header */}
+      {/* Header with clear tier badge */}
       <div className="flex items-center gap-3 mb-4">
-        <div 
-          className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold text-black"
+        <span 
+          className="px-3 py-1.5 text-sm font-bold uppercase tracking-wider text-black"
           style={{ backgroundColor: currentTier.color }}
         >
-          {currentTier.shortName}
-        </div>
+          {currentTier.name}
+        </span>
         <div>
-          <div className="flex items-center gap-2">
-            <span className="font-bold uppercase tracking-wider" style={{ color: currentTier.color }}>
-              {currentTier.name}
-            </span>
-            <span className="text-xs px-2 py-0.5 border border-[#444] text-[#888]">
-              {currentTier.maxConfidence}% accuracy
-            </span>
-          </div>
-          <p className="text-xs text-[#888] mt-0.5">{currentTier.description}</p>
+          <span className="text-xs px-2 py-0.5 border border-[#444] text-[#888]">
+            {currentTier.maxConfidence}% accuracy
+          </span>
+          <p className="text-xs text-[#888] mt-1">{currentTier.description}</p>
         </div>
       </div>
       
-      {/* Segmented progress bar */}
+      {/* Segmented progress bar with CLEAR tier names */}
       <div className="mb-4">
-        <div className="flex justify-between text-[10px] text-[#666] mb-1">
+        <div className="flex justify-between text-[10px] text-[#666] mb-2">
           <span>{ratingCount} ratings</span>
-          {nextTier && <span>{nextTier.minRatings} for {nextTier.name}</span>}
+          {nextTier && <span>{ratingsToNext} more to {nextTier.name}</span>}
         </div>
         
-        <div className="flex gap-1 h-3">
+        <div className="flex gap-1">
           {tiers.map((tier) => {
             const isCompleted = ratingCount >= tier.minRatings
             const isCurrent = tier.id === currentTier.id
@@ -230,52 +220,31 @@ export function TierProgress({
             else if (isCurrent) fillPercent = progress
             
             return (
-              <div 
-                key={tier.id}
-                className="flex-1 bg-[#222] rounded-sm overflow-hidden"
-                title={`${tier.name}: ${tier.minRatings}+ ratings`}
-              >
+              <div key={tier.id} className="flex-1">
+                {/* Progress bar */}
                 <div 
-                  className="h-full transition-all duration-500"
-                  style={{ 
-                    width: `${fillPercent}%`,
-                    backgroundColor: tier.color
-                  }}
-                />
-              </div>
-            )
-          })}
-        </div>
-        
-        {/* Tier labels with checkmarks */}
-        <div className="flex justify-between mt-2">
-          {tiers.map((tier) => {
-            const isCompleted = ratingCount >= tier.minRatings
-            const isCurrent = tier.id === currentTier.id
-            
-            return (
-              <div 
-                key={tier.id}
-                className="flex flex-col items-center"
-                style={{ width: `${100 / tiers.length}%` }}
-              >
-                <div 
-                  className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold border-2 ${
-                    isCompleted ? 'text-black' : 'text-[#666]'
-                  }`}
-                  style={{ 
-                    backgroundColor: isCompleted ? tier.color : 'transparent',
-                    borderColor: isCompleted || isCurrent ? tier.color : '#333'
-                  }}
+                  className="h-3 bg-[#222] rounded-sm overflow-hidden mb-1"
+                  title={`${tier.name}: ${tier.minRatings}+ ratings`}
                 >
-                  {isCompleted ? '✓' : tier.shortName}
+                  <div 
+                    className="h-full transition-all duration-500"
+                    style={{ 
+                      width: `${fillPercent}%`,
+                      backgroundColor: tier.color
+                    }}
+                  />
                 </div>
-                <span 
-                  className={`text-[9px] mt-1 uppercase tracking-wider ${isCurrent ? 'font-bold' : ''}`}
+                {/* CLEAR tier name label */}
+                <div 
+                  className={`text-[9px] text-center uppercase tracking-wider ${isCurrent ? 'font-bold' : ''}`}
                   style={{ color: isCompleted || isCurrent ? tier.color : '#555' }}
                 >
                   {tier.name}
-                </span>
+                </div>
+                {/* Ratings threshold */}
+                <div className="text-[8px] text-center text-[#444]">
+                  {tier.minRatings}+
+                </div>
               </div>
             )
           })}
@@ -285,19 +254,14 @@ export function TierProgress({
       {/* Next tier preview */}
       {nextTier && (
         <div className="flex items-center gap-3 p-3 bg-[#0a0a0a] border border-[#222]">
-          <div 
-            className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-black opacity-50"
+          <span 
+            className="px-2 py-1 text-xs font-bold uppercase tracking-wider text-black opacity-60"
             style={{ backgroundColor: nextTier.color }}
           >
-            {nextTier.shortName}
-          </div>
+            {nextTier.name}
+          </span>
           <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#666]">
-                NEXT: {nextTier.name}
-              </span>
-              <span className="text-[10px] text-[#555]">{ratingsToNext} ratings away</span>
-            </div>
+            <span className="text-[10px] text-[#555]">{ratingsToNext} ratings away</span>
             <p className="text-[10px] text-[#555] mt-0.5">
               Unlocks: {nextTier.perks.slice(0, 2).join(', ')}
             </p>

@@ -759,37 +759,34 @@ export default function QuickRatePage() {
   )
 }
 
-// Inline Tier Progress Bar for Quick Rate - Clean design without emojis
+// Inline Tier Progress Bar for Quick Rate - CLEAR LABELS
 function TierProgressBar({ ratingCount }: { ratingCount: number }) {
   const { progress, ratingsToNext, currentTier, nextTier } = getProgressToNextTier(ratingCount)
   const tiers = TASTEID_TIERS.slice(1) // Skip 'locked'
   
   return (
     <div className="space-y-2">
-      {/* Header info */}
+      {/* Header with current tier */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div 
-            className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-black"
+          <span 
+            className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-black"
             style={{ backgroundColor: currentTier.color }}
           >
-            {currentTier.shortName}
-          </div>
-          <span className="text-xs font-bold uppercase tracking-wider" style={{ color: currentTier.color }}>
             {currentTier.name}
           </span>
           <span className="text-[10px] text-[#666]">{currentTier.maxConfidence}% accuracy</span>
         </div>
         {nextTier && (
           <span className="text-[10px] text-[#888]">
-            {ratingsToNext} to {nextTier.name}
+            {ratingsToNext} ratings to <span style={{ color: nextTier.color }}>{nextTier.name}</span>
           </span>
         )}
       </div>
       
-      {/* Segmented progress bar */}
-      <div className="flex gap-0.5 h-2">
-        {tiers.map((tier) => {
+      {/* Segmented progress bar with labels */}
+      <div className="flex gap-0.5">
+        {tiers.map((tier, index) => {
           const isCompleted = ratingCount >= tier.minRatings
           const isCurrent = tier.id === currentTier.id
           
@@ -800,49 +797,28 @@ function TierProgressBar({ ratingCount }: { ratingCount: number }) {
           return (
             <div 
               key={tier.id}
-              className="flex-1 bg-[#222] rounded-sm overflow-hidden"
-              title={`${tier.name}: ${tier.minRatings}+ ratings`}
+              className="flex-1"
             >
+              {/* Progress segment */}
               <div 
-                className="h-full transition-all duration-500"
-                style={{ 
-                  width: `${fillPercent}%`,
-                  backgroundColor: tier.color
-                }}
-              />
-            </div>
-          )
-        })}
-      </div>
-      
-      {/* Tier labels */}
-      <div className="flex justify-between">
-        {tiers.map((tier) => {
-          const isCompleted = ratingCount >= tier.minRatings
-          const isCurrent = tier.id === currentTier.id
-          return (
-            <div 
-              key={tier.id}
-              className="flex flex-col items-center"
-              style={{ width: `${100 / tiers.length}%` }}
-            >
-              <div 
-                className={`w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold border transition-all ${
-                  isCompleted ? 'text-black' : 'text-[#666]'
-                }`}
-                style={{ 
-                  backgroundColor: isCompleted ? tier.color : 'transparent',
-                  borderColor: isCompleted || isCurrent ? tier.color : '#333'
-                }}
+                className="h-2 bg-[#222] rounded-sm overflow-hidden mb-1"
+                title={`${tier.name}: ${tier.minRatings}+ ratings`}
               >
-                {isCompleted ? '✓' : tier.shortName}
+                <div 
+                  className="h-full transition-all duration-500"
+                  style={{ 
+                    width: `${fillPercent}%`,
+                    backgroundColor: tier.color
+                  }}
+                />
               </div>
-              <span 
-                className={`text-[8px] mt-0.5 uppercase tracking-wider ${isCurrent ? 'font-bold' : ''}`}
+              {/* Tier name label */}
+              <div 
+                className={`text-[8px] text-center uppercase tracking-wider ${isCurrent ? 'font-bold' : ''}`}
                 style={{ color: isCompleted || isCurrent ? tier.color : '#444' }}
               >
-                {tier.shortName}
-              </span>
+                {tier.name}
+              </div>
             </div>
           )
         })}
