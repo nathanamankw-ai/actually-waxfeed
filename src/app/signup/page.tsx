@@ -29,8 +29,8 @@ export default function SignupPage() {
       return
     }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters")
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters")
       return
     }
 
@@ -154,7 +154,7 @@ export default function SignupPage() {
               className="w-full bg-[--surface] border border-[--border-dim] px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
               placeholder="••••••••"
               required
-              minLength={6}
+              minLength={8}
             />
           </div>
 
@@ -170,7 +170,7 @@ export default function SignupPage() {
               className="w-full bg-[--surface] border border-[--border-dim] px-4 py-3 text-white focus:outline-none focus:border-white transition-colors"
               placeholder="••••••••"
               required
-              minLength={6}
+              minLength={8}
             />
           </div>
 
