@@ -442,7 +442,7 @@ export default async function Home() {
                       </div>
                       <div>
                         <p className="text-sm font-bold text-[#00bfff]">Discover</p>
-                        <p className="text-xs text-[var(--muted)]">AI-powered recommendations that actually match your taste</p>
+                        <p className="text-xs text-[var(--muted)]">Personalized recommendations that actually match your taste</p>
                       </div>
                     </div>
                     
