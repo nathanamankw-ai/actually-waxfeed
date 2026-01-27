@@ -54,7 +54,7 @@ export function TasteIDCompletionBanner({ reviewCount, hasTasteID }: TasteIDComp
 
   return (
     <div className="border-b border-[--border] bg-gradient-to-r from-[#ffd700]/5 to-transparent">
-      <div className="max-w-7xl mx-auto px-6 py-4">
+      <div className="w-full px-6 lg:px-12 xl:px-20 py-2">
         <div className="flex items-center gap-4">
           {/* Level badge */}
           <div 

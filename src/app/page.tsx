@@ -77,7 +77,7 @@ export default async function Home() {
     <div className="min-h-screen bg-background text-foreground">
       {/* HERO - Clear Value Proposition */}
       <section className="border-b border-[var(--border)]">
-        <div className="w-full px-6 lg:px-12 xl:px-20 py-20 lg:py-28">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-12 lg:py-16">
           <div className="max-w-3xl">
             {/* Tagline */}
             <p className="text-sm tracking-widest uppercase text-[#ffd700] mb-6 font-medium">
@@ -332,7 +332,7 @@ export default async function Home() {
 
       {/* FINAL CTA */}
       <section className="bg-[var(--surface)]">
-        <div className="w-full px-6 lg:px-12 xl:px-20 py-20 text-center">
+        <div className="w-full px-6 lg:px-12 xl:px-20 py-12 lg:py-16 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold mb-6">
             Ready to prove your taste?
           </h2>
